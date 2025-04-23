@@ -1,0 +1,150 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="{{url_for('static', filename='css/base.css')}}" />
+    <title>示例页面</title>
+</head>
+
+<body>
+    <!-- 导航栏占位 -->
+    <div id="nav-container"></div>
+
+    <!-- 主体内容 -->
+    <main>
+        <h1 style="text-align: center;">欢迎来到示例页面</h1>
+        <table>
+            <caption>Reactions</caption>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>gene_reaction_rule</th>
+                    <th>Metabolites</th>
+                    <th>Lower_bound</th>
+                    <th>Upper_bound</th>
+                    <th>Objective</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>r_2189</td>
+                    <td>oleate exchange</td>
+                    <td></td>
+                    <td>s_2826 at 0x2927fcf0ad0:-1.0</td>
+                    <td>0.0</td>
+                    <td>1000.0</td>
+                    <td>
+                        <button id="requestBtn">Select</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>r_2190</td>
+                    <td>butyrate (n-C4:0) transport</td>
+                    <td>YNL065W</td>
+                    <td>s_2822 at 0x2927fcf07d0:-1.0,s_2828
+                        at 0x2927fcf0c20:1.0</td>
+                    <td>-1000.0</td>
+                    <td>1000.0</td>
+                </tr>
+                <tr>
+                    <td>r_2191</td>
+                    <td>hexanoate (n-C6:0) transport</td>
+                    <td>YNL065W</td>
+                    <td>s_2824 at 0x2927fcf0950:-1.0,
+                        s_2829 at 0x2927fcf0d40:1.0</td>
+                    <td>-1000.0</td>
+                    <td>1000.0</td>
+                </tr>
+                <tr>
+                    <td>r_2189</td>
+                    <td>oleate exchange</td>
+                    <td></td>
+                    <td>s_2826 at 0x2927fcf0ad0:-1.0</td>
+                    <td>0.0</td>
+                    <td>1000.0</td>
+                </tr>
+                <tr>
+                    <td>r_2190</td>
+                    <td>butyrate (n-C4:0) transport</td>
+                    <td>YNL065W</td>
+                    <td>s_2822 at 0x2927fcf07d0:-1.0,s_2828
+                        at 0x2927fcf0c20:1.0</td>
+                    <td>-1000.0</td>
+                    <td>1000.0</td>
+                </tr>
+                <tr>
+                    <td>r_2191</td>
+                    <td>hexanoate (n-C6:0) transport</td>
+                    <td>YNL065W</td>
+                    <td>s_2824 at 0x2927fcf0950:-1.0,
+                        s_2829 at 0x2927fcf0d40:1.0</td>
+                    <td>-1000.0</td>
+                    <td>1000.0</td>
+                </tr>
+                <tr>
+                    <td>r_2189</td>
+                    <td>oleate exchange</td>
+                    <td></td>
+                    <td>s_2826 at 0x2927fcf0ad0:-1.0</td>
+                    <td>0.0</td>
+                    <td>1000.0</td>
+                </tr>
+                <tr>
+                    <td>r_2190</td>
+                    <td>butyrate (n-C4:0) transport</td>
+                    <td>YNL065W</td>
+                    <td>s_2822 at 0x2927fcf07d0:-1.0,s_2828
+                        at 0x2927fcf0c20:1.0</td>
+                    <td>-1000.0</td>
+                    <td>1000.0</td>
+                </tr>
+                <tr>
+                    <td>r_2191</td>
+                    <td>hexanoate (n-C6:0) transport</td>
+                    <td>YNL065W</td>
+                    <td>s_2824 at 0x2927fcf0950:-1.0,
+                        s_2829 at 0x2927fcf0d40:1.0</td>
+                    <td>-1000.0</td>
+                    <td>1000.0</td>
+                </tr>
+                <!-- 可根据需求添加更多行 -->
+            </tbody>
+        </table>
+
+    </main>
+
+    <!-- 页脚占位 -->
+    <!-- <div id="footer-container"></div> -->
+
+    <!-- 使用 jQuery 动态加载 nav 和 footer -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(function () {
+            $('#nav-container').load('./nav.html');
+            // $('#footer-container').load('./footer.html');
+        });
+    </script>
+    <!-- <script>
+        document.getElementById('requestBtn').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/endpoint', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ key: 'value' })
+                });
+                const data = await response.json();
+                console.log('响应数据:', data);
+            } catch (error) {
+                console.error('请求失败:', error);
+            }
+        });
+    </script> -->
+
+</body>
+
+</html>

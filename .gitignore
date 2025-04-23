@@ -1,0 +1,14 @@
+env
+.venv
+.vscode
+.idea
+__pycache__
+public
+
+.DS_STORE
+
+/test
+/docs
+logs
+tools
+*.pptx

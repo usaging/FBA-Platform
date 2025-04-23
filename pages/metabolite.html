@@ -1,0 +1,80 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+    
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="{{url_for('static', filename='css/base.css')}}" />
+    <title>示例页面</title>
+</head>
+
+
+<body>
+    <!-- 导航栏占位 -->
+    <div id="nav-container"></div>
+
+    <!-- 主体内容 -->
+    <main>
+        <h1 style="text-align: center;">欢迎来到示例页面</h1>
+        <table>
+            <caption>Metabolites</caption>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Formula</th>
+                    <th>Charge</th>
+                    <th>Compartment</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>s_4324</td>
+                    <td>dCTP</td>
+                    <td>C9H12N3O13P3</td>
+                    <td>-4</td>
+                    <td>m</td>
+                </tr>
+                <tr>
+                    <td>s_4324</td>
+                    <td>dCTP</td>
+                    <td>C9H12N3O13P3</td>
+                    <td>-4</td>
+                    <td>m</td>
+                </tr>
+                <tr>
+                    <td>s_4324</td>
+                    <td>dCTP</td>
+                    <td>C9H12N3O13P3</td>
+                    <td>-4</td>
+                    <td>m</td>
+                </tr>
+                <tr>
+                    <td>s_4324</td>
+                    <td>dCTP</td>
+                    <td>C9H12N3O13P3</td>
+                    <td>-4</td>
+                    <td>m</td>
+                </tr>
+                <!-- 可根据需求添加更多行 -->
+            </tbody>
+        </table>
+
+    </main>
+
+    <!-- 页脚占位 -->
+    <!-- <div id="footer-container"></div> -->
+
+    <!-- 使用 jQuery 动态加载 nav 和 footer -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(function () {
+            $('#nav-container').load('./nav.html');
+            // $('#footer-container').load('./footer.html');
+        });
+    </script>
+</body>
+
+</html>

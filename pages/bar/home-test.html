@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FBA-PLATFORM</title>
+    <!-- 引入字体图标 -->
+    <link rel="stylesheet" href="./icons/font/iconfont.css">
+
+</head>
+
+<body>
+    <nav class="shell close">
+        <header>
+            <div class="image-text"> <span class="image"> <img src="./logo.svg" alt=""> </span>
+                <div class="text logo-text"> <span class="name">FBA-PLATFORM</span> <span
+                        class="software">SCUT-CHINA_L</span>
+                </div>
+            </div> <i class="iconfont icon-xiangyoujiantou toggle"></i>
+        </header>
+        <div class="menu-bar">
+            <div class="menu">
+                <li class="search-box"> <i class="iconfont icon-search icon"></i> <input type="text"
+                        placeholder="Search..."> </li>
+                <ul class="menu-links">
+                    <li class="nav-link"> <a href="#"> <i class="iconfont icon-cell icon"></i> <span
+                                class="text nac-text">Step1:Models</span> </a> </li>
+                    <li class="nav-link"> <a href="#"> <i class="iconfont icon-reaction icon"></i> <span
+                                class="text nac-text">Step2:Reactions</span> </a> </li>
+                    <li class="nav-link"> <a href="#"> <i class="iconfont icon-metabolite icon"></i> <span
+                                class="text nac-text">Step3:Metabolites</span> </a> </li>
+                    <li class="nav-link"> <a href="#"> <i class="iconfont icon-gene icon"></i> <span
+                                class="text nac-text">Step4:Genes</span> </a> </li>
+                    <li class="nav-link"> <a href="#"> <i class="iconfont icon-result icon"></i> <span
+                                class="text nac-text">Step5:Result</span> </a> </li>
+                    <li class="nav-link"> <a href="#"> <i class="iconfont icon-mind icon"></i> <span
+                                class="text nac-text">another...</span> </a> </li>
+                </ul>
+            </div>
+            <div class="bottom-content">
+                <li class=""> <a href="#"> <i class="iconfont icon-wiki icon"></i> <span
+                            class="text nac-text">Wiki</span> </a> </li>
+                <li class="mode">
+                    <div class="sun-moon"> <i class="iconfont icon-rijian icon sun"></i> <i
+                            class="iconfont icon-yejian icon moon"></i> </div> <span class="mode-text text">Moon</span>
+                    <div class="toggle-switch"> <span class="switch"></span> </div>
+                </li>
+            </div>
+        </div>
+    </nav>
+</body>
+
+
+<script>
+    const body = document.querySelector('body'), shell = body.querySelector('nav'), toggle = body.querySelector(".toggle"), searchBtn = body.querySelector(".search-box"), modeSwitch = body.querySelector(".toggle-switch"), modeText = body.querySelector(".mode-text");
+
+    // 点击toggle元素时触发事件 
+    toggle.addEventListener("click", () => {
+        // 切换shell元素的close类 
+        shell.classList.toggle("close");
+    })
+    // 点击searchBtn元素时触发事件
+    searchBtn.addEventListener("click", () => {
+        // 移除shell元素的close类
+        shell.classList.remove("close");
+    })
+    // 点击modeSwitch元素时触发事件
+    modeSwitch.addEventListener("click", () => {
+        // 切换body元素的dark类
+        body.classList.toggle("dark");
+        // 如果body元素包含dark类
+        if (body.classList.contains("dark")) { modeText.innerText = "Sun"; } else { modeText.innerText = "Moon"; }
+    }); 
+</script>
+
+</html>

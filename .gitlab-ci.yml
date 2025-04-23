@@ -1,0 +1,17 @@
+image: python:3.6
+
+pages:
+  stage: build
+  script:
+  - pip install --no-cache-dir -r dependencies.txt
+  - FLASK_APP=app.py flask freeze
+  artifacts:
+    paths:
+    - public
+  only:
+  - main
+
+# 使用 Python 3.6 环境 运行 CI/CD 流程。
+# 安装依赖（如 Flask、Flask-Freeze）。
+# 生成静态网站（flask freeze 将 Flask 应用转为 HTML/CSS/JS 文件）。
+# 将 public/ 目录 作为产物上传，由 GitLab Pages 自动托管。
