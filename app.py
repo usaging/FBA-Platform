@@ -33,7 +33,7 @@ def replace_rs(summary):
     # 替换所有匹配的ID
     return pattern.sub(replace_match, summary)
 
-template_folder = path.abspath('.')
+template_folder = path.abspath('./wiki')
 
 app = Flask(__name__, template_folder=template_folder)
 app.config['FREEZER_DESTINATION'] = 'public'
@@ -51,12 +51,13 @@ def serve():
 
 @app.route('/')
 def home():
-    return render_template('pages/model.html')
+    return render_template('pages/confirm.html')
 
 
 @app.route('/model/<id>')
 def set_model(id):
     model=cobra.io.read_sbml_model(str(Path('models')) + '/' + id + '.xml')
+    
     @app.route('/objective/<reaction_id>')
     def set_objective(reaction_id):
         model.objective = model.reactions.get_by_id(reaction_id)
@@ -76,9 +77,9 @@ def set_model(id):
         print('Status: ',solution.status)
         print(replace_rs(model.summary()).tostring())
 
-# @app.route('/<page>')
-# def pages(page):
-#     return render_template(str(Path('pages')) + '/' + page.lower() + '.html')
+@app.route('/pages/<page>')
+def pages(page):
+    return render_template(str(Path('pages')) + '/' + page.lower() + '.html')
 
 # Main Function, Runs at http://0.0.0.0:8080
 if __name__ == "__main__":
