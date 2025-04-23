@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}Test：这里写你要替换的标题{% endblock %}
+
+{% block page_content %}
+
+<link href="{{ url_for('static', filename = 'css/base.css')}}" rel="stylesheet">
+
+<div class="main">
+    <div class="feature">
+
+    </div>
+    <div class="content">
+        <p>aaaaaaa aaaaaaaa aaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaa aaaaaaaaaa aa
+            aaaaaaa aaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaaa aaaaaaaaa aa
+            aaaaaaaa aaaaaaaaaaa aaaaaaaaa aaaaaaaaa aaaaaaaaaa aaaaaaaaaaa aaaaaaaa aaaaaa
+        </p>
+    </div>
+
+</div>
+
+{% endblock %}

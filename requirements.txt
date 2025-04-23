@@ -1,0 +1,4 @@
+loguru
+cobra
+flask
+frozen-flask

@@ -1,0 +1,79 @@
+button {
+    padding: 6px 12px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.content {
+    backdrop-filter: blur(10px);
+    /* 上 0，右 自动，底 80px，左 250px刚好 */
+    margin: 50px 100px 80px 250px;
+    max-width: 100%;
+    /* 限制最大宽度 */
+
+    display: flex;
+    flex-wrap: wrap;
+
+}
+
+
+.content p {
+    width: 100%;
+    /* 强制p元素占满宽度 */
+    word-break: break-word;
+    /* 确保强制换行 */
+}
+
+/* body { */
+/* 上 0，右 自动，底 80px，左 250px刚好 */
+/* margin: 50px 100px 80px 250px;
+} */
+
+table {
+    width: 100%;
+    /* 占满父容器宽度 */
+    border-collapse: collapse;
+    /* 合并单元格边框 */
+}
+
+th,
+td {
+    border: 1px solid #ccc;
+    /* 边框样式 */
+    padding: 0.5rem;
+    /* 单元格内边距 */
+    text-align: left;
+    /* 文本左对齐 */
+}
+
+caption {
+    caption-side: top;
+    /* 标题显示在表格上方 */
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.shell li a#a1 {
+    background-color: var(--primary-color);
+}
+
+.shell li a#a1 .icon,
+.shell li a#a1 .text {
+    color: var(--shell-color);
+}
+
+body {
+    background-image: url('../icons/background.png');
+    /* background-size: contain; */
+    /* 完整显示图片，可能有空白*/
+    background-size: 100% 100%;
+    /* 拉伸填充 */
+    color: #FFFFFF
+}
