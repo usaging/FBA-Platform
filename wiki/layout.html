@@ -10,11 +10,15 @@
 
     <!-- Custom CSS -->
     <link href="{{ url_for('static', filename = 'css/base.css')}}" rel="stylesheet">
+    <link href="{{ url_for('static', filename = 'css/top-nav.css')}}" rel="stylesheet">
 
     <title>{% block title %}{% endblock %} | SCUT-China-L - iGEM 2025</title>
 </head>
 
 <body>
+    <!-- 顶部导航 -->
+    {% include 'top-nav.html' %}
+
     <!-- Nav -->
     {% include 'nav.html' %}
 
@@ -23,7 +27,28 @@
         {% block page_content %}{% endblock %}
     </div>
     <!-- #################################################################################################################3 -->
+ <!-- ...原有JS代码... -->
+ <script>
+    // 顶部导航与侧边栏联动
+    const shell = document.querySelector('.shell');
+    const topNav = document.querySelector('.top-nav');
 
+    // 监听侧边栏状态变化
+    function updateNavPosition() {
+        if (shell.classList.contains('close')) {
+            topNav.style.left = '88px';  // 侧边栏收缩状态
+        } else {
+            topNav.style.left = '250px'; // 侧边栏展开状态
+        }
+    }
+
+    // 初始化位置
+    updateNavPosition();
+
+    // 添加事件监听
+    shell.addEventListener('transitionend', updateNavPosition);
+    shell.addEventListener('click', updateNavPosition); // 兼容手动点击切换
+</script>
 </body>
 
 </html>
