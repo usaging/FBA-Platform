@@ -5,7 +5,6 @@ import pandas as pd
 import re
 
 from flask import Flask, render_template
-from flask_frozen import Freezer
 
 def replace_rs(summary):
     met_df = pd.read_csv("./met.csv", header=None, names=['id', 'name'])
@@ -39,15 +38,8 @@ app = Flask(__name__, template_folder=template_folder)
 app.config['FREEZER_DESTINATION'] = 'public'
 app.config['FREEZER_RELATIVE_URLS'] = True
 app.config['FREEZER_IGNORE_MIMETYPE_WARNINGS'] = True
-freezer = Freezer(app)
 
-@app.cli.command()
-def freeze():
-    freezer.freeze()
 
-@app.cli.command()
-def serve():
-    freezer.run()
 
 @app.route('/')
 def home():
