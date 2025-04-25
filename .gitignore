@@ -12,3 +12,5 @@ public
 logs
 tools
 *.pptx
+/genes
+/reactions
