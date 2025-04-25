@@ -16,45 +16,144 @@
             <tbody></tbody>
         </table>
     </div>
-
+<div id="pagination" style="margin-top: 1em; text-align: center;"></div>
 </div>
 
 <script>
-    // 加载 JSON 文件并渲染表格
+    const rowsPerPage = 15;
+    let currentPage = 1;
+    let totalPages = 1;
+    let rowData = [];
+
     fetch('/gene.json')
-        .then(response => response.json())
+        .then(res => res.json())
         .then(data => {
-            const table = document.getElementById('gene-table');
-            const thead = table.querySelector('thead');
-            const tbody = table.querySelector('tbody');
-
-            if (data.length === 0) {
-                thead.innerHTML = '<tr><th>没有数据</th></tr>';
-                return;
-            }
-
-            // 表头
-            const headers = Object.keys(data[0]);
-            headers.push("操作"); // 添加操作列标题
-            thead.innerHTML = '<tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
-
-            // 表格内容
-            tbody.innerHTML = data.map((row, index) => {
-                const rowHtml = headers.map(h => {
-                    if (h === "操作") {
-                        return `<td><button onclick="handleAction(${index})">选择</button></td>`;
-                    } else {
-                        return `<td>${row[h]}</td>`;
-                    }
-                }).join('');
-                return `<tr>${rowHtml}</tr>`;
-            }).join('');
-
-            // 缓存数据供按钮使用
-            window.rowData = data;
+            rowData = data;
+            totalPages = Math.ceil(data.length / rowsPerPage);
+            renderTable();
+            renderPagination();
         });
 
+    function renderTable() {
+        const table = document.getElementById('gene-table');
+        const thead = table.querySelector('thead');
+        const tbody = table.querySelector('tbody');
+
+        if (rowData.length === 0) {
+            thead.innerHTML = '<tr><th>没有数据</th></tr>';
+            tbody.innerHTML = '';
+            return;
+        }
+
+        // 表头只在首次渲染
+        if (!thead.hasChildNodes()) {
+            const headers = Object.keys(rowData[0]).concat('操作');
+            thead.innerHTML = '<tr>' +
+                headers.map(h => `<th>${h}</th>`).join('') +
+                '</tr>';
+        }
+
+        const start = (currentPage - 1) * rowsPerPage;
+        const pageData = rowData.slice(start, start + rowsPerPage);
+
+        tbody.innerHTML = pageData.map((row, idx) => {
+            const realIndex = start + idx;
+            const cells = Object.keys(row).map(key => `<td>${row[key]}</td>`);
+            cells.push(`<td><button onclick="handleAction(${realIndex})">选择</button></td>`);
+            return `<tr>${cells.join('')}</tr>`;
+        }).join('');
+    }
+
+    function renderPagination() {
+        const container = document.getElementById('pagination');
+        let html = '';
+
+        // 上一页
+        html += `<button ${currentPage === 1 ? 'disabled' : ''} onclick="goToPage(${currentPage - 1})">‹</button>`;
+
+        // 辅助函数：添加页码按钮或省略号
+        function addPage(num) {
+            if (num === '...') {
+                html += `<span class="ellipsis">…</span>`;
+            } else {
+                html += `<button ${num === currentPage ? 'class="active"' : ''}`
+                    + ` onclick="goToPage(${num})">${num}</button>`;
+            }
+        }
+
+        if (totalPages <= 7) {
+            // 页数不多，全部显示
+            for (let i = 1; i <= totalPages; i++) {
+                addPage(i);
+            }
+        } else {
+            // 总页数大于7，折叠逻辑
+            addPage(1);  // 始终显示第1页
+
+            // 前置省略号
+            if (currentPage > 4) {
+                addPage('...');
+            }
+
+            // 中间页码：当前页前后各两页
+            const start = Math.max(2, currentPage - 2);
+            const end = Math.min(totalPages - 1, currentPage + 2);
+            for (let i = start; i <= end; i++) {
+                addPage(i);
+            }
+
+            // 后置省略号
+            if (currentPage < totalPages - 3) {
+                addPage('...');
+            }
+
+            addPage(totalPages);  // 始终显示最后一页
+        }
+
+        // 下一页
+        html += `<button ${currentPage === totalPages ? 'disabled' : ''} onclick="goToPage(${currentPage + 1})">›</button>`;
+
+        container.innerHTML = html;
+    }
+
+    function goToPage(page) {
+        if (page < 1 || page > totalPages || page === currentPage) return;
+        currentPage = page;
+        renderTable();
+        renderPagination();
+    }
+
+    function handleAction(index) {
+        const item = rowData[index];
+        console.log('选中行数据：', item);
+        // …你的业务逻辑…
+    }
 </script>
+
+<style>
+    #pagination button {
+        margin: 0 2px;
+        padding: 4px 8px;
+        cursor: pointer;
+    }
+
+    #pagination button.active {
+        font-weight: bold;
+        text-decoration: underline;
+    }
+
+    #pagination button:disabled {
+        opacity: 0.5;
+        cursor: default;
+    }
+
+    .ellipsis {
+        display: inline-block;
+        margin: 0 4px;
+        font-size: 1.2em;
+        vertical-align: middle;
+    }
+</style>
 
 
 {% endblock %}
