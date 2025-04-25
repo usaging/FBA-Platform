@@ -40,6 +40,7 @@ body {
     background: var(--shell-color);
     transition: all 0.3s ease;
     z-index: 100;
+    
 }
 
 .close {

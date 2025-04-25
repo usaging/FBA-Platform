@@ -1,0 +1,50 @@
+
+
+ <!-- 顶部导航栏 -->
+ <nav class="top-nav">
+    <div class="nav-container">
+        <div class="brand-section">
+            <a href="/" class="brand-link">
+                <img src="{{url_for('static', filename='icons/logo.svg')}}" alt="Logo" class="brand-logo">
+                <span class="brand-name">FBA-PLATFORM</span>
+            </a>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="#" class="nav-link active">模型选择</a></li>
+            <li class="nav-item"><a href="#" class="nav-link">约束设置</a></li>
+            <li class="nav-item"><a href="#" class="nav-link">基因编辑</a></li>
+            <li class="nav-item"><a href="#" class="nav-link">结果验证</a></li>
+        </ul>
+        <div class=".confirm-actions">
+            <button class="mode-toggle">
+                <i class="iconfont icon-sun"></i>
+                <i class="iconfont icon-moon"></i>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<script>
+    // 顶部导航与侧边栏联动
+const shell = document.querySelector('.shell');
+const topNav = document.querySelector('.top-nav');
+
+shell.addEventListener('transitionend', () => {
+    topNav.style.paddingLeft = shell.classList.contains('close') ? '88px' : '250px';
+});
+
+// 响应式导航切换
+const menuToggle = document.querySelector('.mode-toggle');
+const navMenu = document.querySelector('.nav-menu');
+
+menuToggle.addEventListener('click', () => {
+    navMenu.classList.toggle('active');
+});
+// 在原有JS基础上添加
+// 侧边栏状态同步
+document.querySelector('.toggle').addEventListener('click', () => {
+    shell.classList.toggle('close');
+    updateNavPosition(); // 手动触发位置更新
+});
+
+</script>

@@ -1,14 +1,16 @@
 {% extends "layout.html" %}
 
-{% block title %}Test：这里写你要替换的标题{% endblock %}
+{% block title %}Test：模型选择{% endblock %}
 
 {% block page_content %}
 
 <link href="{{ url_for('static', filename = 'css/base.css')}}" rel="stylesheet">
+<link href="{{ url_for('static', filename = 'css/top-nav.css')}}" rel="stylesheet">
+
+
 
 <div class="main">
     <div class="feature">
-
     </div>
     <div class="content">
         <table id="model-table">
@@ -55,6 +57,5 @@
         });
 
 </script>
-
 
 {% endblock %}
