@@ -25,7 +25,6 @@
     let totalPages = 1;
     let rowData = [];
 
-    // 加载数据并初始化表格和分页
     fetch('/reaction.json')
         .then(res => res.json())
         .then(data => {
@@ -48,7 +47,7 @@
 
         // 表头只在首次渲染
         if (!thead.hasChildNodes()) {
-            const headers = Object.keys(rowData[0]).concat(['操作']);
+            const headers = Object.keys(rowData[0]).concat('操作');
             thead.innerHTML = '<tr>' +
                 headers.map(h => `<th>${h}</th>`).join('') +
                 '</tr>';
@@ -59,22 +58,8 @@
 
         tbody.innerHTML = pageData.map((row, idx) => {
             const realIndex = start + idx;
-            const cells = Object.keys(row).map(key => {
-                if (key === 'lower_bound') {
-                    return `<td><input type="number" id="lower-${realIndex}" value="${row.lower_bound}" /></td>`;
-                }
-                if (key === 'upper_bound') {
-                    return `<td><input type="number" id="upper-${realIndex}" value="${row.upper_bound}" /></td>`;
-                }
-                return `<td>${row[key]}</td>`;
-            });
-            // 添加“选择Objective”和“提交上下限”按钮
-            cells.push(`
-                <td>
-                    <button onclick="selectObjective(${realIndex})">选择Objective</button>
-                    <button onclick="submitBounds(${realIndex})">提交修改的上下限</button>
-                </td>
-            `);
+            const cells = Object.keys(row).map(key => `<td>${row[key]}</td>`);
+            cells.push(`<td><button onclick="handleAction(${realIndex})">选择</button></td>`);
             return `<tr>${cells.join('')}</tr>`;
         }).join('');
     }
@@ -86,29 +71,48 @@
         // 上一页
         html += `<button ${currentPage === 1 ? 'disabled' : ''} onclick="goToPage(${currentPage - 1})">‹</button>`;
 
+        // 辅助函数：添加页码按钮或省略号
         function addPage(num) {
             if (num === '...') {
                 html += `<span class="ellipsis">…</span>`;
             } else {
-                html += `<button ${num === currentPage ? 'class="active"' : ''}` +
-                    ` onclick="goToPage(${num})">${num}</button>`;
+                html += `<button ${num === currentPage ? 'class="active"' : ''}`
+                    + ` onclick="goToPage(${num})">${num}</button>`;
             }
         }
 
         if (totalPages <= 7) {
-            for (let i = 1; i <= totalPages; i++) addPage(i);
+            // 页数不多，全部显示
+            for (let i = 1; i <= totalPages; i++) {
+                addPage(i);
+            }
         } else {
-            addPage(1);
-            if (currentPage > 4) addPage('...');
+            // 总页数大于7，折叠逻辑
+            addPage(1);  // 始终显示第1页
+
+            // 前置省略号
+            if (currentPage > 4) {
+                addPage('...');
+            }
+
+            // 中间页码：当前页前后各两页
             const start = Math.max(2, currentPage - 2);
             const end = Math.min(totalPages - 1, currentPage + 2);
-            for (let i = start; i <= end; i++) addPage(i);
-            if (currentPage < totalPages - 3) addPage('...');
-            addPage(totalPages);
+            for (let i = start; i <= end; i++) {
+                addPage(i);
+            }
+
+            // 后置省略号
+            if (currentPage < totalPages - 3) {
+                addPage('...');
+            }
+
+            addPage(totalPages);  // 始终显示最后一页
         }
 
         // 下一页
         html += `<button ${currentPage === totalPages ? 'disabled' : ''} onclick="goToPage(${currentPage + 1})">›</button>`;
+
         container.innerHTML = html;
     }
 
@@ -119,21 +123,10 @@
         renderPagination();
     }
 
-    // 新增：选择Objective按钮逻辑
-    function selectObjective(index) {
+    function handleAction(index) {
         const item = rowData[index];
-        const id = item.id;
-        fetch('/objective/' + id);
-    }
-
-    // 新增：提交上下限按钮逻辑
-    function submitBounds(index) {
-        const item = rowData[index];
-        const id = item.id;
-        const lower = document.getElementById(`lower-${index}`).value;
-        const upper = document.getElementById(`upper-${index}`).value;
-        // 你的提交逻辑，例如使用 fetch 发送到后端：
-        fetch('/reaction/' + id + '/' + lower + '/' + upper)
+        console.log('选中行数据：', item);
+        // …你的业务逻辑…
     }
 </script>
 
@@ -161,5 +154,6 @@
         vertical-align: middle;
     }
 </style>
+
 
 {% endblock %}

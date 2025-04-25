@@ -219,7 +219,7 @@ def optimize():
     buf = io.StringIO()
     old_stdout = sys.stdout
     sys.stdout = buf
-
+    print()
     # 2. 执行原本会打印的逻辑
     print('Optimal flux:', solution.objective_value)
     print(model.objective.expression)
@@ -235,7 +235,6 @@ def optimize():
 
     # 4. 渲染到模板
     return render_template('pages/result.html', result=output)
-
 
 @app.route('/pages/<page>')
 def pages(page):
