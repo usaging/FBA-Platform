@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three-Step Stepper</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background: #f4f4f4;
+        }
+
+        .stepper {
+            display: flex;
+            justify-content: space-between;
+            width: 300px;
+            margin-bottom: 20px;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            flex: 1;
+            font-size: 14px;
+            color: #ccc;
+            row-gap: 5px;
+        }
+
+        .step::before {
+            content: attr(data-step);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border: 2px solid #ccc;
+            border-radius: 50%;
+            background: #fff;
+        }
+
+        .step::after {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: calc(-50% + 15px);
+            width: 100%;
+            height: 2px;
+            background: #ccc;
+            z-index: -1;
+        }
+
+        .step:first-child::after {
+            content: none;
+        }
+
+        .step.active {
+            color: #4CAF50;
+        }
+
+        .step.active::before {
+            border-color: #4CAF50;
+            background: #4CAF50;
+            color: #fff;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            background: #4CAF50;
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="stepper">
+        <div class="step active" data-step="1">Step 1</div>
+        <div class="step" data-step="2">Step 2</div>
+        <div class="step" data-step="3">Step 3</div>
+    </div>
+    <div class="buttons">
+        <button id="prev" disabled>Previous</button>
+        <button id="next">Next</button>
+    </div>
+
+    <script>
+        const steps = document.querySelectorAll('.step');
+        const prevBtn = document.getElementById('prev');
+        const nextBtn = document.getElementById('next');
+        let currentStep = 0;
+
+        function updateStepper() {
+            steps.forEach((step, idx) => {
+                if (idx === currentStep) {
+                    step.classList.add('active');
+                } else {
+                    step.classList.remove('active');
+                }
+            });
+            prevBtn.disabled = currentStep === 0;
+            nextBtn.disabled = currentStep === steps.length - 1;
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (currentStep > 0) {
+                currentStep--;
+                updateStepper();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentStep < steps.length - 1) {
+                currentStep++;
+                updateStepper();
+            }
+        });
+    </script>
+</body>
+
+</html>

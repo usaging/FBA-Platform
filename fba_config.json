@@ -1,0 +1,8 @@
+{
+  "model": "yeast-GEM",
+  "objective": null,
+  "deleted_genes": [
+    "Q0085"
+  ],
+  "modified_reactions": []
+}

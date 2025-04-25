@@ -16,47 +16,223 @@
             <tbody></tbody>
         </table>
     </div>
-
+    <div id="pagination" style="margin-top: 1em; text-align: center; margin-bottom: 80px ;"></div>
 </div>
 
 <script>
-    // 加载 JSON 文件并渲染表格
+    const rowsPerPage = 15;
+    let currentPage = 1;
+    let totalPages = 1;
+    let rowData = [];
+
+    // 加载数据并初始化表格和分页
     fetch('/reaction.json')
-        .then(response => response.json())
+        .then(res => res.json())
         .then(data => {
-            const table = document.getElementById('reaction-table');
-            const thead = table.querySelector('thead');
-            const tbody = table.querySelector('tbody');
-
-            if (data.length === 0) {
-                thead.innerHTML = '<tr><th>没有数据</th></tr>';
-                return;
-            }
-
-            // 表头
-            const headers = Object.keys(data[0]);
-            headers.push("操作"); // 添加操作列标题
-            thead.innerHTML = '<tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
-
-            // 表格内容
-            tbody.innerHTML = data.map((row, index) => {
-                const rowHtml = headers.map(h => {
-                    if (h === "操作") {
-                        return `<td><button onclick="handleAction(${index})">选择</button></td>`;
-                    } else {
-                        return `<td>${row[h]}</td>`;
-                    }
-                }).join('');
-                return `<tr>${rowHtml}</tr>`;
-            }).join('');
-
-            // 缓存数据供按钮使用
-            window.rowData = data;
+            rowData = data;
+            totalPages = Math.ceil(data.length / rowsPerPage);
+            renderTable();
+            renderPagination();
         });
 
+    function renderTable() {
+        const table = document.getElementById('reaction-table');
+        const thead = table.querySelector('thead');
+        const tbody = table.querySelector('tbody');
 
+        if (rowData.length === 0) {
+            thead.innerHTML = '<tr><th>没有数据</th></tr>';
+            tbody.innerHTML = '';
+            return;
+        }
 
+        // 表头只在首次渲染
+        if (!thead.hasChildNodes()) {
+            const headers = Object.keys(rowData[0])
+                .concat(['Objective', '操作']);
+            thead.innerHTML = '<tr>' +
+                headers.map(h => `<th>${h}</th>`).join('') +
+                '</tr>';
+        }
+
+        const start = (currentPage - 1) * rowsPerPage;
+        const pageData = rowData.slice(start, start + rowsPerPage);
+
+        tbody.innerHTML = pageData.map((row, idx) => {
+            const realIndex = start + idx;
+            const cells = [];
+
+            // 动态生成数据列和输入框列
+            Object.keys(row).forEach(key => {
+                if (key === 'lower_bound') {
+                    cells.push(
+                        `<td><input type="number" id="lower-${realIndex}" value="${row.lower_bound}" class="bound-input" /></td>`
+                    );
+                } else if (key === 'upper_bound') {
+                    cells.push(
+                        `<td><input type="number" id="upper-${realIndex}" value="${row.upper_bound}" class="bound-input" /></td>`
+                    );
+                } else {
+                    cells.push(`<td>${row[key]}</td>`);
+                }
+            });
+
+            // 新增 Objective 列
+            cells.push(`
+                <td>
+                    <button class="btn objective-btn" onclick="selectObjective(${realIndex})">
+                        选择 Objective
+                    </button>
+                </td>
+            `);
+
+            // 原操作列只保留提交按钮
+            cells.push(`
+                <td>
+                    <button class="btn submit-btn" onclick="submitBounds(${realIndex})">
+                        提交修改
+                    </button>
+                </td>
+            `);
+
+            return `<tr>${cells.join('')}</tr>`;
+        }).join('');
+    }
+
+    function renderPagination() {
+        const container = document.getElementById('pagination');
+        let html = '';
+
+        // 上一页
+        html += `<button ${currentPage === 1 ? 'disabled' : ''} onclick="goToPage(${currentPage - 1})">‹</button>`;
+
+        function addPage(num) {
+            if (num === '...') {
+                html += `<span class="ellipsis">…</span>`;
+            } else {
+                html += `<button ${num === currentPage ? 'class="active"' : ''}` +
+                    ` onclick="goToPage(${num})">${num}</button>`;
+            }
+        }
+
+        if (totalPages <= 7) {
+            for (let i = 1; i <= totalPages; i++) addPage(i);
+        } else {
+            addPage(1);
+            if (currentPage > 4) addPage('...');
+            const start = Math.max(2, currentPage - 2);
+            const end = Math.min(totalPages - 1, currentPage + 2);
+            for (let i = start; i <= end; i++) addPage(i);
+            if (currentPage < totalPages - 3) addPage('...');
+            addPage(totalPages);
+        }
+
+        // 下一页
+        html += `<button ${currentPage === totalPages ? 'disabled' : ''} onclick="goToPage(${currentPage + 1})">›</button>`;
+        container.innerHTML = html;
+    }
+
+    function goToPage(page) {
+        if (page < 1 || page > totalPages || page === currentPage) return;
+        currentPage = page;
+        renderTable();
+        renderPagination();
+    }
+
+    // 选择Objective按钮逻辑
+    function selectObjective(index) {
+        const item = rowData[index];
+        const id = item.id;
+        fetch('/objective/' + id);
+    }
+
+    // 提交上下限按钮逻辑
+    function submitBounds(index) {
+        const item = rowData[index];
+        const id = item.id;
+        const lower = document.getElementById(`lower-${index}`).value;
+        const upper = document.getElementById(`upper-${index}`).value;
+        fetch('/reaction/' + id + '/' + lower + '/' + upper);
+    }
 </script>
 
+<style>
+    /* 美化上下限输入框 */
+    .bound-input {
+        width: 80px;
+        padding: 6px 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 0.9em;
+        transition: border-color 0.2s ease;
+    }
+
+    .bound-input:focus {
+        outline: none;
+        border-color: #409eff;
+        box-shadow: 0 0 5px rgba(64, 158, 255, 0.5);
+    }
+
+    /* 按钮通用样式 */
+    .btn {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        font-size: 0.9em;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .objective-btn {
+        background-color: #67c23a;
+        color: white;
+    }
+
+    .objective-btn:hover {
+        background-color: #5daf34;
+    }
+
+    .submit-btn {
+        background-color: #409eff;
+        color: white;
+    }
+
+    .submit-btn:hover {
+        background-color: #368fe0;
+    }
+
+    /* 分页样式略，保持原有样式不变 */
+    #pagination button {
+        margin: 0 2px;
+        padding: 4px 8px;
+        cursor: pointer;
+    }
+
+    #pagination button.active {
+        font-weight: bold;
+        text-decoration: underline;
+    }
+
+    #pagination button:disabled {
+        opacity: 0.5;
+        cursor: default;
+    }
+
+    .ellipsis {
+        display: inline-block;
+        margin: 0 4px;
+        font-size: 1.2em;
+        vertical-align: middle;
+    }
+
+    .shell li a#a2 {
+        background-color: var(--primary-color);
+    }
+
+    .shell li a#a2 .icon,
+    .shell li a#a2 .text {
+        color: var(--shell-color);
+    }
+</style>
 
 {% endblock %}

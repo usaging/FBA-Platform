@@ -1,0 +1,667 @@
+[
+  {
+    "id": "PFK",
+    "name": "PFK",
+    "reaction": "atp_c + f6p_c --> adp_c + fdp_c + h_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "PFL",
+    "name": "PFL",
+    "reaction": "coa_c + pyr_c --> accoa_c + for_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "PGI",
+    "name": "PGI",
+    "reaction": "g6p_c <=> f6p_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "PGK",
+    "name": "PGK",
+    "reaction": "3pg_c + atp_c <=> 13dpg_c + adp_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "PGL",
+    "name": "PGL",
+    "reaction": "6pgl_c + h2o_c --> 6pgc_c + h_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "ACALD",
+    "name": "ACALD",
+    "reaction": "acald_c + coa_c + nad_c <=> accoa_c + h_c + nadh_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "AKGt2r",
+    "name": "AKGt2r",
+    "reaction": "akg_e + h_e <=> akg_c + h_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "PGM",
+    "name": "PGM",
+    "reaction": "2pg_c <=> 3pg_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "PIt2r",
+    "name": "PIt2r",
+    "reaction": "h_e + pi_e <=> h_c + pi_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "ALCD2x",
+    "name": "ALCD2x",
+    "reaction": "etoh_c + nad_c <=> acald_c + h_c + nadh_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "ACALDt",
+    "name": "ACALDt",
+    "reaction": "acald_e <=> acald_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "ACKr",
+    "name": "ACKr",
+    "reaction": "ac_c + atp_c <=> actp_c + adp_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "PPC",
+    "name": "PPC",
+    "reaction": "co2_c + h2o_c + pep_c --> h_c + oaa_c + pi_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "ACONTa",
+    "name": "ACONTa",
+    "reaction": "cit_c <=> acon_C_c + h2o_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "ACONTb",
+    "name": "ACONTb",
+    "reaction": "acon_C_c + h2o_c <=> icit_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "ATPM",
+    "name": "ATPM",
+    "reaction": "atp_c + h2o_c --> adp_c + h_c + pi_c",
+    "lower_bound": 8.39,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "PPCK",
+    "name": "PPCK",
+    "reaction": "atp_c + oaa_c --> adp_c + co2_c + pep_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "ACt2r",
+    "name": "ACt2r",
+    "reaction": "ac_e + h_e <=> ac_c + h_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "PPS",
+    "name": "PPS",
+    "reaction": "atp_c + h2o_c + pyr_c --> amp_c + 2.0 h_c + pep_c + pi_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "ADK1",
+    "name": "ADK1",
+    "reaction": "amp_c + atp_c <=> 2.0 adp_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "AKGDH",
+    "name": "AKGDH",
+    "reaction": "akg_c + coa_c + nad_c --> co2_c + nadh_c + succoa_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "ATPS4r",
+    "name": "ATPS4r",
+    "reaction": "adp_c + 4.0 h_e + pi_c <=> atp_c + h2o_c + 3.0 h_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "PTAr",
+    "name": "PTAr",
+    "reaction": "accoa_c + pi_c <=> actp_c + coa_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "PYK",
+    "name": "PYK",
+    "reaction": "adp_c + h_c + pep_c --> atp_c + pyr_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "BIOMASS_Ecoli_core_w_GAM",
+    "name": "BIOMASS_Ecoli_core_w_GAM",
+    "reaction": "1.496 3pg_c + 3.7478 accoa_c + 59.81 atp_c + 0.361 e4p_c + 0.0709 f6p_c + 0.129 g3p_c + 0.205 g6p_c + 0.2557 gln__L_c + 4.9414 glu__L_c + 59.81 h2o_c + 3.547 nad_c + 13.0279 nadph_c + 1.7867 oaa_c + 0.5191 pep_c + 2.8328 pyr_c + 0.8977 r5p_c --> 59.81 adp_c + 4.1182 akg_c + 3.7478 coa_c + 59.81 h_c + 3.547 nadh_c + 13.0279 nadp_c + 59.81 pi_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "PYRt2",
+    "name": "PYRt2",
+    "reaction": "h_e + pyr_e <=> h_c + pyr_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "CO2t",
+    "name": "CO2t",
+    "reaction": "co2_e <=> co2_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "RPE",
+    "name": "RPE",
+    "reaction": "ru5p__D_c <=> xu5p__D_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "CS",
+    "name": "CS",
+    "reaction": "accoa_c + h2o_c + oaa_c --> cit_c + coa_c + h_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "RPI",
+    "name": "RPI",
+    "reaction": "r5p_c <=> ru5p__D_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "SUCCt2_2",
+    "name": "SUCCt2_2",
+    "reaction": "2.0 h_e + succ_e --> 2.0 h_c + succ_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "CYTBD",
+    "name": "CYTBD",
+    "reaction": "2.0 h_c + 0.5 o2_c + q8h2_c --> h2o_c + 2.0 h_e + q8_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "D_LACt2",
+    "name": "D_LACt2",
+    "reaction": "h_e + lac__D_e <=> h_c + lac__D_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "ENO",
+    "name": "ENO",
+    "reaction": "2pg_c <=> h2o_c + pep_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "SUCCt3",
+    "name": "SUCCt3",
+    "reaction": "h_e + succ_c --> h_c + succ_e",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "ETOHt2r",
+    "name": "ETOHt2r",
+    "reaction": "etoh_e + h_e <=> etoh_c + h_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "SUCDi",
+    "name": "SUCDi",
+    "reaction": "q8_c + succ_c --> fum_c + q8h2_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "SUCOAS",
+    "name": "SUCOAS",
+    "reaction": "atp_c + coa_c + succ_c <=> adp_c + pi_c + succoa_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "TALA",
+    "name": "TALA",
+    "reaction": "g3p_c + s7p_c <=> e4p_c + f6p_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "THD2",
+    "name": "THD2",
+    "reaction": "2.0 h_e + nadh_c + nadp_c --> 2.0 h_c + nad_c + nadph_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "TKT1",
+    "name": "TKT1",
+    "reaction": "r5p_c + xu5p__D_c <=> g3p_c + s7p_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "TKT2",
+    "name": "TKT2",
+    "reaction": "e4p_c + xu5p__D_c <=> f6p_c + g3p_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "TPI",
+    "name": "TPI",
+    "reaction": "dhap_c <=> g3p_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "EX_ac_e",
+    "name": "EX_ac_e",
+    "reaction": "ac_e --> ",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "EX_acald_e",
+    "name": "EX_acald_e",
+    "reaction": "acald_e --> ",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "EX_akg_e",
+    "name": "EX_akg_e",
+    "reaction": "akg_e --> ",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "EX_co2_e",
+    "name": "EX_co2_e",
+    "reaction": "co2_e <=> ",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "EX_etoh_e",
+    "name": "EX_etoh_e",
+    "reaction": "etoh_e --> ",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "EX_for_e",
+    "name": "EX_for_e",
+    "reaction": "for_e --> ",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "EX_fru_e",
+    "name": "EX_fru_e",
+    "reaction": "fru_e --> ",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "EX_fum_e",
+    "name": "EX_fum_e",
+    "reaction": "fum_e --> ",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "EX_glc__D_e",
+    "name": "EX_glc__D_e",
+    "reaction": "glc__D_e <=> ",
+    "lower_bound": -10.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "EX_gln__L_e",
+    "name": "EX_gln__L_e",
+    "reaction": "gln__L_e --> ",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "EX_glu__L_e",
+    "name": "EX_glu__L_e",
+    "reaction": "glu__L_e --> ",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "EX_h_e",
+    "name": "EX_h_e",
+    "reaction": "h_e <=> ",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "EX_h2o_e",
+    "name": "EX_h2o_e",
+    "reaction": "h2o_e <=> ",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "EX_lac__D_e",
+    "name": "EX_lac__D_e",
+    "reaction": "lac__D_e --> ",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "EX_mal__L_e",
+    "name": "EX_mal__L_e",
+    "reaction": "mal__L_e --> ",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "EX_nh4_e",
+    "name": "EX_nh4_e",
+    "reaction": "nh4_e <=> ",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "EX_o2_e",
+    "name": "EX_o2_e",
+    "reaction": "o2_e <=> ",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "EX_pi_e",
+    "name": "EX_pi_e",
+    "reaction": "pi_e <=> ",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "EX_pyr_e",
+    "name": "EX_pyr_e",
+    "reaction": "pyr_e --> ",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "EX_succ_e",
+    "name": "EX_succ_e",
+    "reaction": "succ_e --> ",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "FBA",
+    "name": "FBA",
+    "reaction": "fdp_c <=> dhap_c + g3p_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "FBP",
+    "name": "FBP",
+    "reaction": "fdp_c + h2o_c --> f6p_c + pi_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "FORt2",
+    "name": "FORt2",
+    "reaction": "for_e + h_e --> for_c + h_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "FORt",
+    "name": "FORt",
+    "reaction": "for_e <-- for_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 0.0
+  },
+  {
+    "id": "FRD7",
+    "name": "FRD7",
+    "reaction": "fum_c + q8h2_c --> q8_c + succ_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "FRUpts2",
+    "name": "FRUpts2",
+    "reaction": "fru_e + pep_c --> f6p_c + pyr_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "FUM",
+    "name": "FUM",
+    "reaction": "fum_c + h2o_c <=> mal__L_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "FUMt2_2",
+    "name": "FUMt2_2",
+    "reaction": "fum_e + 2.0 h_e --> fum_c + 2.0 h_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "G6PDH2r",
+    "name": "G6PDH2r",
+    "reaction": "g6p_c + nadp_c <=> 6pgl_c + h_c + nadph_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "GAPD",
+    "name": "GAPD",
+    "reaction": "g3p_c + nad_c + pi_c <=> 13dpg_c + h_c + nadh_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "GLCpts",
+    "name": "GLCpts",
+    "reaction": "glc__D_e + pep_c --> g6p_c + pyr_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "GLNS",
+    "name": "GLNS",
+    "reaction": "atp_c + glu__L_c + nh4_c --> adp_c + gln__L_c + h_c + pi_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "GLNabc",
+    "name": "GLNabc",
+    "reaction": "atp_c + gln__L_e + h2o_c --> adp_c + gln__L_c + h_c + pi_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "GLUDy",
+    "name": "GLUDy",
+    "reaction": "glu__L_c + h2o_c + nadp_c <=> akg_c + h_c + nadph_c + nh4_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "GLUN",
+    "name": "GLUN",
+    "reaction": "gln__L_c + h2o_c --> glu__L_c + nh4_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "GLUSy",
+    "name": "GLUSy",
+    "reaction": "akg_c + gln__L_c + h_c + nadph_c --> 2.0 glu__L_c + nadp_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "GLUt2r",
+    "name": "GLUt2r",
+    "reaction": "glu__L_e + h_e <=> glu__L_c + h_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "GND",
+    "name": "GND",
+    "reaction": "6pgc_c + nadp_c --> co2_c + nadph_c + ru5p__D_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "H2Ot",
+    "name": "H2Ot",
+    "reaction": "h2o_e <=> h2o_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "ICDHyr",
+    "name": "ICDHyr",
+    "reaction": "icit_c + nadp_c <=> akg_c + co2_c + nadph_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "ICL",
+    "name": "ICL",
+    "reaction": "icit_c --> glx_c + succ_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "LDH_D",
+    "name": "LDH_D",
+    "reaction": "lac__D_c + nad_c <=> h_c + nadh_c + pyr_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "MALS",
+    "name": "MALS",
+    "reaction": "accoa_c + glx_c + h2o_c --> coa_c + h_c + mal__L_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "MALt2_2",
+    "name": "MALt2_2",
+    "reaction": "2.0 h_e + mal__L_e --> 2.0 h_c + mal__L_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "MDH",
+    "name": "MDH",
+    "reaction": "mal__L_c + nad_c <=> h_c + nadh_c + oaa_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "ME1",
+    "name": "ME1",
+    "reaction": "mal__L_c + nad_c --> co2_c + nadh_c + pyr_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "ME2",
+    "name": "ME2",
+    "reaction": "mal__L_c + nadp_c --> co2_c + nadph_c + pyr_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "NADH16",
+    "name": "NADH16",
+    "reaction": "4.0 h_c + nadh_c + q8_c --> 3.0 h_e + nad_c + q8h2_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "NADTRHD",
+    "name": "NADTRHD",
+    "reaction": "nad_c + nadph_c --> nadh_c + nadp_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "NH4t",
+    "name": "NH4t",
+    "reaction": "nh4_e <=> nh4_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "O2t",
+    "name": "O2t",
+    "reaction": "o2_e <=> o2_c",
+    "lower_bound": -1000.0,
+    "upper_bound": 1000.0
+  },
+  {
+    "id": "PDH",
+    "name": "PDH",
+    "reaction": "coa_c + nad_c + pyr_c --> accoa_c + co2_c + nadh_c",
+    "lower_bound": 0.0,
+    "upper_bound": 1000.0
+  }
+]
