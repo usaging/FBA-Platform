@@ -62,7 +62,8 @@
     border-bottom: 2px solid var(--primary-color);
 }
 
-.user-actions {
+/*确认键*/
+.confirm-actions {
     display: flex;
     align-items: center;
     gap: 20px;
@@ -77,18 +78,6 @@
     color: var(--text-color);
 }
 
-.user-profile {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-}
-
-.user-avatar {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-}
 
 /* 侧边栏关闭时的特殊处理 */
 .shell.close + .top-nav {
