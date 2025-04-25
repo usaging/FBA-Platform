@@ -6,19 +6,55 @@
 
 <link href="{{ url_for('static', filename = 'css/base.css')}}" rel="stylesheet">
 
-<!-- <script async src="static/xxxxx.js"></script> -->
-<!-- 
-<style>
-</style> 
--->
-
 <div class="main">
+    <div class="feature">
 
+    </div>
     <div class="content">
-        <p>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-        </p>
+        <table id="confirm-table">
+            <thead></thead>
+            <tbody></tbody>
+        </table>
     </div>
 
 </div>
+
+<script>
+    // 加载 JSON 文件并渲染表格
+    fetch('/confirm.json')
+        .then(response => response.json())
+        .then(data => {
+            const table = document.getElementById('gene-table');
+            const thead = table.querySelector('thead');
+            const tbody = table.querySelector('tbody');
+
+            if (data.length === 0) {
+                thead.innerHTML = '<tr><th>没有数据</th></tr>';
+                return;
+            }
+
+            // 表头
+            const headers = Object.keys(data[0]);
+            headers.push("操作"); // 添加操作列标题
+            thead.innerHTML = '<tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
+
+            // 表格内容
+            tbody.innerHTML = data.map((row, index) => {
+                const rowHtml = headers.map(h => {
+                    if (h === "操作") {
+                        return `<td><button onclick="handleAction(${index})">选择</button></td>`;
+                    } else {
+                        return `<td>${row[h]}</td>`;
+                    }
+                }).join('');
+                return `<tr>${rowHtml}</tr>`;
+            }).join('');
+
+            // 缓存数据供按钮使用
+            window.rowData = data;
+        });
+
+</script>
+
 
 {% endblock %}

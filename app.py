@@ -3,35 +3,75 @@ import cobra
 from pathlib import Path
 import pandas as pd
 import re
+import json
 
 app = Flask(__name__, template_folder='wiki')
 
 # 全局变量存储模型
 model = None
+model_id=None
 
-def display_reaction_info(model):
-    rxn_csv_path = "./rxn.csv"
+def export_reactions_json(model, rxn_csv_path, output_json_path):
+    """
+    将模型反应信息导出为纯净JSON文件
+    
+    参数:
+        model: SBML模型
+        rxn_csv_path: 反应ID到名称的映射CSV路径
+        output_json_path: 输出JSON路径
+    """
+    # 加载代谢模型
+    
+    # 读取ID-名称映射表
+    name_mapping = {}
     try:
-        rxn_df = pd.read_csv(rxn_csv_path, header=None, names=['reaction_id', 'name'])
-        id_to_name = dict(zip(rxn_df['reaction_id'], rxn_df['name']))
+        rxn_df = pd.read_csv(rxn_csv_path, header=None, names=['id', 'name'])
+        name_mapping = rxn_df.set_index('id')['name'].to_dict()
     except FileNotFoundError:
-        print(f"警告: 未找到反应名称映射文件 {rxn_csv_path}, 将使用反应ID作为名称")
-        id_to_name = {}
+        print(f"⚠️ 未找到映射文件 {rxn_csv_path}，将直接使用反应ID作为名称")
+
+    # 构建反应数据
+    reactions = []
+    for rxn in model.reactions:
+        reactions.append({
+            "id": rxn.id,
+            "name": name_mapping.get(rxn.id, rxn.id),  # 自动回退到ID
+            "reaction": rxn.build_reaction_string(),
+            "lower_bound": float(rxn.lower_bound),
+            "upper_bound": float(rxn.upper_bound)
+        })
+
+    # 写入JSON文件
+    Path(output_json_path).parent.mkdir(parents=True, exist_ok=True)
+    with open(output_json_path, 'w', encoding='utf-8') as f:
+        json.dump(reactions, f, indent=2, ensure_ascii=False)
     
-    print("{:<15} {:<50} {:<15} {:<15} {:<15}".format(
-        "ID", "Name", "Reaction", "Lower bound", "Upper bound"))
-    print("="*110)
+    print(f"✅ 成功导出 {len(reactions)} 个反应到 {output_json_path}")
+
+def export_genes_json(model,output_json_path):
+    """
+    将模型基因信息导出为纯净JSON文件
     
-    for reaction in model.reactions:
-        name = id_to_name.get(reaction.id, reaction.id)
-        reaction_eq = reaction.build_reaction_string()
-        print("{:<15} {:<50} {:<15} {:<15.2f} {:<15.2f}".format(
-            reaction.id,
-            name,
-            reaction_eq,
-            reaction.lower_bound,
-            reaction.upper_bound
-        ))
+    参数:
+        model: SBML模型
+        output_json_path: 输出JSON路径
+    """
+    # 加载代谢模型
+    
+
+    # 构建反应数据
+    genes = []
+    for gene in model.genes:
+        genes.append({
+            "id": gene.id
+        })
+
+    # 写入JSON文件
+    Path(output_json_path).parent.mkdir(parents=True, exist_ok=True)
+    with open(output_json_path, 'w', encoding='utf-8') as f:
+        json.dump(genes, f, indent=2, ensure_ascii=False)
+    
+    print(f"✅ 成功导出 {len(genes)} 个反应到 {output_json_path}")
 
 def replace_rs(summary):
     met_df = pd.read_csv("./met.csv", header=None, names=['id', 'name'])
@@ -55,6 +95,20 @@ def replace_rs(summary):
 def serve_model():
     return send_from_directory('.', 'model.json')
 
+@app.route('/reaction.json')
+def serve_reaction():
+    if model is None:
+        return "No model loaded."
+    r_path=model_id+'.json'
+    return send_from_directory('reactions', r_path)
+
+@app.route('/gene.json')
+def serve_gene():
+    if model is None:
+        return "No model loaded."
+    g_path=model_id+'.json'
+    return send_from_directory('genes', g_path)
+
 @app.route('/')
 def home():
     return render_template('pages/confirm.html')
@@ -62,9 +116,14 @@ def home():
 @app.route('/model/<id>')
 def set_model(id):
     global model
+    global model_id
+    model_id=id
     model_path = Path('models') / f'{id}.xml'
     model = cobra.io.read_sbml_model(str(model_path))
-    display_reaction_info(model)
+    export_r_path='reactions/'+id+'.json'
+    export_g_path='genes/'+id+'.json'
+    export_reactions_json(model,'./rxn.csv',export_r_path )
+    export_genes_json(model,export_g_path )
     return f"Model {id} loaded successfully."
 
 @app.route('/objective/<reaction_id>')
