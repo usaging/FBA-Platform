@@ -12,7 +12,12 @@ app = Flask(__name__, template_folder='wiki')
 # 全局变量存储模型
 model = None
 model_id=None
-confirm=[]
+confirm={
+            "model": None,               # 存储模型名称（字符串）
+            "objective": None,             # 存储目标函数（字符串）
+            "deleted_genes": [],         # 存储待删除基因（列表，如 ["gene1", "gene2"]）
+            "modified_reactions": []     # 存储修改的反应（列表，元素为字典）
+        }
 
 def process_file(file_path):
     """
@@ -148,6 +153,10 @@ def replace_rs(summary):
     
     return pattern.sub(replace_match, summary)
 
+@app.route('/fba-config.json')
+def serve_fba_config():
+    return send_from_directory('.', 'fba_config.json')
+
 @app.route('/model.json')
 def serve_model():
     return send_from_directory('.', 'model.json')
@@ -175,7 +184,10 @@ def home():
 def set_model(id):
     global model
     global model_id
+    global confirm
+
     model_id=id
+    confirm['model']=model_id
     model_path = Path('models') / f'{id}.xml'
     model = cobra.io.read_sbml_model(str(model_path))
     export_r_path='reactions/'+id+'.json'
@@ -186,35 +198,58 @@ def set_model(id):
 
 @app.route('/objective/<reaction_id>')
 def set_objective(reaction_id):
+    global confirm
     global model
     if model is None:
         return "No model loaded."
     model.objective = model.reactions.get_by_id(reaction_id)
+    confirm['objective']=reaction_id
     return f"Objective set to reaction {reaction_id}."
 
 @app.route('/reaction/<reaction_id>/<lower>/<upper>')
 def set_reaction(reaction_id, lower, upper):
+    global confirm
     global model
     if model is None:
         return "No model loaded."
     reaction = model.reactions.get_by_id(reaction_id)
     reaction.lower_bound = float(lower)
     reaction.upper_bound = float(upper)
+    confirm['modified_reactions'].append({
+        "reaction": reaction_id,
+        "lower_bound": reaction.lower_bound,
+        "upper_bound": reaction.upper_bound
+    })
     return f"Reaction {reaction_id} bounds set to [{lower}, {upper}]."
 
 @app.route('/gene/<gene_id>')
 def knock_out_gene(gene_id):
+    global confirm
     global model
     if model is None:
         return "No model loaded."
+    confirm['deleted_genes'].append(gene_id)
     model.genes.get_by_id(gene_id).knock_out()
+    
     return f"Gene {gene_id} knocked out."
+
+@app.route('/confirm')
+def set_confirm():
+    with open("fba_config.json", "w") as f:
+        json.dump(confirm, f, indent=2)
+    return render_template('pages/confirm.html')
 
 @app.route('/optimize')
 def optimize():
     global model
     if model is None:
         return "No model loaded."
+    # 导出为 JSON 文件
+    # with open("fba_config.json", "w") as f:
+    #     json.dump(confirm, f, indent=2)
+
+    # 查看数据结构
+    print(json.dumps(confirm, indent=2))
     solution = model.optimize()
  # 1. 创建 StringIO 并替换 stdout
     buf = io.StringIO()

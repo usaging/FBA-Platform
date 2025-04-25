@@ -1,60 +1,101 @@
 {% extends "layout.html" %}
 
-{% block title %}Test：这里写你要替换的标题{% endblock %}
+{% block title %}模型配置展示{% endblock %}
 
 {% block page_content %}
-
-<link href="{{ url_for('static', filename = 'css/base.css')}}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/base.css') }}" rel="stylesheet">
 
 <div class="main">
     <div class="feature">
-
+        <!-- 可放置页面特色内容 -->
     </div>
     <div class="content">
-        <table id="confirm-table">
-            <thead></thead>
+        <h2>Model 信息</h2>
+        <table id="model-info-table">
+            <thead>
+                <tr>
+                    <th>字段</th>
+                    <th>值</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <h2>Deleted Genes</h2>
+        <table id="deleted-genes-table">
+            <thead>
+                <tr>
+                    <th>Gene</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <h2>Modified Reactions</h2>
+        <table id="modified-reactions-table">
+            <thead>
+                <tr>
+                    <th>Reaction</th>
+                    <th>Lower Bound</th>
+                    <th>Upper Bound</th>
+                </tr>
+            </thead>
             <tbody></tbody>
         </table>
     </div>
-
 </div>
 
 <script>
-    // 加载 JSON 文件并渲染表格
-    fetch('/confirm.json')
-        .then(response => response.json())
+    // 从后端接口获取 JSON 配置
+    fetch('/fba-config.json')
+        .then(res => res.json())
         .then(data => {
-            const table = document.getElementById('gene-table');
-            const thead = table.querySelector('thead');
-            const tbody = table.querySelector('tbody');
+            // 填充 Model 信息
+            const infoTbody = document.querySelector('#model-info-table tbody');
+            ['model', 'objective'].forEach(key => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${key}</td><td>${data[key]}</td>`;
+                infoTbody.appendChild(row);
+            });
 
-            if (data.length === 0) {
-                thead.innerHTML = '<tr><th>没有数据</th></tr>';
-                return;
-            }
+            // 填充 Deleted Genes
+            const delTbody = document.querySelector('#deleted-genes-table tbody');
+            data.deleted_genes.forEach(gene => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${gene}</td>`;
+                delTbody.appendChild(row);
+            });
 
-            // 表头
-            const headers = Object.keys(data[0]);
-            //headers.push("操作"); // 添加操作列标题
-            thead.innerHTML = '<tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
-
-            // 表格内容
-            tbody.innerHTML = data.map((row, index) => {
-                const rowHtml = headers.map(h => {
-                    // if (h === "操作") {
-                    //     return `<td><button onclick="handleAction(${index})">选择</button></td>`;
-                    // } else {
-                    return `<td>${row[h]}</td>`;
-                    //}
-                }).join('');
-                return `<tr>${rowHtml}</tr>`;
-            }).join('');
-
-            // 缓存数据供按钮使用
-            //window.rowData = data;
+            // 填充 Modified Reactions
+            const modTbody = document.querySelector('#modified-reactions-table tbody');
+            data.modified_reactions.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.reaction}</td>
+                    <td>${item.lower_bound}</td>
+                    <td>${item.upper_bound}</td>
+                `;
+                modTbody.appendChild(row);
+            });
         });
-
 </script>
 
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-bottom: 1em;
+    }
 
+    th,
+    td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: left;
+    }
+
+    /* th {
+        background-color: #f4f4f4;
+    } */
+</style>
 {% endblock %}

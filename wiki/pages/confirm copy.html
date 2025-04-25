@@ -1,0 +1,143 @@
+{% extends "layout.html" %}
+
+{% block title %}Test：这里写你要替换的标题{% endblock %}
+
+{% block page_content %}
+
+<link href="{{ url_for('static', filename = 'css/base.css')}}" rel="stylesheet">
+
+<div class="main">
+    <div class="feature">
+
+    </div>
+
+    <div class="summary">
+        <p>Model: <strong id="model-display"></strong></p>
+        <p>Objective: <strong id="objective-display"></strong></p>
+        <p>Deleted Genes: <span id="deleted-genes-display"></span></p>
+    </div>
+
+    <!-- 修改后的反应表格 -->
+    <div class="content">
+        <table id="reaction-table">
+            <thead></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div id="pagination" style="margin-top: 1em; text-align: center;"></div>
+
+    <script>
+        const rowsPerPage = 15;
+        let currentPage = 1;
+        let totalPages = 1;
+        let reactionData = [];  // 专门存储反应数据
+
+        // 获取数据并初始化
+        fetch('/fba-config.json')  // 修改为你的 JSON 路径
+            .then(res => res.json())
+            .then(data => {
+                // 展示基础信息
+                document.getElementById('model-display').textContent = data.model;
+                document.getElementById('objective-display').textContent = data.objective;
+                document.getElementById('deleted-genes-display').textContent = data.deleted_genes.join(', ');
+
+                // 处理反应数据
+                reactionData = data.modified_reactions;
+                totalPages = Math.ceil(reactionData.length / rowsPerPage);
+                renderTable();
+                renderPagination();
+            });
+
+        function renderTable() {
+            const table = document.getElementById('reaction-table');
+            const thead = table.querySelector('thead');
+            const tbody = table.querySelector('tbody');
+
+            // 空数据提示
+            if (reactionData.length === 0) {
+                thead.innerHTML = '<tr><th colspan="4">没有反应数据</th></tr>';
+                tbody.innerHTML = '';
+                return;
+            }
+
+            // 动态生成表头（固定字段+操作列）
+            if (!thead.innerHTML) {
+                thead.innerHTML = `
+        <tr>
+          <th>Reaction ID</th>
+          <th>Lower Bound</th>
+          <th>Upper Bound</th>
+          <th>操作</th>
+        </tr>
+      `;
+            }
+
+            // 分页数据切片
+            const start = (currentPage - 1) * rowsPerPage;
+            const pageData = reactionData.slice(start, start + rowsPerPage);
+
+            // 生成表格内容
+            tbody.innerHTML = pageData.map((reaction, idx) => `
+      <tr>
+        <td>${reaction.reaction}</td>
+        <td>${reaction.lower_bound.toFixed(2)}</td>
+        <td>${reaction.upper_bound.toFixed(2)}</td>
+        <td>
+          <button onclick="handleReactionAction('${reaction.reaction}')">选择</button>
+        </td>
+      </tr>
+    `).join('');
+        }
+
+        // 分页和样式保持原逻辑不变（只需修改渲染函数名）
+        function renderPagination() { /* 原函数内容无需修改 */ }
+        function goToPage(page) { /* 原函数内容无需修改 */ }
+
+        // 操作函数示例
+        function handleReactionAction(reactionId) {
+            console.log('Selected reaction:', reactionId);
+            // 示例：跳转到详情页
+            window.location.href = `/reactions/${reactionId}`;
+        }
+    </script>
+
+    <style>
+        /* 优化表格样式 */
+        #reaction-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1em;
+        }
+
+        #reaction-table th,
+        #reaction-table td {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        #reaction-table th {
+            background-color: #f5f5f5;
+        }
+
+        /* 数值列右对齐 */
+        #reaction-table td:nth-child(2),
+        #reaction-table td:nth-child(3) {
+            text-align: right;
+            font-family: monospace;
+        }
+
+        /* 基础信息样式 */
+        .summary {
+            margin-bottom: 1.5em;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .summary p {
+            margin: 6px 0;
+        }
+    </style>
+
+    {% endblock %}

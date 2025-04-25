@@ -16,7 +16,7 @@
             <tbody></tbody>
         </table>
     </div>
-<div id="pagination" style="margin-top: 1em; text-align: center;"></div>
+    <div id="pagination" style="margin-top: 1em; text-align: center;"></div>
 </div>
 
 <script>
@@ -125,7 +125,7 @@
 
     function handleAction(index) {
         const item = rowData[index];
-        const gene=item.id;
+        const gene = item.id;
         fetch('/gene/' + gene)
         // …你的业务逻辑…
     }
@@ -155,6 +155,5 @@
         vertical-align: middle;
     }
 </style>
-
 
 {% endblock %}
