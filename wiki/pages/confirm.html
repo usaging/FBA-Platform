@@ -1,24 +1,110 @@
 {% extends "layout.html" %}
 
-{% block title %}Test：这里写你要替换的标题{% endblock %}
+{% block title %}模型配置展示{% endblock %}
 
 {% block page_content %}
-
-<link href="{{ url_for('static', filename = 'css/base.css')}}" rel="stylesheet">
-
-<!-- <script async src="static/xxxxx.js"></script> -->
-<!-- 
-<style>
-</style> 
--->
+<link href="{{ url_for('static', filename='css/base.css') }}" rel="stylesheet">
 
 <div class="main">
-
-    <div class="content">
-        <p>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-        </p>
+    <div class="feature">
+        <!-- 可放置页面特色内容 -->
     </div>
+    <div class="content">
+        <h2>Model 信息</h2>
+        <table id="model-info-table">
+            <thead>
+                <tr>
+                    <th>字段</th>
+                    <th>值</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
 
+        <h2>Deleted Genes</h2>
+        <table id="deleted-genes-table">
+            <thead>
+                <tr>
+                    <th>Gene</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <h2>Modified Reactions</h2>
+        <table id="modified-reactions-table">
+            <thead>
+                <tr>
+                    <th>Reaction</th>
+                    <th>Lower Bound</th>
+                    <th>Upper Bound</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 </div>
 
+<script>
+    // 从后端接口获取 JSON 配置
+    fetch('/fba-config.json')
+        .then(res => res.json())
+        .then(data => {
+            // 填充 Model 信息
+            const infoTbody = document.querySelector('#model-info-table tbody');
+            ['model', 'objective'].forEach(key => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${key}</td><td>${data[key]}</td>`;
+                infoTbody.appendChild(row);
+            });
+
+            // 填充 Deleted Genes
+            const delTbody = document.querySelector('#deleted-genes-table tbody');
+            data.deleted_genes.forEach(gene => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${gene}</td>`;
+                delTbody.appendChild(row);
+            });
+
+            // 填充 Modified Reactions
+            const modTbody = document.querySelector('#modified-reactions-table tbody');
+            data.modified_reactions.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.reaction}</td>
+                    <td>${item.lower_bound}</td>
+                    <td>${item.upper_bound}</td>
+                `;
+                modTbody.appendChild(row);
+            });
+        });
+</script>
+
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-bottom: 1em;
+    }
+
+    th,
+    td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: left;
+    }
+
+    .shell li a#a4 {
+        background-color: var(--primary-color);
+    }
+
+    .shell li a#a4 .icon,
+    .shell li a#a4 .text {
+        color: var(--shell-color);
+    }
+
+    /* th {
+        background-color: #f4f4f4;
+    } */
+</style>
 {% endblock %}

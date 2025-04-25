@@ -7,13 +7,14 @@
     <title>FBA-PLATFORM</title>
     <!-- 引入字体图标 -->
     <link rel="stylesheet" href="{{url_for('static',filename='icons/font/iconfont.css')}}">
-<link rel="stylesheet" href="{{url_for('static',filename='css/nav.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/nav.css')}}">
 </head>
 
 <body>
     <nav class="shell close">
         <header>
-            <div class="image-text"> <span class="image"> <img src="{{url_for('static',filename='icons/logo.svg')}}" alt=""> </span>
+            <div class="image-text"> <span class="image"> <img src="{{url_for('static',filename='icons/logo.svg')}}"
+                        alt=""> </span>
                 <div class="text logo-text"> <span class="name">FBA-PLATFORM</span> <span
                         class="software">SCUT-CHINA_L</span>
                 </div>
@@ -26,13 +27,14 @@
                 <ul class="menu-links">
                     <li class="nav-link"> <a href="/pages/model" id="a1"> <i class="iconfont icon-cell icon"></i> <span
                                 class="text nac-text">Step1:Models</span> </a> </li>
-                    <li class="nav-link"> <a href="/pages/constraints" id="a2"> <i class="iconfont icon-reaction icon"></i>
+                    <li class="nav-link"> <a href="/pages/constraints" id="a2"> <i
+                                class="iconfont icon-reaction icon"></i>
                             <span class="text nac-text">Step2.1:Constraints</span> </a> </li>
-                    <li class="nav-link"> <a href="/pages/gene" id="a3"> <i class="iconfont icon-metabolite icon"></i>
+                    <li class="nav-link"> <a href="/pages/gene" id="a3"> <i class="iconfont icon-gene icon"></i>
                             <span class="text nac-text">Step2.2:Gene</span> </a> </li>
-                    <li class="nav-link"> <a href="/pages/confirm" id="a4"> <i class="iconfont icon-gene icon"></i> <span
-                                class="text nac-text">Step2.3:Confirm</span> </a> </li>
-                    <li class="nav-link"> <a href="/pages/result" id="a5"> <i class="iconfont icon-result icon"></i> <span
+                    <li class="nav-link"> <a href="/confirm" id="a4"> <i class="iconfont icon-metabolite icon"></i>
+                            <span class="text nac-text">Step2.3:Confirm</span> </a> </li>
+                    <li class="nav-link"> <a href="/optimize" id="a5"> <i class="iconfont icon-result icon"></i> <span
                                 class="text nac-text">Step3:Result</span> </a> </li>
                     <li class="nav-link"> <a href="#" id="a6"> <i class="iconfont icon-mind icon"></i> <span
                                 class="text nac-text">another...</span> </a> </li>
