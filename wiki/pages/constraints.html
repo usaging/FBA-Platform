@@ -48,7 +48,8 @@
 
         // 表头只在首次渲染
         if (!thead.hasChildNodes()) {
-            const headers = Object.keys(rowData[0]).concat(['操作']);
+            const headers = Object.keys(rowData[0])
+                .concat(['Objective', '操作']);
             thead.innerHTML = '<tr>' +
                 headers.map(h => `<th>${h}</th>`).join('') +
                 '</tr>';
@@ -59,22 +60,41 @@
 
         tbody.innerHTML = pageData.map((row, idx) => {
             const realIndex = start + idx;
-            const cells = Object.keys(row).map(key => {
+            const cells = [];
+
+            // 动态生成数据列和输入框列
+            Object.keys(row).forEach(key => {
                 if (key === 'lower_bound') {
-                    return `<td><input type="number" id="lower-${realIndex}" value="${row.lower_bound}" /></td>`;
+                    cells.push(
+                        `<td><input type="number" id="lower-${realIndex}" value="${row.lower_bound}" class="bound-input" /></td>`
+                    );
+                } else if (key === 'upper_bound') {
+                    cells.push(
+                        `<td><input type="number" id="upper-${realIndex}" value="${row.upper_bound}" class="bound-input" /></td>`
+                    );
+                } else {
+                    cells.push(`<td>${row[key]}</td>`);
                 }
-                if (key === 'upper_bound') {
-                    return `<td><input type="number" id="upper-${realIndex}" value="${row.upper_bound}" /></td>`;
-                }
-                return `<td>${row[key]}</td>`;
             });
-            // 添加“选择Objective”和“提交上下限”按钮
+
+            // 新增 Objective 列
             cells.push(`
                 <td>
-                    <button onclick="selectObjective(${realIndex})">选择Objective</button>
-                    <button onclick="submitBounds(${realIndex})">提交修改的上下限</button>
+                    <button class="btn objective-btn" onclick="selectObjective(${realIndex})">
+                        选择 Objective
+                    </button>
                 </td>
             `);
+
+            // 原操作列只保留提交按钮
+            cells.push(`
+                <td>
+                    <button class="btn submit-btn" onclick="submitBounds(${realIndex})">
+                        提交修改
+                    </button>
+                </td>
+            `);
+
             return `<tr>${cells.join('')}</tr>`;
         }).join('');
     }
@@ -119,25 +139,69 @@
         renderPagination();
     }
 
-    // 新增：选择Objective按钮逻辑
+    // 选择Objective按钮逻辑
     function selectObjective(index) {
         const item = rowData[index];
         const id = item.id;
         fetch('/objective/' + id);
     }
 
-    // 新增：提交上下限按钮逻辑
+    // 提交上下限按钮逻辑
     function submitBounds(index) {
         const item = rowData[index];
         const id = item.id;
         const lower = document.getElementById(`lower-${index}`).value;
         const upper = document.getElementById(`upper-${index}`).value;
-        // 你的提交逻辑，例如使用 fetch 发送到后端：
-        fetch('/reaction/' + id + '/' + lower + '/' + upper)
+        fetch('/reaction/' + id + '/' + lower + '/' + upper);
     }
 </script>
 
 <style>
+    /* 美化上下限输入框 */
+    .bound-input {
+        width: 80px;
+        padding: 6px 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 0.9em;
+        transition: border-color 0.2s ease;
+    }
+
+    .bound-input:focus {
+        outline: none;
+        border-color: #409eff;
+        box-shadow: 0 0 5px rgba(64, 158, 255, 0.5);
+    }
+
+    /* 按钮通用样式 */
+    .btn {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        font-size: 0.9em;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .objective-btn {
+        background-color: #67c23a;
+        color: white;
+    }
+
+    .objective-btn:hover {
+        background-color: #5daf34;
+    }
+
+    .submit-btn {
+        background-color: #409eff;
+        color: white;
+    }
+
+    .submit-btn:hover {
+        background-color: #368fe0;
+    }
+
+    /* 分页样式略，保持原有样式不变 */
     #pagination button {
         margin: 0 2px;
         padding: 4px 8px;
