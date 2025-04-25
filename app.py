@@ -12,6 +12,7 @@ app = Flask(__name__, template_folder='wiki')
 # 全局变量存储模型
 model = None
 model_id=None
+confirm=[]
 
 def process_file(file_path):
     """

@@ -35,23 +35,23 @@
 
             // 表头
             const headers = Object.keys(data[0]);
-            headers.push("操作"); // 添加操作列标题
+            //headers.push("操作"); // 添加操作列标题
             thead.innerHTML = '<tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
 
             // 表格内容
             tbody.innerHTML = data.map((row, index) => {
                 const rowHtml = headers.map(h => {
-                    if (h === "操作") {
-                        return `<td><button onclick="handleAction(${index})">选择</button></td>`;
-                    } else {
-                        return `<td>${row[h]}</td>`;
-                    }
+                    // if (h === "操作") {
+                    //     return `<td><button onclick="handleAction(${index})">选择</button></td>`;
+                    // } else {
+                    return `<td>${row[h]}</td>`;
+                    //}
                 }).join('');
                 return `<tr>${rowHtml}</tr>`;
             }).join('');
 
             // 缓存数据供按钮使用
-            window.rowData = data;
+            //window.rowData = data;
         });
 
 </script>
