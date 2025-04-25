@@ -125,7 +125,8 @@
 
     function handleAction(index) {
         const item = rowData[index];
-        console.log('选中行数据：', item);
+        const gene=item.id;
+        fetch('/gene/' + gene)
         // …你的业务逻辑…
     }
 </script>

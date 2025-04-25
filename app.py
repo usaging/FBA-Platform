@@ -3,6 +3,7 @@ import cobra
 from pathlib import Path
 import pandas as pd
 import re
+import os
 import io, sys
 import json
 
@@ -11,6 +12,60 @@ app = Flask(__name__, template_folder='wiki')
 # 全局变量存储模型
 model = None
 model_id=None
+
+def process_file(file_path):
+    """
+    自定义文件处理函数
+    这里只是一个示例，你可以替换成任何你需要对文件进行的操作
+    返回一个包含文件信息的字典
+    """
+    file_info = {}
+
+    # 加载代谢模型
+    model = cobra.io.read_sbml_model(file_path)
+
+    # 提取文件名（不含后缀）
+    base, _ = os.path.splitext(os.path.basename(file_path))
+    file_info['ID']                = base
+    file_info['Metabolite_count']  = len(model.metabolites)
+    file_info['Gene_count']        = len(model.genes)
+    file_info['Reaction_count']    = len(model.reactions)
+
+    return file_info
+
+def scan_directory_and_generate_json(directory_path, output_json):
+    """
+    扫描目录并生成 JSON 报告
+    
+    参数:
+        directory_path: 要扫描的目录路径
+        output_json:     输出的 JSON 文件路径
+    """
+    # 确保输出目录存在
+    os.makedirs(os.path.dirname(output_json), exist_ok=True)
+    
+    # 收集所有文件信息
+    all_files_info = []
+    
+    for root, dirs, files in os.walk(directory_path):
+        for filename in files:
+            file_path = os.path.join(root, filename)
+            try:
+                info = process_file(file_path)
+                all_files_info.append(info)
+            except Exception as e:
+                print(f"处理文件 {file_path} 时出错: {e}")
+                continue
+    
+    if not all_files_info:
+        print("没有找到任何有效的 SBML 文件。")
+        return
+    
+    # 写入 JSON 文件
+    with open(output_json, 'w', encoding='utf-8') as jf:
+        json.dump(all_files_info, jf, ensure_ascii=False, indent=2)
+    
+    print(f"成功处理 {len(all_files_info)} 个文件，结果已保存到 {output_json}")
 
 def export_reactions_json(model, rxn_csv_path, output_json_path):
     """
@@ -112,6 +167,7 @@ def serve_gene():
 
 @app.route('/')
 def home():
+    # scan_directory_and_generate_json('./models', './model.json')
     return render_template('pages/model.html')
 
 @app.route('/model/<id>')
