@@ -20,7 +20,10 @@ button:hover {
 .content {
     backdrop-filter: blur(10px);
     /* 上 0，右 自动，底 80px，左 250px刚好 */
-    margin: 50px 100px 80px 350px;
+    /*margin: 50px 100px 80px 350px;*/
+    margin-top: 50px;
+    margin-right: 100px;
+    margin-left: 350px;
     max-width: 100%;
     /* 限制最大宽度 */
 
@@ -64,15 +67,6 @@ caption {
     /* 标题显示在表格上方 */
     font-weight: bold;
     margin-bottom: 0.5rem;
-}
-
-.shell li a#a1 {
-    background-color: var(--primary-color);
-}
-
-.shell li a#a1 .icon,
-.shell li a#a1 .text {
-    color: var(--shell-color);
 }
 
 body {
