@@ -38,7 +38,7 @@ body {
     width: 250px;
     padding: 10px 14px;
     background: var(--shell-color);
-    transition: all 0.3s ease;
+    transition: width 0.3s ease; /* 只过渡宽度 */
     z-index: 100;
     
 }
@@ -150,7 +150,7 @@ header {
 }
 
 .menu {
-    margin-top: 40px;
+    margin-top: 60px;
 }
 
 li.search-box {
