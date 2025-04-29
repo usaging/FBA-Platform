@@ -1,6 +1,25 @@
 {
-  "model": "e_coli_core",
-  "objective": "biomass",
-  "deleted_genes": [],
-  "modified_reactions": []
+  "model": "iJO1366",
+  "objective": "EX_cm_e",
+  "deleted_genes": [
+    "b0241",
+    "b0929"
+  ],
+  "modified_reactions": [
+    {
+      "reaction": "EX_cmp_e",
+      "lower_bound": 0.0,
+      "upper_bound": 1000.0
+    },
+    {
+      "reaction": "EX_co2_e",
+      "lower_bound": -10.0,
+      "upper_bound": 10.0
+    },
+    {
+      "reaction": "EX_cobalt2_e",
+      "lower_bound": -100.0,
+      "upper_bound": 1000.0
+    }
+  ]
 }
