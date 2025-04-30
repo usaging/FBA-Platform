@@ -8,7 +8,7 @@
 
 
 
-<div class="main" style="padding-top: 100px"> 
+<div class="main" style="padding-top: 10px"> 
     <div class="feature">
     </div>
     <div class="content">
@@ -17,7 +17,7 @@
             <tbody></tbody>
         </table>
     </div>
-    <div id="pagination" style="margin-top: 1em; text-align: center; margin-bottom: 80px;"></div>
+    <div id="pagination" style="margin-top: 1em; text-align: center; margin-bottom: 10px;"></div>
 </div>
 <script>
     const rowsPerPage = 15;
@@ -127,7 +127,11 @@
         const item = rowData[index];
         const id = item.ID;
         fetch('/model/' + id)
-        // …你的业务逻辑…
+        .then(response => {
+            if (response.ok) {
+                window.location.href = '/constraints';
+            }
+        });
     }
 </script>
 

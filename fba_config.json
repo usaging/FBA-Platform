@@ -1,6 +1,8 @@
 {
-  "model": null,
+  "model": "e_coli_core",
   "objective": "biomass",
-  "deleted_genes": [],
+  "deleted_genes": [
+    "b1241"
+  ],
   "modified_reactions": []
 }

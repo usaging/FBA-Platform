@@ -1,79 +1,106 @@
-button {
-    color: #FFC107;
-    /* 金黄文字 */
-    background: transparent;
-    /* 透明背景 */
-    border: none;
-    /* 去掉边框 */
-    cursor: pointer;
-    /* 鼠标悬停变手指 */
-    padding: 0;
-    /* 去掉内边距 */
-    font-size: inherit;
-    /* 继承父元素字体大小 */
+/* 基础样式 */
+:root {
+    --primary-color: #409EFF; /* 浅蓝色主色调 */
+    --primary-light: #ECF5FF;
+    --primary-dark: #337ecc;
 }
 
-button:hover {
-    text-decoration: underline;
+body {
+    min-height: 100vh;
+    background-image: url('../icons/background.png');
+    background-size: 100% 100%;
+    color: #333;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
 .content {
     backdrop-filter: blur(10px);
-    /* 上 0，右 自动，底 80px，左 250px刚好 */
-    /*margin: 50px 100px 80px 350px;*/
-    margin-top: 50px;
-    margin-right: 100px;
-    margin-left: 350px;
-    max-width: 100%;
-    /* 限制最大宽度 */
-
-    display: flex;
-    flex-wrap: wrap;
-
+    margin-top: 80px;
+    margin-left: 220px;
+    padding: 20px;
+    min-height: calc(100vh - 80px);
+    background-color: rgba(255, 255, 255, 0.8);
+    position: relative;
+    z-index: 1;
 }
 
-
-.content p {
-    width: 100%;
-    /* 强制p元素占满宽度 */
-    word-break: break-word;
-    /* 确保强制换行 */
-}
-
-/* body { */
-/* 上 0，右 自动，底 80px，左 250px刚好 */
-/* margin: 50px 100px 80px 250px;
-} */
-
+/* 表格样式调整 */
 table {
     width: 100%;
-    /* 占满父容器宽度 */
     border-collapse: collapse;
-    /* 合并单元格边框 */
+    margin: 10px 0;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    overflow-x: auto;
+    display: block;
+    max-height: calc(100vh - 200px);
 }
 
-th,
-td {
-    border: 1px solid #ccc;
-    /* 边框样式 */
-    padding: 0.5rem;
-    /* 单元格内边距 */
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
     text-align: left;
-    /* 文本左对齐 */
+    white-space: nowrap;
 }
 
-caption {
-    caption-side: top;
-    /* 标题显示在表格上方 */
-    font-weight: bold;
-    margin-bottom: 0.5rem;
+th {
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+    position: sticky;
+    top: 0;
 }
 
-body {
-    background-image: url('../icons/background.png');
-    /* background-size: contain; */
-    /* 完整显示图片，可能有空白*/
-    background-size: 100% 100%;
-    /* 拉伸填充 */
-    color: #FFECB3
+/* 翻页样式 */
+#pagination {
+    margin-top: 15px;
+    text-align: center;
+}
+
+#pagination button {
+    padding: 5px 10px;
+    margin: 0 3px;
+    border: 1px solid #ddd;
+    background: white;
+    cursor: pointer;
+}
+
+#pagination button.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-dark);
+}
+
+#pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+/* 暗黑模式样式 */
+.dark {
+    --body-color: #202224;
+    --shell-color: #171717;
+    --text-color: #ccc;
+}
+
+.dark .content {
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #eee;
+}
+
+.dark table {
+    background-color: #333;
+}
+
+.dark th, .dark td {
+    border-color: #555;
+}
+
+.dark th {
+    background-color: #444;
+    color: var(--primary-color);
+}
+
+.dark tr:hover {
+    background-color: #444;
 }

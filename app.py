@@ -180,6 +180,22 @@ def home():
     # scan_directory_and_generate_json('./models', './model.json')
     return render_template('pages/model.html')
 
+@app.route('/model')
+def model_page():
+    return render_template('pages/model.html')
+
+@app.route('/constraints')
+def constraints_page():
+    return render_template('pages/constraints.html')
+
+@app.route('/gene')
+def gene_page():
+    return render_template('pages/gene.html')
+
+@app.route('/result')
+def result_page():
+    return render_template('pages/result.html')
+
 @app.route('/model/<id>')
 def set_model(id):
     global model
