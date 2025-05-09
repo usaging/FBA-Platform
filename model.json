@@ -6,12 +6,6 @@
     "Reaction_count": 95
   },
   {
-    "ID": "iEK1008",
-    "Metabolite_count": 998,
-    "Gene_count": 1008,
-    "Reaction_count": 1226
-  },
-  {
     "ID": "iJN678",
     "Metabolite_count": 795,
     "Gene_count": 622,
@@ -64,5 +58,11 @@
     "Metabolite_count": 2806,
     "Gene_count": 1161,
     "Reaction_count": 4131
+  },
+  {
+    "ID": "iEK1008",
+    "Metabolite_count": 998,
+    "Gene_count": 1008,
+    "Reaction_count": 1226
   }
 ]

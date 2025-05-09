@@ -1,15 +1,6 @@
 {
   "model": "e_coli_core",
-  "objective": "biomass",
-  "deleted_genes": [
-    "b1241",
-    "b1241"
-  ],
-  "modified_reactions": [
-    {
-      "reaction": "PFK",
-      "lower_bound": 0.0,
-      "upper_bound": 997.0
-    }
-  ]
+  "objective": "PFK",
+  "deleted_genes": [],
+  "modified_reactions": []
 }
