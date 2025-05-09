@@ -131,7 +131,7 @@ def set_objective(reaction_id):
     global model
     if model is None:
         return "No model loaded."
-    model.objective = model.reactions.get_by_id(reaction_id)
+    # model.objective = model.reactions.get_by_id(reaction_id)
     confirm['objective']=reaction_id
     return f"Objective set to reaction {reaction_id}."
 
@@ -142,8 +142,8 @@ def set_reaction(reaction_id, lower, upper):
     if model is None:
         return "No model loaded."
     reaction = model.reactions.get_by_id(reaction_id)
-    reaction.lower_bound = float(lower)
-    reaction.upper_bound = float(upper)
+    # reaction.lower_bound = float(lower)
+    # reaction.upper_bound = float(upper)
     confirm['modified_reactions'].append({
         "reaction": reaction_id,
         "lower_bound": reaction.lower_bound,
@@ -158,24 +158,57 @@ def knock_out_gene(gene_id):
     if model is None:
         return "No model loaded."
     confirm['deleted_genes'].append(gene_id)
-    model.genes.get_by_id(gene_id).knock_out()
-    
+    # model.genes.get_by_id(gene_id).knock_out()
+
     return f"Gene {gene_id} knocked out."
 
 @app.route('/confirm')
 def set_confirm():
+    # global model
+    # global confirm
+    # if model is None:
+    #     return "No model loaded."
+    
+    # if confirm["deleted_genes"]:
+    #     for gene_id in confirm["deleted_genes"]:
+    #         if gene_id in model.genes:
+    #             model.genes.get_by_id(gene_id).knock_out()
+    #         else:
+    #             print(f"警告: 基因 {gene_id} 不存在于模型中")
+
+    # if confirm["objective"]:
+    #     model.objective = confirm['objective']
+
+    # if confirm["modified_reactions"]:
+    #     for reaction in confirm["modified_reactions"]:
+    #         reaction_id = reaction["reaction"]
+    #         lower_bound = reaction["lower_bound"]
+    #         upper_bound = reaction["upper_bound"]
+    #         if reaction_id in model.reactions:
+    #             model.reactions.get_by_id(reaction_id).lower_bound = lower_bound
+    #             model.reactions.get_by_id(reaction_id).upper_bound = upper_bound
+    #         else:
+    #             print(f"警告: reaction {reaction_id} 不存在于模型中")
+
     with open("fba_config.json", "w") as f:
         json.dump(confirm, f, indent=2)
     return render_template('pages/confirm.html')
 
-@app.route('/optimize')
+@app.route('/cancel')
+def clear_confirm():
+    global confirm
+    confirm={
+            "model": None,               # 存储模型名称（字符串）
+            "objective": "biomass",             # 存储目标函数（字符串）
+            "deleted_genes": [],         # 存储待删除基因（列表，如 ["gene1", "gene2"]）
+            "modified_reactions": []     # 存储修改的反应（列表，元素为字典）
+        }
+    
+@app.route('/result')
 def optimize():
     global model
     if model is None:
         return "No model loaded."
-    # 导出为 JSON 文件
-    # with open("fba_config.json", "w") as f:
-    #     json.dump(confirm, f, indent=2)
 
     # 查看数据结构
     print(json.dumps(confirm, indent=2))
