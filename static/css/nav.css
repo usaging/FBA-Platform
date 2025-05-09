@@ -7,7 +7,7 @@
     width: 220px;
     padding: 15px 0;
     background: white;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     z-index: 100;
     overflow-y: auto;
 }
@@ -21,113 +21,82 @@
 /* 第一级菜单项 */
 .nav-link {
     position: relative;
-    margin: 20px 0; /* 调整间距 */
+    margin: 20px 0;
+    padding-left: 20px;
 }
 
 .nav-link::before {
-    content: '';
-    position: absolute;
-    width: 1px;
-    height: calc(100% + 40px); /* 确保虚线覆盖到下一个元素 */
-    background: #ccc;
-    left: 35px; /* 根据实际情况调整位置 */
-    top: -20px; /* 根据实际情况调整位置 */
+    display: none; /* 去掉第一级之间的虚线 */
 }
 
-.nav-link:first-child::before {
-    display: none; /* 首个元素前不需要虚线 */
+.nav-link:last-child::before {
+    display: none;
 }
 
-.nav-link a.active .step-item,
-.nav-link a:hover .step-item {
-    color: var(--primary-color); /* 改变文字颜色 */
-}
-
-.nav-link a.active .step-icon i,
-.nav-link a:hover .step-icon i {
-    color: var(--primary-color); /* 改变图标颜色 */
-}
-
-.step-item {
-    display: flex;
-    align-items: center;
-    text-align: left;
-    padding-left: 40px; /* 确保有足够的空间显示圆形序号 */
-    position: relative;
-}
-
-.step-item::before {
-    content: attr(data-step);
-    position: absolute;
-    left: 0;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: white;
-    border: 2px solid #ccc;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.nav-link a {
+    text-decoration: none;
     color: #333;
-    font-size: 12px;
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 4px;
 }
 
-/* 当激活时改变圆形序号的颜色 */
-.nav-link a.active .step-item::before,
-.nav-link a:hover .step-item::before {
-    border-color: var(--primary-color);
+.nav-link a.active,
+.nav-link a:hover {
     color: var(--primary-color);
+    background-color: rgba(0, 123, 255, 0.05);
+}
+
+.step-icon {
+    margin-right: 10px;
+    font-size: 18px;
 }
 
 /* 子菜单项 */
+.submenu {
+    display: none;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.submenu.active {
+    display: block;
+}
+
 .submenu .nav-link {
     margin: 10px 0;
+    padding-left: 40px;
 }
 
 .submenu .nav-link::before {
     content: '';
     position: absolute;
-    width: 1px;
-    height: calc(100% + 20px); /* 确保虚线覆盖到下一个元素 */
-    background: #ccc;
-    left: 45px; /* 调整根据实际情况 */
-    top: -10px; /* 调整根据实际情况 */
+    top: 0;
+    left: 30px;
+    height: 100%;
+    border-left: 2px dashed #888; /* 更粗、更深色的虚线 */
+    z-index: -1;
 }
 
-
-.submenu .nav-link a.active .step-item,
-.submenu .nav-link a:hover .step-item {
-    color: var(--primary-color);
-}
-
-.submenu .nav-link a.active .step-icon i,
-.submenu .nav-link a:hover .step-icon i {
-    color: var(--primary-color);
-}
-
-.submenu .step-item {
-    padding-left: 60px; /* 确保有足够的空间显示圆形序号 */
-}
-
-.submenu .step-item::before {
-    content: attr(data-step);
-    position: absolute;
-    left: 0;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: white;
-    border: 2px solid #ccc;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.submenu .nav-link a {
+    text-decoration: none;
     color: #333;
-    font-size: 12px;
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 4px;
 }
 
-.submenu .nav-link a.active .step-item::before,
-.submenu .nav-link a:hover .step-item::before {
-    border-color: var(--primary-color);
+.submenu .nav-link a.active,
+.submenu .nav-link a:hover {
+    color: var(--primary-color);
+    background-color: rgba(0, 123, 255, 0.05);
+}
+
+/* 条件设置激活时变色 */
+.step-item.active {
     color: var(--primary-color);
 }
 
@@ -175,7 +144,7 @@
     right: 0;
     bottom: 0;
     background-color: #ccc;
-    transition: .4s;
+    transition: 0.4s;
 }
 
 .slider:before {
@@ -186,14 +155,14 @@
     left: 2px;
     bottom: 2px;
     background-color: white;
-    transition: .4s;
+    transition: 0.4s;
 }
 
-input:checked + .slider {
+input:checked +.slider {
     background-color: var(--primary-color);
 }
 
-input:checked + .slider:before {
+input:checked +.slider:before {
     transform: translateX(20px);
 }
 
@@ -205,6 +174,29 @@ input:checked + .slider:before {
     border-radius: 50%;
 }
 
+/* 新增WIKI链接样式 */
+.wiki-link {
+    position: absolute;
+    bottom: 60px;
+    width: 100%;
+    padding: 15px 0;
+    border-top: 1px solid #eee;
+}
+
+.wiki-link a {
+    text-decoration: none;
+    color: #333;
+    display: flex;
+    align-items: center;
+    padding: 8px 20px;
+}
+
+.wiki-link a:hover {
+    color: var(--primary-color);
+    background-color: rgba(0, 123, 255, 0.05);
+}
+
+
 /* 暗黑模式样式 */
 .dark .shell {
     background-color: #333;
@@ -215,31 +207,35 @@ input:checked + .slider:before {
     color: #eee;
 }
 
-.dark .nav-link a:hover, .dark .nav-link a.active {
-    background-color: #444;
-    color: white;
-}
-
-/* 修改暗黑模式切换位置 */
-.bottom-content {
-    position: fixed;
-    bottom: 20px;
-    left: 0;
-    width: 220px;
-    padding: 15px 0;
-    border-top: 1px solid #eee;
-    background: white;
-    z-index: 110;
+.dark .nav-link a:hover,
+.dark .nav-link a.active {
+    background-color: #1e3a8a !important; /* 深蓝色背景 */
+    color: white !important;
 }
 
 .dark .bottom-content {
     background: #333;
     border-top-color: #444;
 }
+
 .dark .mode-text {
     color: #eee;
 }
 
 .dark .slider {
     background-color: #555;
+}
+
+/* 修复分析计算按钮背景色问题 */
+.dark .nav-link#a3 a {
+    background-color: transparent !important;
+}
+
+/* 暗黑模式下的WIKI链接样式 */
+.dark .wiki-link {
+    border-top-color: #444;
+}
+
+.dark .wiki-link a {
+    color: #eee;
 }

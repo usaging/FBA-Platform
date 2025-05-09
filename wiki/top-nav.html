@@ -19,33 +19,21 @@
                 <span class="software">SCUT-CHINA_L</span>
             </div>
         </div>
+        
+        <!-- 模型显示区域 -->
+        <div class="selected-model" id="selectedModel">
+            <i class="fa-solid fa-database"></i>
+            <span id="modelIdText">未选择模型</span>
+        </div>
 
-        <!-- 搜索、筛选及操作按钮区域 -->
-        <div class="right-section">
-            <div class="search-filter">
-                <div class="search-bar">
-                    <input type="text" placeholder="搜索模型...">
-                    <i class="iconfont icon-search"></i>
-                </div>
-                <div class="select-bar">
-                    <select>
-                        <option>所有模型</option>
-                        <option>酵母模型</option>
-                        <option>细菌模型</option>
-                    </select>
-                </div>
-            </div>
-            <div class="action-buttons">
-                <button class="import-btn" id="importBtn">
-                    <i class="iconfont icon-upload"></i> 导入
-                </button>
-                <button class="prev-btn hidden" id="prevBtn">
-                    <i class="iconfont icon-arrow-left"></i> 上一步
-                </button>
-                <button class="next-btn" id="nextBtn">
-                    下一步 <i class="iconfont icon-arrow-right"></i>
-                </button>
-            </div>
+        <!-- 操作按钮区域 -->
+        <div class="action-buttons">
+            <button class="prev-btn hidden" id="prevBtn">
+                <i class="iconfont icon-arrow-left"></i> 上一步
+            </button>
+            <button class="next-btn" id="nextBtn">
+                下一步 <i class="iconfont icon-arrow-right"></i>
+            </button>
         </div>
     </div>
 </nav>
@@ -56,10 +44,16 @@
         const currentPath = window.location.pathname;
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
-        const importBtn = document.getElementById('importBtn');
+        const modelIdText = document.getElementById('modelIdText');
 
-        // 首页隐藏"上一步"按钮
-        if (currentPath === '/' || currentPath === '/model') {
+        // 从本地存储获取选中的模型ID
+        const selectedModelId = localStorage.getItem('selectedModelId');
+        if (selectedModelId) {
+            modelIdText.textContent = selectedModelId;
+        }
+
+        // 只在首页隐藏上一步按钮
+        if (currentPath === '/') {
             prevBtn.classList.add('hidden');
         } else {
             prevBtn.classList.remove('hidden');
@@ -68,18 +62,24 @@
         // 设置按钮状态
         if (currentPath.includes('/analysis')) {
             nextBtn.textContent = '计算结果';
-            importBtn.innerHTML = '<i class="iconfont icon-download"></i> 导出';
         } else {
             nextBtn.textContent = '下一步';
-            importBtn.innerHTML = '<i class="iconfont icon-upload"></i> 导入';
         }
         
         // 下一步按钮点击事件
         nextBtn.addEventListener('click', (e) => {
             e.preventDefault();
+            
+            // 检查是否在模型选择页面且未选择模型
+            if (currentPath === '/model' && !selectedModelId) {
+                alert('请先选择一个模型');
+                return;
+            }
+            
             const routes = {
                 '/': '/model',
-                '/model': '/constraints',
+                '/model': '/objective',
+                '/objective': '/constraints',
                 '/constraints': '/gene',
                 '/gene': '/confirm',
                 '/confirm': '/result'
@@ -92,18 +92,26 @@
         // 上一步按钮点击事件
         prevBtn.addEventListener('click', (e) => {
             e.preventDefault();
+            // 清空当前页面的选择状态
+        if (currentPath === '/gene') {
+            localStorage.removeItem('selectedGenes');
+        } else if (currentPath === '/constraints') {
+            localStorage.removeItem('modifiedReactions');
+        }
             const routes = {
                 '/model': '/',
-                '/constraints': '/model',
+                '/objective': '/model',
+                '/constraints': '/objective',
                 '/gene': '/constraints',
                 '/confirm': '/gene',
                 '/result':'/confirm'
             };
             
             const prevRoute = routes[currentPath] || '/model';
-            window.location.href = prevRoute;
+            // window.location.href = prevRoute;
         });
     });
 </script>
+
 </body>
 </html>
