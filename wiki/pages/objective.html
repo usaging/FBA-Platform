@@ -1,0 +1,128 @@
+{% extends "layout.html" %}
+
+{% block title %}目标反应选择{% endblock %}
+
+{% block page_content %}
+
+<link href="{{ url_for('static', filename = 'css/base.css')}}" rel="stylesheet">
+
+<div class="main" style="padding-top: 10px">
+    <div class="search-container" style="display: flex; justify-content: flex-end; padding-right: 40px; padding-left: 100px; margin: 50px 50px;">
+        <input type="text" id="searchInput" placeholder="搜索反应ID或名称..." class="search-input" style="width: 300px;">
+        <button id="searchBtn" class="search-btn">搜索</button>
+    </div>
+    
+    <div class="content">
+        <table id="objective-table">
+            <thead></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div id="pagination" style="margin-top: 1em; text-align: center; margin-bottom: 80px;"></div>
+</div>
+
+<script>
+    const rowsPerPage = 15;
+    let currentPage = 1;
+    let totalPages = 1;
+    let rowData = [];
+    
+
+    fetch('/reaction.json')
+        .then(res => res.json())
+        .then(data => {
+            // 添加来源信息
+            rowData = data.map(item => ({
+                ...item,
+                source: '本地'
+            }));
+            
+            // 检查是否有导入的数据
+            const importedData = JSON.parse(localStorage.getItem('importedReactions') || []);
+            if (importedData.length > 0) {
+                const importedWithSource = importedData.map(item => ({
+                    ...item,
+                    source: '导入'
+                }));
+                rowData = [...importedWithSource, ...rowData];
+            }
+            
+            totalPages = Math.ceil(rowData.length / rowsPerPage);
+            renderTable();
+            renderPagination();
+        });
+
+    function renderTable(filter = '') {
+        const table = document.getElementById('objective-table');
+        const thead = table.querySelector('thead');
+        const tbody = table.querySelector('tbody');
+
+        const filteredData = filter ? 
+            rowData.filter(item => 
+                item.id.toLowerCase().includes(filter) || 
+                (item.name && item.name.toLowerCase().includes(filter))
+            ) : rowData;
+
+        if (filteredData.length === 0) {
+            thead.innerHTML = '<tr><th>没有找到匹配的反应</th></tr>';
+            tbody.innerHTML = '';
+            return;
+        }
+
+        if (!thead.hasChildNodes()) {
+            const headers = ['来源', 'id', 'name', 'reaction'];
+            thead.innerHTML = '<tr>' +
+                headers.map(h => `<th>${h}</th>`).join('') +
+                '</tr>';
+        }
+
+        const start = (currentPage - 1) * rowsPerPage;
+        const pageData = filteredData.slice(start, start + rowsPerPage);
+
+        tbody.innerHTML = pageData.map((row, idx) => {
+            const realIndex = start + idx;
+            return `<tr>
+                <td class="source-cell">${row.source || '本地'}</td>
+                <td>${row.id}</td>
+                <td>${row.name || row.id}</td>
+                <td>${row.reaction}</td>
+            </tr>`;
+        }).join('');
+    }
+
+    document.getElementById('searchBtn').addEventListener('click', () => {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        currentPage = 1;
+        renderTable(searchTerm);
+        renderPagination();
+    });
+
+    // 保留分页函数...
+</script>
+
+<style>
+    .search-container {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+        padding: 0 20px;
+    }
+    
+    .search-input {
+        flex: 1;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    
+    .search-btn {
+        padding: 8px 16px;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+</style>
+
+{% endblock %}

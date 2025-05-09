@@ -24,6 +24,7 @@
     let currentPage = 1;
     let totalPages = 1;
     let rowData = [];
+    let selectedGenes = JSON.parse(localStorage.getItem('selectedGenes') || '[]');
 
     fetch('/gene.json')
         .then(res => res.json())
@@ -38,6 +39,23 @@
         const table = document.getElementById('gene-table');
         const thead = table.querySelector('thead');
         const tbody = table.querySelector('tbody');
+
+         // 先清空表格
+    thead.innerHTML = '';
+    tbody.innerHTML = '';
+
+    // 检查数据有效性（新增）
+    if (!rowData || !Array.isArray(rowData) ){
+        console.error('Invalid data format:', rowData);
+        thead.innerHTML = '<tr><th>数据加载异常</th></tr>';
+        return;
+    }
+
+    // 修改判断条件（原逻辑有问题）
+    if (rowData.length === 0) {
+        thead.innerHTML = '<tr><th>没有数据</th></tr>';
+        return;
+    }
 
         if (rowData.length === 0) {
             thead.innerHTML = '<tr><th>没有数据</th></tr>';
@@ -59,7 +77,13 @@
         tbody.innerHTML = pageData.map((row, idx) => {
             const realIndex = start + idx;
             const cells = Object.keys(row).map(key => `<td>${row[key]}</td>`);
-            cells.push(`<td><button onclick="handleAction(${realIndex})">选择</button></td>`);
+            // 修改操作列为圆点选择
+            cells.push(`
+                <td class="select-cell">
+                    <div class="select-dot ${selectedGenes.includes(row.id) ? 'selected' : ''}" 
+                         onclick="toggleGene('${row.id}')"></div>
+                </td>
+            `);
             return `<tr>${cells.join('')}</tr>`;
         }).join('');
     }
@@ -123,12 +147,23 @@
         renderPagination();
     }
 
-    function handleAction(index) {
-        const item = rowData[index];
-        const gene = item.id;
-        fetch('/gene/' + gene)
-        // …你的业务逻辑…
+    function toggleGene(geneId) {
+        if (selectedGenes.includes(geneId)) {
+            selectedGenes = selectedGenes.filter(id => id !== geneId);
+        } else {
+            selectedGenes.push(geneId);
+        }
+        localStorage.setItem('selectedGenes', JSON.stringify(selectedGenes));
+        renderTable();
+        
+        // 保持原有的后端请求
+        fetch('/gene/' + geneId);
     }
+
+    // 初始化时渲染已选基因
+    document.addEventListener('DOMContentLoaded', () => {
+        renderTable();
+    });
 </script>
 
 <style>

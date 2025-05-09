@@ -49,7 +49,7 @@
         // 表头只在首次渲染
         if (!thead.hasChildNodes()) {
             const headers = Object.keys(rowData[0])
-                .concat(['Objective', '操作']);
+                .concat(['操作']);
             thead.innerHTML = '<tr>' +
                 headers.map(h => `<th>${h}</th>`).join('') +
                 '</tr>';
@@ -76,15 +76,6 @@
                     cells.push(`<td>${row[key]}</td>`);
                 }
             });
-
-            // 新增 Objective 列
-            cells.push(`
-                <td>
-                    <button class="btn objective-btn" onclick="selectObjective(${realIndex})">
-                        选择 Objective
-                    </button>
-                </td>
-            `);
 
             // 原操作列只保留提交按钮
             cells.push(`

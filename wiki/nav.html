@@ -4,74 +4,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FBA-PLATFORM</title>
+    <title>FBA - PLATFORM</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary-color: blue;
+        }
+    </style>
 </head>
-
 
 <body>
     <!--左侧导航栏-->
-        <nav class="shell">
-            <div class="menu-bar">
-                <div class="menu">
-                    <ul class="menu-links">
-                        <!-- 模型选择 -->
-                        <li class="nav-link">
-                            <a href="/model" id="a1" class="active">
-                                <div class="step-item" data-step="1">
-                                    <div class="step-icon"><i class="iconfont icon-cell icon"></i></div>
-                                    <div class="step-text">模型选择</div>
-                                </div>
-                            </a>
-                        </li>
-                        
-                        <!-- 条件设置 -->
-<li class="nav-link has-submenu">
-    <div class="step-item" id="conditionSetting" data-step="2"> 
-        <div class="step-icon"><i class="iconfont icon-reaction icon"></i></div>
-        <div class="step-text">条件设置</div>
-        <i class="iconfont icon-arrow-down submenu-toggle"></i>
-    </div>
-    <ul class="submenu">
-        <li class="nav-link">
-            <a href="/constraints">
-                <div class="step-item" data-step="2.1">
-                    <div class="step-icon"><i class="iconfont icon-gene icon"></i></div>
-                    <div class="step-text">反应设置</div>
-                </div>
-            </a>
-        </li>
-        <li class="nav-link">
-            <a href="/gene">
-                <div class="step-item" data-step="2.2">
-                    <div class="step-icon"><i class="iconfont icon-gene icon"></i></div>
-                    <div class="step-text">基因敲除</div>
-                </div>
-            </a>
-        </li>
-        <li class="nav-link">
-            <a href="/confirm">
-                <div class="step-item" data-step="2.3">
-                    <div class="step-icon"><i class="iconfont icon-gene icon"></i></div>
-                    <div class="step-text">设置确定</div>
-                </div>
-            </a>
-        </li>
-    </ul>
-</li>
-                        
-                        <!-- 分析计算 -->
-                        <li class="nav-link">
-                            <a href="/result" id="a3" >
-                                <div class="step-item" data-step="3">
-                                    <div class="step-icon"><i class="iconfont icon-gene icon"></i></div>
-                                    <div class="step-text">分析计算</div>
-                                </div>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+    <nav class="shell">
+        <div class="menu-bar">
+            <div class="menu">
                 
-                <!-- 暗黑模式切换 -->
+                <ul class="menu-links">
+                    <!-- 模型选择 -->
+                    <li class="nav-link">
+                        <a href="/model" id="a1" class="active">
+                            <i class="fa-solid fa-table-cells-large step-icon"></i>
+                            <span class="step-text">模型选择</span>
+                        </a>
+                    </li>
+
+                    <!-- 条件设置 -->
+                    <li class="nav-link has-submenu">
+                        <div class="step-item" id="conditionSetting">
+                            <i class="fa-solid fa-sliders step-icon"></i>
+                            <span class="step-text">条件设置</span>
+                            <i class="fa-solid fa-chevron-down submenu-toggle"></i>
+                        </div>
+                        <ul class="submenu active"> <!-- 默认展开 -->
+                            <li class="nav-link">
+                                <a href="/objective">
+                                    <i class="fa-solid fa-bullseye step-icon"></i>
+                                    <span class="step-text">目标设置</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="/constraints">
+                                    <i class="fa-solid fa-arrows-left-right step-icon"></i>
+                                    <span class="step-text">反应设置</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="/gene">
+                                    <i class="fa-solid fa-dna step-icon"></i>
+                                    <span class="step-text">基因敲除</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="/confirm">
+                                    <i class="fa-solid fa-check step-icon"></i>
+                                    <span class="step-text">设置确定</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- 分析计算 -->
+                    <li class="nav-link">
+                        <a href="/result" id="a3">
+                            <i class="fa-solid fa-calculator step-icon"></i>
+                            <span class="step-text">分析计算</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 新增WIKI部件 -->
+        <div class="wiki-link">
+            <a href="https://example.com/wiki" target="_blank">
+                <i class="fa-solid fa-book step-icon"></i>
+                <span class="step-text">WIKI</span>
+            </a>
+        </div>
+        
+            <!-- 暗黑模式切换 -->
             <div class="bottom-content">
                 <div class="dark-mode-toggle">
                     <span class="mode-text">暗黑模式</span>
@@ -81,59 +92,67 @@
                     </label>
                 </div>
             </div>
-            </div>
-        </nav>
-    
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-    // 子菜单切换
-    document.querySelectorAll('.submenu-toggle').forEach(toggle => {
-        toggle.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            const submenu = e.target.closest('.has-submenu').querySelector('.submenu');
-            submenu.classList.toggle('active');
-            e.target.classList.toggle('icon-arrow-down');
-            e.target.classList.toggle('icon-arrow-up');
-        });
-    });
+        </div>
+    </nav>
 
-    // 为“条件设置”添加点击事件监听器，避免默认行为
-    document.getElementById('conditionSetting').addEventListener('click', function(e) {
-        e.preventDefault(); // 阻止默认行为
-        const submenu = this.closest('.has-submenu').querySelector('.submenu');
-        submenu.classList.toggle('active');
-        const toggle = this.querySelector('.submenu-toggle');
-        toggle.classList.toggle('icon-arrow-down');
-        toggle.classList.toggle('icon-arrow-up');
-    });
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 子菜单切换
+            document.querySelectorAll('.submenu-toggle').forEach(toggle => {
+                toggle.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const submenu = e.target.closest('.has-submenu').querySelector('.submenu');
+                    submenu.classList.toggle('active');
+                    e.target.classList.toggle('fa-chevron-down');
+                    e.target.classList.toggle('fa-chevron-up');
+                });
+            });
 
-    // 导航链接点击事件
-    document.querySelectorAll('.nav-link a').forEach(link => {
-        link.addEventListener('click', function(e) {
-            if (this.getAttribute('href') !== '#') {
+            // 为“条件设置”添加点击事件监听器
+            document.getElementById('conditionSetting').addEventListener('click', function (e) {
                 e.preventDefault();
-                window.location.href = this.getAttribute('href');
+                const submenu = this.closest('.has-submenu').querySelector('.submenu');
+                submenu.classList.toggle('active');
+                const toggle = this.querySelector('.submenu-toggle');
+                toggle.classList.toggle('fa-chevron-down');
+                toggle.classList.toggle('fa-chevron-up');
+                // 点击时切换条件设置自身颜色
+                this.classList.toggle('active');
+            });
+
+            // 导航链接点击事件
+            document.querySelectorAll('.nav-link a').forEach(link => {
+                link.addEventListener('click', function (e) {
+                    if (this.getAttribute('href') !== '#') {
+                        e.preventDefault();
+                        window.location.href = this.getAttribute('href');
+                    }
+                });
+            });
+
+            // 高亮当前页面
+            const currentPath = window.location.pathname;
+            // 重置所有菜单项的激活状态
+            document.querySelectorAll('.nav-link a').forEach(link => {
+                link.classList.remove('active');
+            });
+            // 只高亮当前路径对应的菜单项
+            document.querySelector(`.nav-link a[href="${currentPath}"]`)?.classList.add('active');
+            
+            // 如果当前是条件设置的子页面，激活条件设置标题
+            if (currentPath.startsWith('/objective') || 
+                currentPath.startsWith('/constraints') || 
+                currentPath.startsWith('/gene') || 
+                currentPath.startsWith('/confirm')) {
+                document.getElementById('conditionSetting').classList.add('active');
+                // 确保条件设置子菜单保持展开
+                document.querySelector('#conditionSetting').closest('.has-submenu').querySelector('.submenu').classList.add('active');
+                document.querySelector('#conditionSetting').querySelector('.submenu-toggle').classList.remove('fa-chevron-down');
+                document.querySelector('#conditionSetting').querySelector('.submenu-toggle').classList.add('fa-chevron-up');
             }
         });
-    });
+    </script>
+</body>
 
-    // 高亮当前页面
-    const currentPath = window.location.pathname;
-    document.querySelectorAll('.nav-link a').forEach(link => {
-        if (link.getAttribute('href') === currentPath) {
-            link.classList.add('active');
-            // 展开父菜单
-            const submenu = link.closest('.submenu');
-            if (submenu) {
-                submenu.classList.add('active');
-                const toggle = submenu.closest('.has-submenu').querySelector('.submenu-toggle');
-                toggle.classList.add('icon-arrow-up');
-                toggle.classList.remove('icon-arrow-down');
-            }
-        }
-    });
-});
-        </script>
-    </body>
-</html>
+</html>    

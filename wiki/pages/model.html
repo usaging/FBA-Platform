@@ -24,6 +24,8 @@
     let currentPage = 1;
     let totalPages = 1;
     let rowData = [];
+    let selectedModelId = localStorage.getItem('selectedModelId') || null;
+
 
     fetch('/model.json')
         .then(res => res.json())
@@ -59,7 +61,13 @@
         tbody.innerHTML = pageData.map((row, idx) => {
             const realIndex = start + idx;
             const cells = Object.keys(row).map(key => `<td>${row[key]}</td>`);
-            cells.push(`<td><button onclick="handleAction(${realIndex})">选择</button></td>`);
+            // 修改操作列为圆点选择
+            cells.push(`
+                <td class="select-cell">
+                    <div class="select-dot ${selectedModelId === row.ID ? 'selected' : ''}" 
+                         onclick="selectModel('${row.ID}')"></div>
+                </td>
+            `);
             return `<tr>${cells.join('')}</tr>`;
         }).join('');
     }
@@ -123,15 +131,14 @@
         renderPagination();
     }
 
-    function handleAction(index) {
-        const item = rowData[index];
-        const id = item.ID;
-        fetch('/model/' + id)
-        .then(response => {
-            if (response.ok) {
-                window.location.href = '/constraints';
-            }
-        });
+    function selectModel(modelId) {
+        selectedModelId = modelId;
+        localStorage.setItem('selectedModelId', modelId);
+        document.getElementById('modelIdText').textContent = modelId;
+        renderTable(); // 重新渲染表格以更新圆点状态
+        
+        // 保持原有的后端请求
+        fetch('/model/' + modelId);
     }
 </script>
 

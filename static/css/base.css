@@ -7,8 +7,8 @@
 
 body {
     min-height: 100vh;
-    background-image: url('../icons/background.png');
-    background-size: 100% 100%;
+    /* 将背景图片替换为纯色背景，这里使用 #f0f0f0 作为示例，你可以根据需求修改 */
+    background-color: #f0f0f0;
     color: #333;
     font-family: 'Arial', sans-serif;
     margin: 0;
@@ -17,25 +17,26 @@ body {
 
 .content {
     backdrop-filter: blur(10px);
-    margin-top: 80px;
-    margin-left: 220px;
-    padding: 20px;
-    min-height: calc(100vh - 80px);
+    margin-top: 60px;
+    margin-left: 130px;
+    padding: 10px;
+    min-height: calc(100vh - 60px);
     background-color: rgba(255, 255, 255, 0.8);
     position: relative;
     z-index: 1;
+    width: calc(100% - 180px);  /* 增加宽度 */
 }
 
 /* 表格样式调整 */
 table {
     width: 100%;
     border-collapse: collapse;
-    margin: 10px 0;
+    margin: 5px 0;
     background-color: white;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     overflow-x: auto;
     display: block;
-    max-height: calc(100vh - 200px);
+    max-height: calc(100vh - 150px) !important;
 }
 
 th, td {
@@ -50,6 +51,48 @@ th {
     color: var(--primary-dark);
     position: sticky;
     top: 0;
+}
+
+/* 来源列样式 */
+td.source-cell {
+    color: #666;
+    font-size: 0.9em;
+}
+
+/* 选择列样式 */
+td.select-cell {
+    text-align: center;
+}
+
+.select-dot {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.select-dot.selected {
+    background-color: var(--primary-color);
+    border-color: var(--primary-dark);
+}
+/* 添加按钮状态样式 */
+.btn-disabled {
+    background-color: #cccccc;
+    color: #666666;
+    cursor: not-allowed;
+}
+
+.btn-modified {
+    background-color: #FF8A87;
+    color: white;
+}
+
+.btn-submitted {
+    background-color: #409EFF;
+    color: white;
 }
 
 /* 翻页样式 */
@@ -103,4 +146,8 @@ th {
 
 .dark tr:hover {
     background-color: #444;
+}
+
+.dark td.source-cell {
+    color: #aaa;
 }

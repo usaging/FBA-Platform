@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block title %}FBA分析平台{% endblock %}
+
+{% block page_content %}
+<style>
+    .welcome-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: calc(100vh - 160px);
+        text-align: center;
+    }
+    
+    .welcome-logo {
+        font-size: 72px;
+        color: var(--primary-color);
+        margin-bottom: 30px;
+    }
+    
+    .welcome-text {
+        font-size: 24px;
+        margin-bottom: 50px;
+    }
+</style>
+
+<div class="welcome-container">
+    <div class="welcome-logo">FBA ANALYSIS</div>
+    <div class="welcome-text">代谢网络通量平衡分析平台</div>
+    <button class="next-btn" onclick="window.location.href='/model'">
+        开始分析 <i class="iconfont icon-arrow-right"></i>
+    </button>
+</div>
+{% endblock %}

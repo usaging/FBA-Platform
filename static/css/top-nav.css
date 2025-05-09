@@ -1,3 +1,4 @@
+
 .top-nav {
     position: fixed;
     top: 0;
@@ -14,33 +15,29 @@
 
 .nav-container {
     display: flex;
-    justify-content: space-between; /* 使两边的内容分别靠左和靠右 */
+    justify-content: space-between;
     width: 100%;
     align-items: center;
 }
 
-/* 包含搜索和操作区域的容器 */
-.right-section {
+/* 当前选择模型显示 */
+.selected-model {
     display: flex;
-    gap: 15px; /* 控制内部元素之间的间距 */
     align-items: center;
-    margin-left: auto; /* 强制该部分内容靠右 */
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: rgba(0, 123, 255, 0.1);
+    border-radius: 4px;
+    color: var(--primary-color);
+    margin-left: 20px;
+    margin-right: auto;
 }
 
-.search-filter {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.action-buttons {
-    display: flex;
-    align-items: center;
-    gap: 15px;
+.selected-model i {
+    font-size: 16px;
 }
 
 /* Logo和标题 - 上下排版 */
-
 .image-text {
     display: flex;
     align-items: center;
@@ -73,62 +70,11 @@
     border-radius: 6px;
 }
 
-/* 搜索和筛选区域 */
-.search-filter {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-right: auto;
-}
-
-.search-bar {
-    position: relative;
-}
-
-.search-bar input {
-    padding: 8px 30px 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: white;
-    color: #333;
-    width: 200px;
-    transition: border-color 0.3s;
-}
-
-.search-bar input:focus {
-    border-color: var(--primary-color);
-    outline: none;
-}
-
-.search-bar .iconfont {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #999;
-}
-
-.select-bar select {
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: white;
-    color: #333;
-    min-width: 150px;
-    transition: border-color 0.3s;
-}
-
-.select-bar select:focus {
-    border-color: var(--primary-color);
-    outline: none;
-}
-
 /* 操作按钮区域 */
 .action-buttons {
     display: flex;
     align-items: center;
-    gap: 15px;
-    margin-left: auto;
+    gap: 10px;
 }
 
 button {
@@ -138,18 +84,18 @@ button {
     transition: all 0.3s ease;
     white-space: nowrap;
     font-size: 14px;
+    min-width: 100px;
 }
 
-.import-btn, .export-btn {
-    background-color: white;
-    border: 1px solid var(--primary-color);
-    color: var(--primary-color);
-}
-
+/* 修改按钮样式，确保文本居中 */
 .prev-btn, .next-btn {
     background-color: var(--primary-color);
     border: 1px solid var(--primary-dark);
     color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;  /* 添加这行确保文本居中 */
+    gap: 5px;
 }
 
 button:hover {
@@ -174,18 +120,7 @@ button:hover {
     color: #aaa;
 }
 
-.dark .search-bar input,
-.dark .select-bar select {
-    background-color: #444;
-    border-color: #555;
-    color: #eee;
-}
-
-.dark .search-bar .iconfont {
-    color: #aaa;
-}
-
-.dark .import-btn, .dark .export-btn {
-    background-color: #444;
-    color: var(--primary-color);
+.dark .selected-model {
+    background-color: rgba(0, 123, 255, 0.2);
+    color: var(--primary-light);
 }
