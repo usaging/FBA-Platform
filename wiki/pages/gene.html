@@ -29,18 +29,10 @@
     fetch('/gene.json')
         .then(res => res.json())
         .then(data => {
-            if (!data || !Array.isArray(data)) {
-            throw new Error('Invalid data format');
-        }
-        rowData = data;
-        totalPages = Math.ceil(data.length / rowsPerPage);
-        renderTable();
-        renderPagination();
-    })
-    .catch(err => {
-        console.error('加载基因数据失败:', err);
-        document.querySelector('#gene-table thead').innerHTML = 
-            '<tr><th>数据加载失败</th></tr>';
+            rowData = data;
+            totalPages = Math.ceil(data.length / rowsPerPage);
+            renderTable();
+            renderPagination();
         });
 
     function renderTable() {
@@ -83,14 +75,17 @@
         const pageData = rowData.slice(start, start + rowsPerPage);
 
         tbody.innerHTML = pageData.map((row, idx) => {
-            return `<tr>
-            <td>${row.id}</td>
-            <td class="select-cell">
-                <div class="select-dot ${selectedGenes.includes(row.id) ? 'selected' : ''}" 
-                     onclick="toggleGene('${row.id}')"></div>
-            </td>
-        </tr>`;
-    }).join('');
+            const realIndex = start + idx;
+            const cells = Object.keys(row).map(key => `<td>${row[key]}</td>`);
+            // 修改操作列为圆点选择
+            cells.push(`
+                <td class="select-cell">
+                    <div class="select-dot ${selectedGenes.includes(row.id) ? 'selected' : ''}" 
+                         onclick="toggleGene('${row.id}')"></div>
+                </td>
+            `);
+            return `<tr>${cells.join('')}</tr>`;
+        }).join('');
     }
 
     function renderPagination() {
