@@ -3,6 +3,26 @@ from pathlib import Path
 import os
 import json
 
+def update_file_records(new_files):
+    """更新文件记录"""
+    try:
+        # 读取现有记录
+        if os.path.exists('model.json'):
+            with open('model.json', 'r') as f:
+                records = json.load(f)
+        else:
+            records = []
+            
+        # 追加新记录
+        records.extend(new_files)
+        
+        # 写入文件
+        with open('model.json', 'w') as f:
+            json.dump(records, f, ensure_ascii=False,indent=2)
+            
+    except Exception as e:
+        print(f"更新记录文件失败: {str(e)}")
+
 def process_file(file_path):
     """
     模型文件处理函数

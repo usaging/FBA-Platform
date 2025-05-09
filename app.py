@@ -14,6 +14,7 @@ app.config['UPLOAD_FOLDER'] = 'models/'
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10MB
 app.config['ALLOWED_EXTENSIONS'] = {'xml', 'sbml'}  # 按需修改
 
+
 # 全局变量存储模型
 model = None
 model_id=None
@@ -35,6 +36,7 @@ def upload_file():
 
     files = request.files.getlist('files')
     success_files = []
+    new_records = []
     
     for file in files:
         if file.filename == '':
@@ -43,8 +45,19 @@ def upload_file():
         # 仅检查文件后缀
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            success_files.append(filename)
+            save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(save_path)
+
+        # 构建记录信息
+        file_info=tools.process_file(save_path)
+
+        new_records.append(file_info)
+        success_files.append(filename)
+
+    # 更新JSON记录文件
+    if new_records:
+        tools.update_file_records(new_records)
+
 
     if not success_files:
         return jsonify({"message": "没有符合要求的文件"}), 400
