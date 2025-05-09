@@ -11,7 +11,7 @@
 
     </div>
     <div class="content">
-        <table id="reaction-table" >
+        <table id="reaction-table">
             <thead></thead>
             <tbody></tbody>
         </table>
@@ -142,14 +142,14 @@
     // 选择Objective按钮逻辑
     function selectObjective(index) {
         const item = rowData[index];
-        const id = item.id;
+        const id = item.name;
         fetch('/objective/' + id);
     }
 
     // 提交上下限按钮逻辑
     function submitBounds(index) {
         const item = rowData[index];
-        const id = item.id;
+        const id = item.name;
         const lower = document.getElementById(`lower-${index}`).value;
         const upper = document.getElementById(`upper-${index}`).value;
         fetch('/reaction/' + id + '/' + lower + '/' + upper);
