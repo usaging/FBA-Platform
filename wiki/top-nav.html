@@ -120,12 +120,7 @@
         // 上一步按钮点击事件
         prevBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            // 清空当前页面的选择状态
-        if (currentPath === '/gene') {
-            localStorage.removeItem('selectedGenes');
-        } else if (currentPath === '/constraints') {
-            localStorage.removeItem('modifiedReactions');
-        }
+            
             const routes = {
                 '/model': '/',
                 '/objective': '/model',
