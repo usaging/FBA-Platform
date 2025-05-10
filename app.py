@@ -205,6 +205,16 @@ def clear_models():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+@app.route('/clear-objective', methods=['POST'])  # 明确指定允许 POST 方法
+def clear_objective():
+    global confirm
+    try:
+        confirm['objective'] = "biomass"
+        # 如果还有其他需要清理的数据，可以在此操作
+        return jsonify({"status": "success", "message": "目标函数已清空"})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500        
+
 @app.route('/cancel')
 def clear_confirm():
     global confirm

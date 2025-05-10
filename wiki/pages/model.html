@@ -8,8 +8,6 @@
 
 <div class="main" style="padding-top: 10px">
     <div class="search-container">
-        <!-- <input type="text" id="searchInput" placeholder="搜索模型ID或名称..." class="search-input">
-        <button id="searchBtn" class="search-btn">搜索</button> -->
 
         <!-- 修改搜索框：移除搜索按钮，改为即时输入触发 -->
         <input type="text" id="searchInput" placeholder="搜索模型ID或名称..." class="search-input">
@@ -65,7 +63,6 @@
     const rowsPerPage = 15;
     let currentPage = 1;
     let totalPages = 1;
-    // let rowData = [];
     let originalData = []; // 原始数据（用于重置）
     let filteredData = [];  // 过滤后的数据（搜索+分页）
     let fuse = null;        // Fuse.js 实例
@@ -140,7 +137,7 @@
         }
 
         // 动态生成表头（每次渲染都重新生成）
-        const headers = Object.keys(filteredData[0]).concat('选择列');
+        const headers = Object.keys(filteredData[0]).concat('选择');
         thead.innerHTML = '<tr>' +
             headers.map(h => `<th>${h}</th>`).join('') +
             '</tr>';
@@ -258,20 +255,7 @@
             });
     });
 
-    // 搜索按钮暂时不做任何操作
-    // document.getElementById('searchBtn').addEventListener('click', function () {
-    //     console.log('搜索功能暂未实现');
-    // });
 </script>
-
-<!-- <style>
-    /* 新增高亮样式 */
-    .highlight {
-        background-color: #ffeb3b;
-        padding: 2px 0;
-        border-radius: 3px;
-    }
-</style> -->
 
 <style>
     .search-container {
