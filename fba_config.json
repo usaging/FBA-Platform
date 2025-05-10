@@ -1,8 +1,13 @@
 {
-  "model": null,
+  "model": "iJN678",
   "objective": [
-    "biomass"
+    "biomass",
+    "34DHOXPEGOX",
+    "EX_ac_e"
   ],
-  "deleted_genes": [],
+  "deleted_genes": [
+    "sll0990",
+    "glk"
+  ],
   "modified_reactions": []
 }

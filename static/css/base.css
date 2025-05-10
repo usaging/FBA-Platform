@@ -129,13 +129,32 @@ td.select-cell {
     border-radius: 50%;
     border: 2px solid #ccc;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.2s;
+}
+
+.select-dot:active {
+    transform: scale(0.9);
 }
 
 .select-dot.selected {
     background-color: var(--primary-color);
     border-color: var(--primary-dark);
 }
+
+/* 悬停提示 */
+.select-cell:hover::after {
+    content: attr(title);
+    position: absolute;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 100;
+}
+.select-dot:hover {
+        transform: scale(1.1);
+    }
 
 /* 按钮状态样式 */
 .btn-disabled {
@@ -251,6 +270,8 @@ td.select-cell {
     color: #eee;
     border-color: #555;
 }
+
+
 
 /* 选择圆点暗黑样式 */
 .dark .select-dot {
