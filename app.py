@@ -131,9 +131,13 @@ def set_objective(reaction_id):
     global model
     if model is None:
         return "No model loaded."
-    # model.objective = model.reactions.get_by_id(reaction_id)
-    confirm['objective'].append(reaction_id)
-    return f"Objective set to reaction {reaction_id}."
+    
+    # 添加判重逻辑
+    if reaction_id not in confirm['objective']:
+        confirm['objective'].append(reaction_id)
+        return f"Reaction {reaction_id} added to objectives."
+    else:
+        return f"Reaction {reaction_id} already exists in objectives."
 
 @app.route('/reaction/<reaction_id>/<lower>/<upper>')
 def set_reaction(reaction_id, lower, upper):
@@ -157,10 +161,13 @@ def knock_out_gene(gene_id):
     global model
     if model is None:
         return "No model loaded."
-    confirm['deleted_genes'].append(gene_id)
-    # model.genes.get_by_id(gene_id).knock_out()
-
-    return f"Gene {gene_id} knocked out."
+    
+    # 添加判重逻辑
+    if gene_id not in confirm['deleted_genes']:
+        confirm['deleted_genes'].append(gene_id)
+        return f"Gene {gene_id} added to deleted_genes."
+    else:
+        return f"Gene {gene_id} already exists in deleted_genes."
 
 @app.route('/confirm')
 def set_confirm():
