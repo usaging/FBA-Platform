@@ -101,7 +101,7 @@
         };
     }
 
-    // 修改：搜索输入监听（即时触发）
+    // 搜索输入监听（即时触发）
     document.getElementById('searchInput').addEventListener('input', debounce(function (e) {
         const query = e.target.value.trim();
 

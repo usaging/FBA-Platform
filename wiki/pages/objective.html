@@ -12,7 +12,6 @@
         <input type="text" id="searchInput" placeholder="搜索反应ID或名称..." class="search-input">
         <button id="clear-btn" class="search-btn">清空</button>
         <button id="organize-btn" class="search-btn">整理</button>
-        <input type="file" id="fileInput" style="display: none;"></input>
     </div>
 
     <div class="content">
@@ -35,7 +34,14 @@
     let filteredData = [];   // 过滤后的数据
     let fuse = null;
 
+    let selectedReactionId = localStorage.getItem('selectedReactionId') || null;
+
+    initData();
+
     function initData() {
+        // 先读取本地存储
+        selectedReactionId = localStorage.getItem('selectedReactionId') || null;
+
         fetch('/reaction.json')
             .then(res => res.json())
             .then(data => {
@@ -81,41 +87,46 @@
         renderPagination();
     }));
 
-    // 渲染表格
+    // 添加选择列渲染逻辑
     function renderTable() {
         const table = document.getElementById('objective-table');
         const thead = table.querySelector('thead');
         const tbody = table.querySelector('tbody');
 
-        // 清空旧内容
         thead.innerHTML = '';
         tbody.innerHTML = '';
 
         if (filteredData.length === 0) {
-            thead.innerHTML = '<tr><th colspan="4">没有找到匹配的反应</th></tr>';
+            thead.innerHTML = '<tr><th colspan="3">没有找到匹配的反应</th></tr>';
             return;
         }
 
-        // 表头也需要同步修改
+        // 添加选择列表头
         thead.innerHTML = `
-    <tr>
-        <th>名称</th>
-        <th>反应式</th>
-    </tr>
-`;
+            <tr>
+                <th>名称</th>
+                <th>反应式</th>
+                <th>选择</th>
+            </tr>
+        `;
 
-        // 分页数据
         const start = (currentPage - 1) * rowsPerPage;
         const pageData = filteredData.slice(start, start + rowsPerPage);
 
-        // 修改后的渲染片段（删除 source 列）
+        // 添加选择列单元格
         tbody.innerHTML = pageData.map(row => `
-    <tr>
-        <td>${row.name}</td>
-        <td>${row.reaction}</td>
-    </tr>
-`).join('');
+            <tr>
+                <td>${row.name}</td>
+                <td>${row.reaction}</td>
+                <td class="select-cell">
+                    <div class="select-dot ${selectedReactionId === row.name ? 'selected' : ''}" 
+                         onclick="selectReaction('${row.name}')"></div>
+                </td>
+            </tr>
+        `).join('');
     }
+
+
 
     function renderPagination() {
         const container = document.getElementById('pagination');
@@ -176,6 +187,15 @@
         renderPagination();
     }
 
+    function selectReaction(reactionId) {
+        selectedReactionId = reactionId;
+        localStorage.setItem('selectedReactionId', reactionId);
+        renderTable(); // 重新渲染表格以更新圆点状态
+
+        // 保持原有的后端请求
+        fetch('/objective/' + reactionId);
+    }
+
     // 清空按钮点击事件（添加错误处理和响应提示）
     document.getElementById('clear-btn').addEventListener('click', function () {
         selectedReactionId = null;
@@ -191,7 +211,8 @@
             })
             .then(data => {
                 alert(data.message); // 显示后端返回的提示
-                window.location.reload(); // 关键代码：刷新页面
+                renderTable();
+                renderPagination();
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -200,8 +221,30 @@
     });
 </script>
 
-<!-- 保留原有样式 -->
+
 <style>
+    /* 添加选择列样式 */
+    .select-cell {
+        text-align: center;
+        width: 60px;
+    }
+
+    .select-dot {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        border: 2px solid #ccc;
+        cursor: pointer;
+        margin: 0 auto;
+        transition: all 0.3s;
+    }
+
+    .select-dot.selected {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    /* 保留原有搜索样式 */
     .search-container {
         display: flex;
         gap: 10px;
