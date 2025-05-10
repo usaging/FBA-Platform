@@ -34,13 +34,11 @@
     let filteredData = [];   // 过滤后的数据
     let fuse = null;
 
-    let selectedReactionId = localStorage.getItem('selectedReactionId') || null;
+    let selectedReactions = JSON.parse(localStorage.getItem('selectedReactions') || '[]');
 
     initData();
 
     function initData() {
-        // 先读取本地存储
-        selectedReactionId = localStorage.getItem('selectedReactionId') || null;
 
         fetch('/reaction.json')
             .then(res => res.json())
@@ -119,14 +117,12 @@
                 <td>${row.name}</td>
                 <td>${row.reaction}</td>
                 <td class="select-cell">
-                    <div class="select-dot ${selectedReactionId === row.name ? 'selected' : ''}" 
-                         onclick="selectReaction('${row.name}')"></div>
+                    <div class="select-dot ${selectedReactions.includes(row.name) ? 'selected' : ''}" 
+                         onclick="toggleReaction('${row.name}')"></div>
                 </td>
             </tr>
         `).join('');
     }
-
-
 
     function renderPagination() {
         const container = document.getElementById('pagination');
@@ -187,19 +183,29 @@
         renderPagination();
     }
 
-    function selectReaction(reactionId) {
-        selectedReactionId = reactionId;
-        localStorage.setItem('selectedReactionId', reactionId);
-        renderTable(); // 重新渲染表格以更新圆点状态
+
+    function toggleReaction(reactionName) {
+        if (selectedReactions.includes(reactionName)) {
+            selectedReactions = selectedReactions.filter(name => name !== reactionName);
+        } else {
+            selectedReactions.push(reactionName);
+        }
+        localStorage.setItem('selectedReactions', JSON.stringify(selectedReactions));
+        renderTable();
 
         // 保持原有的后端请求
-        fetch('/objective/' + reactionId);
+        fetch('/objective/' + reactionName);
     }
+
+    // 初始化时渲染已选反应
+    document.addEventListener('DOMContentLoaded', () => {
+        renderTable();
+    });
 
     // 清空按钮点击事件（添加错误处理和响应提示）
     document.getElementById('clear-btn').addEventListener('click', function () {
-        selectedReactionId = null;
-        localStorage.removeItem('selectedReactionId');
+        selectedReactions = [];
+        localStorage.setItem('selectedReactions', JSON.stringify(selectedReactions));
         renderTable();
 
         fetch('/clear-objective', { method: 'POST' })
