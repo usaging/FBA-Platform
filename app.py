@@ -20,9 +20,10 @@ model = None
 model_id=None
 confirm={
             "model": None,               # 存储模型名称（字符串）
-            "objective": ["biomass"],             # 存储目标函数（字符串）
+            "objective": [],             # 存储目标函数（字符串）
             "deleted_genes": [],         # 存储待删除基因（列表，如 ["gene1", "gene2"]）
-            "modified_reactions": []     # 存储修改的反应（列表，元素为字典）
+            "modified_reactions": [],     # 存储修改的反应（列表，元素为字典）
+            "modified_objective":[]       # 存储修改的目标函数（字符串）
         }
 
 def allowed_file(filename):
@@ -169,34 +170,46 @@ def knock_out_gene(gene_id):
     else:
         return f"Gene {gene_id} already exists in deleted_genes."
 
+@app.route('/config')
+def set_config():
+    global model
+    global confirm
+    if model is None:
+        return "No model loaded."
+    
+    if confirm["deleted_genes"]:
+        for gene_id in confirm["deleted_genes"]:
+            if gene_id in model.genes:
+                model.genes.get_by_id(gene_id).knock_out()
+            else:
+                print(f"警告: 基因 {gene_id} 不存在于模型中")
+
+    if confirm['modified_objective']:
+        combined_objective=cobra.Model().problem.Objective(0)  # 初始化为零表达式
+        for reaction in confirm['modified_objective']:
+            reaction_id = reaction['reaction']
+            if reaction_id in model.reactions:
+                rxn = model.reactions.get_by_id(reaction_id)
+                combined_objective += rxn.flux_expression * reaction['weight']
+            else:
+                print(f"警告: 反应 {reaction_id} 不存在于模型中")
+        model.objective = combined_objective
+    else:
+        model.objective = "Biomass"
+
+    if confirm["modified_reactions"]:
+        for reaction in confirm["modified_reactions"]:
+            reaction_id = reaction["reaction"]
+            lower_bound = reaction["lower_bound"]
+            upper_bound = reaction["upper_bound"]
+            if reaction_id in model.reactions:
+                model.reactions.get_by_id(reaction_id).lower_bound = lower_bound
+                model.reactions.get_by_id(reaction_id).upper_bound = upper_bound
+            else:
+                print(f"警告: reaction {reaction_id} 不存在于模型中")
+
 @app.route('/confirm')
 def set_confirm():
-    # global model
-    # global confirm
-    # if model is None:
-    #     return "No model loaded."
-    
-    # if confirm["deleted_genes"]:
-    #     for gene_id in confirm["deleted_genes"]:
-    #         if gene_id in model.genes:
-    #             model.genes.get_by_id(gene_id).knock_out()
-    #         else:
-    #             print(f"警告: 基因 {gene_id} 不存在于模型中")
-
-    # if confirm["objective"]:
-    #     model.objective = confirm['objective']
-
-    # if confirm["modified_reactions"]:
-    #     for reaction in confirm["modified_reactions"]:
-    #         reaction_id = reaction["reaction"]
-    #         lower_bound = reaction["lower_bound"]
-    #         upper_bound = reaction["upper_bound"]
-    #         if reaction_id in model.reactions:
-    #             model.reactions.get_by_id(reaction_id).lower_bound = lower_bound
-    #             model.reactions.get_by_id(reaction_id).upper_bound = upper_bound
-    #         else:
-    #             print(f"警告: reaction {reaction_id} 不存在于模型中")
-
     with open("fba_config.json", "w") as f:
         json.dump(confirm, f, indent=2)
     return render_template('pages/confirm.html')
@@ -225,7 +238,7 @@ def clear_constraints():
 def clear_objective():
     global confirm
     try:
-        confirm['objective'] = {"biomass":1.0}
+        confirm['objective'] = []
         # 如果还有其他需要清理的数据，可以在此操作
         return jsonify({"status": "success", "message": "目标函数已清空"})
     except Exception as e:
@@ -248,7 +261,7 @@ def clear_confirm():
     try:
        confirm={
             "model": None,               # 存储模型名称（字符串）
-            "objective": ["biomass"],             # 存储目标函数（字符串）
+            "objective": [],             # 存储目标函数（字符串）
             "deleted_genes": [],         # 存储待删除基因（列表，如 ["gene1", "gene2"]）
             "modified_reactions": []     # 存储修改的反应（列表，元素为字典）
         }

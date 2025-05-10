@@ -1,16 +1,25 @@
 {
-  "model": "iND750",
+  "model": "iMM904",
   "objective": [
-    "biomass",
-    "EX_nh4_e",
-    "EX_ocdca_e"
+    "MI13456PKn",
+    "PMI1346PS"
   ],
-  "deleted_genes": [],
+  "deleted_genes": [
+    "YLR300W",
+    "YOL086C",
+    "YGL184C"
+  ],
   "modified_reactions": [
     {
-      "reaction": "EX_na1_e",
+      "reaction": "13BGH",
+      "lower_bound": 10.0,
+      "upper_bound": 999999.0
+    },
+    {
+      "reaction": "DDPA",
       "lower_bound": 10.0,
       "upper_bound": 999999.0
     }
-  ]
+  ],
+  "modified_objective": []
 }
