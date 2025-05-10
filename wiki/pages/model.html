@@ -129,38 +129,39 @@
         const thead = table.querySelector('thead');
         const tbody = table.querySelector('tbody');
 
-        // if (filteredData.length === 0) { // ✅
-        //     thead.innerHTML = '<tr><th>没有找到匹配的模型</th></tr>';
-        //     tbody.innerHTML = '';
-        //     return;
-        // }
+        // 清空表头和表体
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
 
-        // 表头只在首次渲染
-        if (!thead.hasChildNodes()) {
-            const headers = Object.keys(filteredData[0]).concat('选择列');
-            thead.innerHTML = '<tr>' +
-                headers.map(h => `<th>${h}</th>`).join('') +
-                '</tr>';
+        if (filteredData.length === 0) {
+            // 无数据时显示提示
+            thead.innerHTML = '<tr><th>没有找到匹配的模型</th></tr>';
+            return;
         }
 
+        // 动态生成表头（每次渲染都重新生成）
+        const headers = Object.keys(filteredData[0]).concat('选择列');
+        thead.innerHTML = '<tr>' +
+            headers.map(h => `<th>${h}</th>`).join('') +
+            '</tr>';
+
+        // 渲染分页数据
         const start = (currentPage - 1) * rowsPerPage;
         const pageData = filteredData.slice(start, start + rowsPerPage);
 
         tbody.innerHTML = pageData.map((row, idx) => {
-            const realIndex = start + idx;
             const cells = Object.keys(row).map(key => {
                 if (key === '来源') {
                     return `<td class="source-cell">${row[key]}</td>`;
                 }
                 return `<td>${row[key]}</td>`;
             });
-            // 修改操作列为圆点选择
             cells.push(`
-                <td class="select-cell">
-                    <div class="select-dot ${selectedModelId === row.ID ? 'selected' : ''}" 
-                         onclick="selectModel('${row.ID}')"></div>
-                </td>
-            `);
+            <td class="select-cell">
+                <div class="select-dot ${selectedModelId === row.ID ? 'selected' : ''}" 
+                     onclick="selectModel('${row.ID}')"></div>
+            </td>
+        `);
             return `<tr>${cells.join('')}</tr>`;
         }).join('');
     }
