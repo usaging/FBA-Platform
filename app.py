@@ -145,13 +145,13 @@ def set_reaction(reaction_id, lower, upper):
     global model
     if model is None:
         return "No model loaded."
-    reaction = model.reactions.get_by_id(reaction_id)
+    # reaction = model.reactions.get_by_id(reaction_id)
     # reaction.lower_bound = float(lower)
     # reaction.upper_bound = float(upper)
     confirm['modified_reactions'].append({
         "reaction": reaction_id,
-        "lower_bound": reaction.lower_bound,
-        "upper_bound": reaction.upper_bound
+        "lower_bound": float(lower),
+        "upper_bound": float(upper)
     })
     return f"Reaction {reaction_id} bounds set to [{lower}, {upper}]."
 
