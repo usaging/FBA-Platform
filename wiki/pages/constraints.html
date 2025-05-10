@@ -152,6 +152,19 @@
     document.getElementById('clear-btn').addEventListener('click', function() {
         console.log('清空按钮被点击');
         // 这里可以添加清空逻辑
+
+
+        
+document.getElementById('darkModeToggle')?.addEventListener('change', () => {
+    renderTable();
+});
+
+// 初始化时检查暗黑模式
+if (document.body.classList.contains('dark')) {
+    document.documentElement.style.setProperty('--table-bg', '#333');
+} else {
+    document.documentElement.style.setProperty('--table-bg', 'white');
+}
     });
     
 </script>
@@ -159,29 +172,44 @@
 <style>
     /* 美化上下限输入框 */
     .bound-input {
-        width: 80px;
-        padding: 6px 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: 0.9em;
-        transition: border-color 0.2s ease;
+       width: 80px;
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9em;
+    transition: all 0.2s ease;
+    text-align: center;
+    background-color: white;
     }
 
     .bound-input:focus {
         outline: none;
-        border-color: #409eff;
-        box-shadow: 0 0 5px rgba(64, 158, 255, 0.5);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.2);
     }
+
+    /* 新增输入框响应式样式 */
+.bound-input:hover {
+    border-color: #c0c4cc;
+}
 
     /* 按钮通用样式 */
     .btn {
-        padding: 6px 12px;
-        border: none;
-        border-radius: 4px;
-        font-size: 0.9em;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
+        padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
     }
+
+    .search-btn:hover {
+    background-color: var(--primary-dark);
+}
 
     .objective-btn {
         background-color: #67c23a;
@@ -193,30 +221,64 @@
     }
 
     .submit-btn {
-        background-color: #409eff;
-        color: white;
+        background-color: var(--primary-color);
+    color: white;
     }
 
     .submit-btn:hover {
-        background-color: #368fe0;
+         background-color: var(--primary-color);
+    color: white;
     }
 
-    /* 分页样式略，保持原有样式不变 */
-    #pagination button {
-        margin: 0 2px;
-        padding: 4px 8px;
-        cursor: pointer;
-    }
+    /* 表格样式增强 */
+#reaction-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
 
-    #pagination button.active {
-        font-weight: bold;
-        text-decoration: underline;
-    }
+#reaction-table th, #reaction-table td {
+    padding: 12px 15px;
+    border: 1px solid #e0e0e0;
+    text-align: left;
+}
 
-    #pagination button:disabled {
-        opacity: 0.5;
-        cursor: default;
-    }
+#reaction-table th {
+    background-color: #f5f7fa;
+    font-weight: 600;
+    color: #333;
+}
+
+/* 分页样式增强 */
+#pagination {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+#pagination button {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+#pagination button:hover:not(:disabled) {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+#pagination button.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
 
     .ellipsis {
         display: inline-block;
@@ -233,6 +295,84 @@
     .shell li a#a2 .text {
         color: var(--shell-color);
     }
+
+
+     /* 新增暗黑模式样式 */
+    .dark .bound-input {
+        background-color: #444;
+        color: #eee;
+        border-color: #666;
+    }
+
+    .dark .bound-input:focus {
+        border-color: #409eff;
+        box-shadow: 0 0 5px rgba(64, 158, 255, 0.5);
+    }
+
+    .dark .submit-btn {
+        background-color: #337ecc;
+    }
+
+    .dark .submit-btn:hover {
+        background-color: #409eff;
+    }
+
+    .dark #reaction-table {
+        background-color: #333;
+        color: #eee;
+    }
+
+    .dark #reaction-table th {
+        background-color: #444;
+        color: var(--primary-color);
+    }
+
+    .dark #reaction-table td {
+        border-color: #555;
+    }
+
+    .dark #pagination button {
+        background-color: #444;
+        color: #eee;
+        border: 1px solid #555;
+    }
+
+    .dark #pagination button.active {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    /* 暗黑模式表格行悬停 */
+.dark #reaction-table tr:hover td {
+    background-color: #444;
+}
+
+/* 暗黑模式输入框placeholder颜色 */
+.dark .bound-input::placeholder {
+    color: #999;
+}
+
+  .dark #reactions-table th {
+        border-bottom: 0.5px solid white;  /* 白色下边框 */
+    }
+
+@media (max-width: 768px) {
+    .bound-input {
+        width: 60px;
+        padding: 4px 8px;
+    }
+    
+    .btn {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+    
+    #reaction-table th, 
+    #reaction-table td {
+        padding: 8px 10px;
+    }
+}
+
 </style>
 
 {% endblock %}

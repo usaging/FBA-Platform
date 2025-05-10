@@ -3,6 +3,10 @@
 {% block title %}FBA分析平台{% endblock %}
 
 {% block page_content %}
+
+<link href="{{ url_for('static', filename = 'css/base.css')}}" rel="stylesheet">
+
+
 <style>
     .welcome-container {
         display: flex;
@@ -24,7 +28,7 @@
         margin-bottom: 50px;
     }
 
-     .start-btn {
+    .start-btn {
         padding: 8px 16px;
         background-color: var(--primary-color);
         color: white;

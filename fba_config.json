@@ -1,14 +1,8 @@
 {
-  "model": "iJN746",
-  "objective": [
-    "biomass"
-  ],
+  "model": "iJN678",
+  "objective": "biomass",
   "deleted_genes": [
-    "PP_0591",
-    "PP_3591",
-    "PP_2432",
-    "PP_2432",
-    "PP_2432"
+    "glk"
   ],
   "modified_reactions": []
 }
