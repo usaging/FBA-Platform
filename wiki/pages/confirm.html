@@ -7,7 +7,9 @@
 
 <div class="main"  style="padding-top: 10px">
     <div class="feature">
-        <!-- 可放置页面特色内容 -->
+        <div class="search-container" style="justify-content: flex-start;">
+            <button id="clear-btn" class="search-btn">清空配置</button>
+        </div>
     </div>
     <div class="content">
         <h2>Model 信息</h2>
@@ -78,6 +80,25 @@
                 modTbody.appendChild(row);
             });
         });
+
+
+
+         // 添加清空按钮点击事件
+    document.getElementById('clear-btn').addEventListener('click', function() {
+        if (confirm('确定要清空所有配置吗？')) {
+            console.log('清空配置按钮被点击');
+            // 这里可以添加清空配置逻辑
+            fetch('/clear-config', { method: 'POST' })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        console.error('清空配置失败');
+                    }
+                });
+        }
+    });
+    
 </script>
 
 <style>

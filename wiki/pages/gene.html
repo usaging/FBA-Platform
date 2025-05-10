@@ -7,8 +7,11 @@
 <link href="{{ url_for('static', filename = 'css/base.css')}}" rel="stylesheet">
 
 <div class="main"  style="padding-top: 10px">
-    <div class="feature">
-
+     <div class="search-container">
+        <input type="text" id="searchInput" placeholder="搜索基因ID或名称..." class="search-input">
+        <button id="searchBtn" class="search-btn">搜索</button>
+        <button id="clear-btn" class="search-btn">清空</button>
+        <button id="organize-btn" class="search-btn">整理</button>
     </div>
     <div class="content">
         <table id="gene-table">
@@ -164,6 +167,20 @@
     document.addEventListener('DOMContentLoaded', () => {
         renderTable();
     });
+
+     // 添加清空按钮点击事件
+    document.getElementById('clear-btn').addEventListener('click', function() {
+        console.log('清空按钮被点击');
+        // 这里可以添加清空逻辑
+    });
+
+    // 添加整理按钮点击事件
+    document.getElementById('organize-btn').addEventListener('click', function() {
+        console.log('整理按钮被点击');
+        // 这里可以添加整理逻辑
+    });
+
+    
 </script>
 
 <style>

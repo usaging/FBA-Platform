@@ -7,7 +7,6 @@
 
 body {
     min-height: 100vh;
-    /* 将背景图片替换为纯色背景，这里使用 #f0f0f0 作为示例，你可以根据需求修改 */
     background-color: #f0f0f0;
     color: #333;
     font-family: 'Arial', sans-serif;
@@ -17,14 +16,47 @@ body {
 
 .content {
     backdrop-filter: blur(10px);
-    margin-top: 60px;
-    margin-left: 130px;
+    margin-top: 30px;
+    margin-left: 120px;
     padding: 10px;
     min-height: calc(100vh - 60px);
     background-color: rgba(255, 255, 255, 0.8);
     position: relative;
     z-index: 1;
-    width: calc(100% - 180px);  /* 增加宽度 */
+    width: calc(100% - 180px);
+}
+
+/* 搜索组件样式 */
+.search-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 0 20px;
+    margin: 60px 120px;
+    margin-bottom: 30px;
+}
+
+.search-input {
+    flex: 1;
+    max-width: none;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.search-btn {
+    padding: 8px 16px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.search-btn:hover {
+    background-color: var(--primary-dark);
 }
 
 /* 表格样式调整 */
@@ -78,7 +110,8 @@ td.select-cell {
     background-color: var(--primary-color);
     border-color: var(--primary-dark);
 }
-/* 添加按钮状态样式 */
+
+/* 按钮状态样式 */
 .btn-disabled {
     background-color: #cccccc;
     color: #666666;
@@ -119,6 +152,7 @@ td.select-cell {
     opacity: 0.5;
     cursor: not-allowed;
 }
+
 /* 暗黑模式样式 */
 .dark {
     --body-color: #202224;
@@ -150,4 +184,14 @@ td.select-cell {
 
 .dark td.source-cell {
     color: #aaa;
+}
+
+.dark .search-input {
+    background-color: #333;
+    color: #eee;
+    border-color: #555;
+}
+
+.dark .search-btn {
+    background-color: var(--primary-dark);
 }

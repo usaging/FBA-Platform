@@ -6,19 +6,23 @@
 
 <link href="{{ url_for('static', filename = 'css/base.css')}}" rel="stylesheet">
 
-
-
 <div class="main" style="padding-top: 10px"> 
-    <div class="feature">
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="搜索模型ID或名称..." class="search-input">
+        <button id="searchBtn" class="search-btn">搜索</button>
+        <button id="import-btn" class="search-btn">导入</button>
+        <button id="clear-btn" class="search-btn">清空</button>
     </div>
+    
     <div class="content">
         <table id="model-table">
             <thead></thead>
             <tbody></tbody>
         </table>
     </div>
-    <div id="pagination" style="margin-top: 1em; text-align: center; margin-bottom: 10px;"></div>
+    <div id="pagination" style="margin-top: 1em; text-align: center; margin-bottom: 20px;"></div>
 </div>
+
 <script>
     const rowsPerPage = 15;
     let currentPage = 1;
@@ -26,12 +30,15 @@
     let rowData = [];
     let selectedModelId = localStorage.getItem('selectedModelId') || null;
 
-
     fetch('/model.json')
         .then(res => res.json())
         .then(data => {
-            rowData = data;
-            totalPages = Math.ceil(data.length / rowsPerPage);
+            // Add source column to each row
+            rowData = data.map(row => ({
+                '来源': '本地',  // Default source
+                ...row
+            }));
+            totalPages = Math.ceil(rowData.length / rowsPerPage);
             renderTable();
             renderPagination();
         });
@@ -49,7 +56,7 @@
 
         // 表头只在首次渲染
         if (!thead.hasChildNodes()) {
-            const headers = Object.keys(rowData[0]).concat('操作');
+            const headers = Object.keys(rowData[0]).concat('选择列');
             thead.innerHTML = '<tr>' +
                 headers.map(h => `<th>${h}</th>`).join('') +
                 '</tr>';
@@ -60,7 +67,12 @@
 
         tbody.innerHTML = pageData.map((row, idx) => {
             const realIndex = start + idx;
-            const cells = Object.keys(row).map(key => `<td>${row[key]}</td>`);
+            const cells = Object.keys(row).map(key => {
+                if (key === '来源') {
+                    return `<td class="source-cell">${row[key]}</td>`;
+                }
+                return `<td>${row[key]}</td>`;
+            });
             // 修改操作列为圆点选择
             cells.push(`
                 <td class="select-cell">
@@ -140,6 +152,58 @@
         // 保持原有的后端请求
         fetch('/model/' + modelId);
     }
+
+    // 添加导入按钮点击事件
+    document.getElementById('import-btn').addEventListener('click', function() {
+        // 这里可以添加导入逻辑
+        console.log('导入按钮被点击');
+    });
+
+    // 添加清空按钮点击事件
+    document.getElementById('clear-btn').addEventListener('click', function() {
+        // 清空选择状态
+        selectedModelId = null;
+        localStorage.removeItem('selectedModelId');
+        renderTable();
+        
+        // 这里可以添加清空数据的后端请求
+        fetch('/clear-models', { method: 'POST' })
+            .then(response => {
+                if (!response.ok) {
+                    console.error('清空数据失败');
+                }
+            });
+    });
+
+    // 搜索按钮暂时不做任何操作
+    document.getElementById('searchBtn').addEventListener('click', function() {
+        console.log('搜索功能暂未实现');
+    });
 </script>
+
+<style>
+    .search-container {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+        padding: 0 20px;
+    }
+    
+    .search-input {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-right: 10px;
+    }
+    
+    .search-btn {
+        padding: 8px 16px;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+</style>
 
 {% endblock %}
