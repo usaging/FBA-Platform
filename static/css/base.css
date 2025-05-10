@@ -19,11 +19,12 @@ body {
     margin-top: 30px;
     margin-left: 120px;
     padding: 10px;
-    min-height: calc(100vh - 60px);
+    min-height: calc(100vh - 30px);
     background-color: rgba(255, 255, 255, 0.8);
     position: relative;
     z-index: 1;
-    width: calc(100% - 180px);
+    width: calc(100% - 120px);
+    box-sizing: border-box; /* 确保padding不影响总宽度 */
 }
 
 /* 统一按钮样式 */
@@ -192,31 +193,83 @@ td.select-cell {
 
 .dark table {
     background-color: #333;
+    color: #eee;
+    border: 1px solid #555;
 }
 
-.dark th, .dark td {
+.dark td {
     border-color: #555;
 }
 
 .dark th {
     background-color: #444;
     color: var(--primary-color);
+    border-bottom: 2px solid #666;
 }
 
-.dark tr:hover {
+.dark tr:hover td {
     background-color: #444;
 }
 
-.dark td.source-cell {
-    color: #aaa;
+/* 特定页面表格样式 */
+.dark #model-table,
+.dark #gene-table,
+.dark #objective-table,
+.dark #model-info-table,
+.dark #deleted-genes-table,
+.dark #modified-reactions-table {
+    background-color: #333;
 }
 
+.dark #model-table th,
+.dark #gene-table th,
+.dark #objective-table th,
+.dark #model-info-table th,
+.dark #deleted-genes-table th,
+.dark #modified-reactions-table th {
+    background-color: #444;
+    color: var(--primary-color);
+    border-bottom: 2px solid #666;
+}
+
+/* 分页按钮暗黑样式 */
+.dark #pagination button {
+    background-color: #444;
+    color: #eee;
+    border: 1px solid #555;
+}
+
+.dark #pagination button.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* 输入框暗黑样式 */
 .dark .search-input {
-    background-color: #333;
+    background-color: #444;
     color: #eee;
     border-color: #555;
 }
 
-.dark .search-btn {
-    background-color: var(--primary-dark);
+/* 选择圆点暗黑样式 */
+.dark .select-dot {
+    border-color: #666;
+}
+
+.dark .select-dot.selected {
+    background-color: var(--primary-color);
+    border-color: var(--primary-dark);
+}
+
+/* 来源单元格暗黑样式 */
+.dark .source-cell {
+    color: #aaa;
+}
+
+/* 预格式化文本暗黑样式 */
+.dark pre {
+    color: #eee;
+    background-color: #333;
+    border: 1px solid #555;
 }

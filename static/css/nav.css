@@ -209,8 +209,17 @@ input:checked +.slider:before {
 
 .dark .nav-link a:hover,
 .dark .nav-link a.active {
-    /* background-color: #1e3a8a !important; 深蓝色背景 */
+    background-color: #1e3a8a !important; /*深蓝色背景*/
     color: white !important;
+}
+
+/* 暗黑模式下的步骤图标 */
+.dark .step-icon {
+    color: #aaa;
+}
+
+.dark .step-item.active {
+    color: var(--primary-light);
 }
 
 .dark .bottom-content {
