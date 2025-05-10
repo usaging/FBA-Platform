@@ -1,14 +1,16 @@
 {
-  "model": "iJN746",
+  "model": "iND750",
   "objective": [
-    "biomass"
+    "biomass",
+    "EX_nh4_e",
+    "EX_ocdca_e"
   ],
-  "deleted_genes": [
-    "PP_0591",
-    "PP_3591",
-    "PP_2432",
-    "PP_2432",
-    "PP_2432"
-  ],
-  "modified_reactions": []
+  "deleted_genes": [],
+  "modified_reactions": [
+    {
+      "reaction": "EX_na1_e",
+      "lower_bound": 10.0,
+      "upper_bound": 999999.0
+    }
+  ]
 }

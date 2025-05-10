@@ -41,7 +41,7 @@
             originalData = data
             // 初始化 Fuse.js（根据实际字段修改 keys）
             fuse = new Fuse(originalData, {
-                keys: ['name','reaction'], // 根据你的 JSON 字段名修改
+                keys: ['name', 'reaction'], // 根据你的 JSON 字段名修改
                 threshold: 0.3,
                 includeMatches: true,
                 minMatchCharLength: 1
@@ -54,34 +54,34 @@
             renderPagination();
         });
 
-         // 防抖函数
-            function debounce(func, delay = 300) {
-                let timer;
-                return (...args) => {
-                    clearTimeout(timer);
-                    timer = setTimeout(() => func.apply(this, args), delay);
-                };
-            }
+    // 防抖函数
+    function debounce(func, delay = 300) {
+        let timer;
+        return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => func.apply(this, args), delay);
+        };
+    }
 
-            // 搜索输入监听（即时触发）
-            document.getElementById('searchInput').addEventListener('input', debounce(function (e) {
-                const query = e.target.value.trim();
+    // 搜索输入监听（即时触发）
+    document.getElementById('searchInput').addEventListener('input', debounce(function (e) {
+        const query = e.target.value.trim();
 
-                if (!query) {
-                    // 空搜索时恢复全部数据
-                    filteredData = originalData;
-                } else {
-                    // 使用 Fuse.js 搜索
-                    const results = fuse.search(query);
-                    filteredData = results.map(r => r.item);
-                }
+        if (!query) {
+            // 空搜索时恢复全部数据
+            filteredData = originalData;
+        } else {
+            // 使用 Fuse.js 搜索
+            const results = fuse.search(query);
+            filteredData = results.map(r => r.item);
+        }
 
-                // 重置分页
-                currentPage = 1;
-                totalPages = Math.ceil(filteredData.length / rowsPerPage);
-                renderTable();
-                renderPagination();
-            }));
+        // 重置分页
+        currentPage = 1;
+        totalPages = Math.ceil(filteredData.length / rowsPerPage);
+        renderTable();
+        renderPagination();
+    }));
 
     function renderTable() {
         const table = document.getElementById('reaction-table');
@@ -138,7 +138,7 @@
         }).join('');
     }
 
-    
+
 
     function renderPagination() {
         const container = document.getElementById('pagination');
@@ -182,91 +182,91 @@
 
     // 提交上下限按钮逻辑
     function submitBounds(index) {
-        const item = rowData[index];
+        const item = filteredData[index];
         const id = item.name;
         const lower = document.getElementById(`lower-${index}`).value;
         const upper = document.getElementById(`upper-${index}`).value;
         fetch('/reaction/' + id + '/' + lower + '/' + upper);
     }
 
-        // 清空按钮点击事件（添加错误处理和响应提示）
-            document.getElementById('clear-btn').addEventListener('click', function () {
-                selectedReactionId = null;
-                localStorage.removeItem('selectedReactionId');
-                renderTable();
+    // 清空按钮点击事件（添加错误处理和响应提示）
+    document.getElementById('clear-btn').addEventListener('click', function () {
+        selectedReactionId = null;
+        localStorage.removeItem('selectedReactionId');
+        renderTable();
 
-                fetch('/clear-constraints', { method: 'POST' })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('清空请求失败');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        alert(data.message); // 显示后端返回的提示
-                        window.location.reload(); // 关键代码：刷新页面
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('清空失败: ' + error.message);
-                    });
+        fetch('/clear-constraints', { method: 'POST' })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('清空请求失败');
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert(data.message); // 显示后端返回的提示
+                window.location.reload(); // 关键代码：刷新页面
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('清空失败: ' + error.message);
+            });
 
 
-document.getElementById('darkModeToggle')?.addEventListener('change', () => {
-    renderTable();
-});
+        document.getElementById('darkModeToggle')?.addEventListener('change', () => {
+            renderTable();
+        });
 
-// 初始化时检查暗黑模式
-if (document.body.classList.contains('dark')) {
-    document.documentElement.style.setProperty('--table-bg', '#333');
-} else {
-    document.documentElement.style.setProperty('--table-bg', 'white');
-}
-});
-    
+        // 初始化时检查暗黑模式
+        if (document.body.classList.contains('dark')) {
+            document.documentElement.style.setProperty('--table-bg', '#333');
+        } else {
+            document.documentElement.style.setProperty('--table-bg', 'white');
+        }
+    });
+
 </script>
 
 <style>
     /* 美化上下限输入框 */
     .bound-input {
-       width: 80px;
-    padding: 6px 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 0.9em;
-    transition: all 0.2s ease;
-    text-align: center;
-    background-color: white;
+        width: 80px;
+        padding: 6px 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 0.9em;
+        transition: all 0.2s ease;
+        text-align: center;
+        background-color: white;
     }
 
     .bound-input:focus {
         outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.2);
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.2);
     }
 
     /* 新增输入框响应式样式 */
-.bound-input:hover {
-    border-color: #c0c4cc;
-}
+    .bound-input:hover {
+        border-color: #c0c4cc;
+    }
 
     /* 按钮通用样式 */
     .btn {
         padding: 8px 16px;
-    border-radius: 4px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
+        border-radius: 4px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
     }
 
     .search-btn:hover {
-    background-color: var(--primary-dark);
-}
+        background-color: var(--primary-dark);
+    }
 
     .objective-btn {
         background-color: #67c23a;
@@ -279,62 +279,63 @@ if (document.body.classList.contains('dark')) {
 
     .submit-btn {
         background-color: var(--primary-color);
-    color: white;
+        color: white;
     }
 
     .submit-btn:hover {
-         background-color: var(--primary-color);
-    color: white;
+        background-color: var(--primary-color);
+        color: white;
     }
 
     /* 表格样式增强 */
-#reaction-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 15px 0;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
+    #reaction-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
 
-#reaction-table th, #reaction-table td {
-    padding: 12px 15px;
-    border: 1px solid #e0e0e0;
-    text-align: left;
-}
+    #reaction-table th,
+    #reaction-table td {
+        padding: 12px 15px;
+        border: 1px solid #e0e0e0;
+        text-align: left;
+    }
 
-#reaction-table th {
-    background-color: #f5f7fa;
-    font-weight: 600;
-    color: #333;
-}
+    #reaction-table th {
+        background-color: #f5f7fa;
+        font-weight: 600;
+        color: #333;
+    }
 
-/* 分页样式增强 */
-#pagination {
-    margin: 20px 0;
-    display: flex;
-    justify-content: center;
-    gap: 5px;
-}
+    /* 分页样式增强 */
+    #pagination {
+        margin: 20px 0;
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+    }
 
-#pagination button {
-    min-width: 32px;
-    height: 32px;
-    padding: 0 8px;
-    border: 1px solid #ddd;
-    background: white;
-    border-radius: 4px;
-    transition: all 0.2s;
-}
+    #pagination button {
+        min-width: 32px;
+        height: 32px;
+        padding: 0 8px;
+        border: 1px solid #ddd;
+        background: white;
+        border-radius: 4px;
+        transition: all 0.2s;
+    }
 
-#pagination button:hover:not(:disabled) {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-}
+    #pagination button:hover:not(:disabled) {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
 
-#pagination button.active {
-    background: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
-}
+    #pagination button.active {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
 
 
     .ellipsis {
@@ -354,7 +355,7 @@ if (document.body.classList.contains('dark')) {
     }
 
 
-     /* 新增暗黑模式样式 */
+    /* 新增暗黑模式样式 */
     .dark .bound-input {
         background-color: #444;
         color: #eee;
@@ -400,36 +401,36 @@ if (document.body.classList.contains('dark')) {
     }
 
     /* 暗黑模式表格行悬停 */
-.dark #reaction-table tr:hover td {
-    background-color: #444;
-}
-
-/* 暗黑模式输入框placeholder颜色 */
-.dark .bound-input::placeholder {
-    color: #999;
-}
-
-  .dark #reactions-table th {
-        border-bottom: 0.5px solid white;  /* 白色下边框 */
+    .dark #reaction-table tr:hover td {
+        background-color: #444;
     }
 
-@media (max-width: 768px) {
-    .bound-input {
-        width: 60px;
-        padding: 4px 8px;
+    /* 暗黑模式输入框placeholder颜色 */
+    .dark .bound-input::placeholder {
+        color: #999;
     }
-    
-    .btn {
-        padding: 6px 12px;
-        font-size: 13px;
-    }
-    
-    #reaction-table th, 
-    #reaction-table td {
-        padding: 8px 10px;
-    }
-}
 
+    .dark #reactions-table th {
+        border-bottom: 0.5px solid white;
+        /* 白色下边框 */
+    }
+
+    @media (max-width: 768px) {
+        .bound-input {
+            width: 60px;
+            padding: 4px 8px;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        #reaction-table th,
+        #reaction-table td {
+            padding: 8px 10px;
+        }
+    }
 </style>
 
 {% endblock %}
