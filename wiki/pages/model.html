@@ -8,8 +8,12 @@
 
 <div class="main" style="padding-top: 10px">
     <div class="search-container">
+        <!-- <input type="text" id="searchInput" placeholder="搜索模型ID或名称..." class="search-input">
+        <button id="searchBtn" class="search-btn">搜索</button> -->
+
+        <!-- 修改搜索框：移除搜索按钮，改为即时输入触发 -->
         <input type="text" id="searchInput" placeholder="搜索模型ID或名称..." class="search-input">
-        <button id="searchBtn" class="search-btn">搜索</button>
+
         <input type="file" id="fileInput" style="display: none;"></input>
         <button id="import-btn" class="search-btn">导入</button>
         <button id="clear-btn" class="search-btn">清空</button>
@@ -23,6 +27,9 @@
     </div>
     <div id="pagination" style="margin-top: 1em; text-align: center; margin-bottom: 20px;"></div>
 </div>
+
+<!-- 引入 Fuse.js -->
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
 
 <script>
     // 添加导入按钮点击事件
@@ -58,43 +65,86 @@
     const rowsPerPage = 15;
     let currentPage = 1;
     let totalPages = 1;
-    let rowData = [];
+    // let rowData = [];
+    let originalData = []; // 原始数据（用于重置）
+    let filteredData = [];  // 过滤后的数据（搜索+分页）
+    let fuse = null;        // Fuse.js 实例
+
     let selectedModelId = localStorage.getItem('selectedModelId') || null;
 
+    // 初始化：加载数据并配置 Fuse.js
     fetch('/model.json')
         .then(res => res.json())
         .then(data => {
-            // Add source column to each row
-            rowData = data.map(row => ({
-                '来源': '本地',  // Default source
+            originalData = data.map(row => ({
+                '来源': '本地',
                 ...row
             }));
-            totalPages = Math.ceil(rowData.length / rowsPerPage);
+
+            // 初始化 Fuse.js（根据实际字段修改 keys）
+            fuse = new Fuse(originalData, {
+                keys: ['ID'], // 根据你的 JSON 字段名修改
+                threshold: 0.3,
+                includeMatches: true,
+                minMatchCharLength: 1
+            });
+
+            // 初始显示全部数据
+            filteredData = originalData;
+            totalPages = Math.ceil(filteredData.length / rowsPerPage);
             renderTable();
             renderPagination();
         });
+    // 防抖函数
+    function debounce(func, delay = 300) {
+        let timer;
+        return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => func.apply(this, args), delay);
+        };
+    }
+
+    // 修改：搜索输入监听（即时触发）
+    document.getElementById('searchInput').addEventListener('input', debounce(function (e) {
+        const query = e.target.value.trim();
+
+        if (!query) {
+            // 空搜索时恢复全部数据
+            filteredData = originalData;
+        } else {
+            // 使用 Fuse.js 搜索
+            const results = fuse.search(query);
+            filteredData = results.map(r => r.item);
+        }
+
+        // 重置分页
+        currentPage = 1;
+        totalPages = Math.ceil(filteredData.length / rowsPerPage);
+        renderTable();
+        renderPagination();
+    }));
 
     function renderTable() {
         const table = document.getElementById('model-table');
         const thead = table.querySelector('thead');
         const tbody = table.querySelector('tbody');
 
-        if (rowData.length === 0) {
-            thead.innerHTML = '<tr><th>没有数据</th></tr>';
-            tbody.innerHTML = '';
-            return;
-        }
+        // if (filteredData.length === 0) { // ✅
+        //     thead.innerHTML = '<tr><th>没有找到匹配的模型</th></tr>';
+        //     tbody.innerHTML = '';
+        //     return;
+        // }
 
         // 表头只在首次渲染
         if (!thead.hasChildNodes()) {
-            const headers = Object.keys(rowData[0]).concat('选择列');
+            const headers = Object.keys(filteredData[0]).concat('选择列');
             thead.innerHTML = '<tr>' +
                 headers.map(h => `<th>${h}</th>`).join('') +
                 '</tr>';
         }
 
         const start = (currentPage - 1) * rowsPerPage;
-        const pageData = rowData.slice(start, start + rowsPerPage);
+        const pageData = filteredData.slice(start, start + rowsPerPage);
 
         tbody.innerHTML = pageData.map((row, idx) => {
             const realIndex = start + idx;
@@ -208,10 +258,19 @@
     });
 
     // 搜索按钮暂时不做任何操作
-    document.getElementById('searchBtn').addEventListener('click', function () {
-        console.log('搜索功能暂未实现');
-    });
+    // document.getElementById('searchBtn').addEventListener('click', function () {
+    //     console.log('搜索功能暂未实现');
+    // });
 </script>
+
+<!-- <style>
+    /* 新增高亮样式 */
+    .highlight {
+        background-color: #ffeb3b;
+        padding: 2px 0;
+        border-radius: 3px;
+    }
+</style> -->
 
 <style>
     .search-container {
