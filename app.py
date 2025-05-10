@@ -20,7 +20,7 @@ model = None
 model_id=None
 confirm={
             "model": None,               # 存储模型名称（字符串）
-            "objective": "biomass",             # 存储目标函数（字符串）
+            "objective": ["biomass"],             # 存储目标函数（字符串）
             "deleted_genes": [],         # 存储待删除基因（列表，如 ["gene1", "gene2"]）
             "modified_reactions": []     # 存储修改的反应（列表，元素为字典）
         }
@@ -131,9 +131,13 @@ def set_objective(reaction_id):
     global model
     if model is None:
         return "No model loaded."
-    # model.objective = model.reactions.get_by_id(reaction_id)
-    confirm['objective']=reaction_id
-    return f"Objective set to reaction {reaction_id}."
+    
+    # 添加判重逻辑
+    if reaction_id not in confirm['objective']:
+        confirm['objective'].append(reaction_id)
+        return f"Reaction {reaction_id} added to objectives."
+    else:
+        return f"Reaction {reaction_id} already exists in objectives."
 
 @app.route('/reaction/<reaction_id>/<lower>/<upper>')
 def set_reaction(reaction_id, lower, upper):
@@ -157,10 +161,13 @@ def knock_out_gene(gene_id):
     global model
     if model is None:
         return "No model loaded."
-    confirm['deleted_genes'].append(gene_id)
-    # model.genes.get_by_id(gene_id).knock_out()
-
-    return f"Gene {gene_id} knocked out."
+    
+    # 添加判重逻辑
+    if gene_id not in confirm['deleted_genes']:
+        confirm['deleted_genes'].append(gene_id)
+        return f"Gene {gene_id} added to deleted_genes."
+    else:
+        return f"Gene {gene_id} already exists in deleted_genes."
 
 @app.route('/confirm')
 def set_confirm():
@@ -208,22 +215,39 @@ def clear_models():
 def clear_objective():
     global confirm
     try:
-        confirm['objective'] = "biomass"
+        confirm['objective'] = {"biomass":1.0}
         # 如果还有其他需要清理的数据，可以在此操作
         return jsonify({"status": "success", "message": "目标函数已清空"})
     except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500        
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route('/clear-genes', methods=['POST'])  # 明确指定允许 POST 方法
+def clear_genes():
+    global confirm
+    try:
+        confirm['deleted_genes'] = []
+        # 如果还有其他需要清理的数据，可以在此操作
+        return jsonify({"status": "success", "message": "待删除基因已清空"})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500             
 
 @app.route('/cancel')
 def clear_confirm():
     global confirm
     confirm={
             "model": None,               # 存储模型名称（字符串）
-            "objective": "biomass",             # 存储目标函数（字符串）
+            "objective": ["biomass"],             # 存储目标函数（字符串）
             "deleted_genes": [],         # 存储待删除基因（列表，如 ["gene1", "gene2"]）
             "modified_reactions": []     # 存储修改的反应（列表，元素为字典）
         }
-    
+
+# @app.route('/setobjective')
+# def set_objective(reaction_list):
+#     #传入一个reaction-weight的数组，设置objective
+#     global model
+
+
 @app.route('/result')
 def optimize():
     global model
