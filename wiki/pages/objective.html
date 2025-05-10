@@ -8,12 +8,12 @@
 
 <div class="main" style="padding-top: 10px">
     <div class="search-container">
+        <!-- 改为即时搜索输入框 -->
         <input type="text" id="searchInput" placeholder="搜索反应ID或名称..." class="search-input">
-        <button id="searchBtn" class="search-btn">搜索</button>
         <button id="clear-btn" class="search-btn">清空</button>
         <button id="organize-btn" class="search-btn">整理</button>
     </div>
-    
+
     <div class="content">
         <table id="objective-table">
             <thead></thead>
@@ -23,114 +23,242 @@
     <div id="pagination" style="margin-top: 1em; text-align: center; margin-bottom: 80px;"></div>
 </div>
 
+<!-- 引入 Fuse.js -->
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+
 <script>
     const rowsPerPage = 15;
     let currentPage = 1;
     let totalPages = 1;
-    let rowData = [];
-    
+    let originalData = [];  // 原始数据（本地+导入）
+    let filteredData = [];   // 过滤后的数据
+    let fuse = null;
 
-    fetch('/reaction.json')
-        .then(res => res.json())
-        .then(data => {
-            // 添加来源信息
-            rowData = data.map(item => ({
-                ...item,
-                source: '本地'
-            }));
-            
-            // 检查是否有导入的数据
-            const importedData = JSON.parse(localStorage.getItem('importedReactions') || []);
-            if (importedData.length > 0) {
-                const importedWithSource = importedData.map(item => ({
-                    ...item,
-                    source: '导入'
-                }));
-                rowData = [...importedWithSource, ...rowData];
-            }
-            
-            totalPages = Math.ceil(rowData.length / rowsPerPage);
-            renderTable();
-            renderPagination();
-        });
+    let selectedReactionId = localStorage.getItem('selectedReactionId') || null;
 
-    function renderTable(filter = '') {
+    initData();
+
+    function initData() {
+        // 先读取本地存储
+        selectedReactionId = localStorage.getItem('selectedReactionId') || null;
+
+        fetch('/reaction.json')
+            .then(res => res.json())
+            .then(data => {
+                // 直接使用原始数据（不添加 source 字段）
+                originalData = data;  // 假设数据本身已包含所需字段
+
+                // 初始化 Fuse.js
+                fuse = new Fuse(originalData, {
+                    keys: ['reaction', 'name'],  // 根据实际字段调整
+                    threshold: 0.3,
+                    minMatchCharLength: 1
+                });
+
+                filteredData = originalData;
+                totalPages = Math.ceil(filteredData.length / rowsPerPage);
+                renderTable();
+                renderPagination();
+            });
+    }
+    // 防抖函数
+    function debounce(func, delay = 300) {
+        let timer;
+        return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => func.apply(this, args), delay);
+        };
+    }
+
+    // 即时搜索监听
+    document.getElementById('searchInput').addEventListener('input', debounce(function (e) {
+        const query = e.target.value.trim().toLowerCase();
+
+        if (!query) {
+            filteredData = originalData;
+        } else {
+            const results = fuse.search(query);
+            filteredData = results.map(r => r.item);
+        }
+
+        currentPage = 1;
+        totalPages = Math.ceil(filteredData.length / rowsPerPage);
+        renderTable();
+        renderPagination();
+    }));
+
+    // 添加选择列渲染逻辑
+    function renderTable() {
         const table = document.getElementById('objective-table');
         const thead = table.querySelector('thead');
         const tbody = table.querySelector('tbody');
 
-        const filteredData = filter ? 
-            rowData.filter(item => 
-                item.id.toLowerCase().includes(filter) || 
-                (item.name && item.name.toLowerCase().includes(filter))
-            ) : rowData;
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
 
         if (filteredData.length === 0) {
-            thead.innerHTML = '<tr><th>没有找到匹配的反应</th></tr>';
-            tbody.innerHTML = '';
+            thead.innerHTML = '<tr><th colspan="3">没有找到匹配的反应</th></tr>';
             return;
         }
 
-        if (!thead.hasChildNodes()) {
-            const headers = ['来源', 'id', 'name', 'reaction'];
-            thead.innerHTML = '<tr>' +
-                headers.map(h => `<th>${h}</th>`).join('') +
-                '</tr>';
-        }
+        // 添加选择列表头
+        thead.innerHTML = `
+            <tr>
+                <th>名称</th>
+                <th>反应式</th>
+                <th>选择</th>
+            </tr>
+        `;
 
         const start = (currentPage - 1) * rowsPerPage;
         const pageData = filteredData.slice(start, start + rowsPerPage);
 
-        tbody.innerHTML = pageData.map((row, idx) => {
-            const realIndex = start + idx;
-            return `<tr>
-                <td class="source-cell">${row.source || '本地'}</td>
-                <td>${row.id}</td>
-                <td>${row.name || row.id}</td>
+        // 添加选择列单元格
+        tbody.innerHTML = pageData.map(row => `
+            <tr>
+                <td>${row.name}</td>
                 <td>${row.reaction}</td>
-            </tr>`;
-        }).join('');
+                <td class="select-cell">
+                    <div class="select-dot ${selectedReactionId === row.name ? 'selected' : ''}" 
+                         onclick="selectReaction('${row.name}')"></div>
+                </td>
+            </tr>
+        `).join('');
     }
 
-    document.getElementById('searchBtn').addEventListener('click', () => {
-        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        currentPage = 1;
-        renderTable(searchTerm);
+
+
+    function renderPagination() {
+        const container = document.getElementById('pagination');
+        let html = '';
+
+        // 上一页
+        html += `<button ${currentPage === 1 ? 'disabled' : ''} onclick="goToPage(${currentPage - 1})">‹</button>`;
+
+        // 辅助函数：添加页码按钮或省略号
+        function addPage(num) {
+            if (num === '...') {
+                html += `<span class="ellipsis">…</span>`;
+            } else {
+                html += `<button ${num === currentPage ? 'class="active"' : ''}`
+                    + ` onclick="goToPage(${num})">${num}</button>`;
+            }
+        }
+
+        if (totalPages <= 7) {
+            // 页数不多，全部显示
+            for (let i = 1; i <= totalPages; i++) {
+                addPage(i);
+            }
+        } else {
+            // 总页数大于7，折叠逻辑
+            addPage(1);  // 始终显示第1页
+
+            // 前置省略号
+            if (currentPage > 4) {
+                addPage('...');
+            }
+
+            // 中间页码：当前页前后各两页
+            const start = Math.max(2, currentPage - 2);
+            const end = Math.min(totalPages - 1, currentPage + 2);
+            for (let i = start; i <= end; i++) {
+                addPage(i);
+            }
+
+            // 后置省略号
+            if (currentPage < totalPages - 3) {
+                addPage('...');
+            }
+
+            addPage(totalPages);  // 始终显示最后一页
+        }
+
+        // 下一页
+        html += `<button ${currentPage === totalPages ? 'disabled' : ''} onclick="goToPage(${currentPage + 1})">›</button>`;
+
+        container.innerHTML = html;
+    }
+
+    function goToPage(page) {
+        if (page < 1 || page > totalPages || page === currentPage) return;
+        currentPage = page;
+        renderTable();
         renderPagination();
+    }
+
+    function selectReaction(reactionId) {
+        selectedReactionId = reactionId;
+        localStorage.setItem('selectedReactionId', reactionId);
+        renderTable(); // 重新渲染表格以更新圆点状态
+
+        // 保持原有的后端请求
+        fetch('/objective/' + reactionId);
+    }
+
+    // 清空按钮点击事件（添加错误处理和响应提示）
+    document.getElementById('clear-btn').addEventListener('click', function () {
+        selectedReactionId = null;
+        localStorage.removeItem('selectedReactionId');
+        renderTable();
+
+        fetch('/clear-objective', { method: 'POST' })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('清空请求失败');
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert(data.message); // 显示后端返回的提示
+                renderTable();
+                renderPagination();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('清空失败: ' + error.message);
+            });
     });
-
-    // 保留分页函数...
-    
-    // 添加清空按钮点击事件
-    document.getElementById('clear-btn').addEventListener('click', function() {
-        console.log('清空按钮被点击');
-        // 这里可以添加清空逻辑
-    });
-
-    // 添加整理按钮点击事件
-    document.getElementById('organize-btn').addEventListener('click', function() {
-        console.log('整理按钮被点击');
-        // 这里可以添加整理逻辑
-    });
-
-
 </script>
 
+
 <style>
+    /* 添加选择列样式 */
+    .select-cell {
+        text-align: center;
+        width: 60px;
+    }
+
+    .select-dot {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        border: 2px solid #ccc;
+        cursor: pointer;
+        margin: 0 auto;
+        transition: all 0.3s;
+    }
+
+    .select-dot.selected {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    /* 保留原有搜索样式 */
     .search-container {
         display: flex;
         gap: 10px;
         margin-bottom: 15px;
         padding: 0 20px;
     }
-    
+
     .search-input {
         flex: 1;
         padding: 8px 12px;
         border: 1px solid #ddd;
         border-radius: 4px;
     }
-    
+
     .search-btn {
         padding: 8px 16px;
         background-color: var(--primary-color);
