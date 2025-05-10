@@ -82,7 +82,7 @@
             e.preventDefault();
             
             // 检查是否在模型选择页面且未选择模型
-            if (currentPath === '/model' && !selectedModelId) {
+            if (currentPath === '/model' && (modelIdText.textContent === "未选择模型")) {
                 alert('请先选择一个模型');
                 return;
             }
