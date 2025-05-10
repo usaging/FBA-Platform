@@ -1,6 +1,16 @@
 {
-  "model": "iJN678",
-  "objective": "undefined",
-  "deleted_genes": [],
-  "modified_reactions": []
+  "model": "iJN746",
+  "objective": "biomass",
+  "deleted_genes": [
+    "PP_1188",
+    "PP_0591",
+    "PP_1917"
+  ],
+  "modified_reactions": [
+    {
+      "reaction": "3OAR141",
+      "lower_bound": 0.0,
+      "upper_bound": 999999.0
+    }
+  ]
 }

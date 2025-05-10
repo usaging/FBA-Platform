@@ -90,7 +90,6 @@ def serve_gene():
 
 @app.route('/')
 def home():
-    # scan_directory_and_generate_json('./models', './model.json')
     return render_template('pages/index.html')
 
 @app.route('/model')

@@ -26,6 +26,31 @@ body {
     width: calc(100% - 180px);
 }
 
+/* 统一按钮样式 */
+button {
+    padding: 8px 16px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+button:hover {
+    background-color: var(--primary-dark);
+    opacity: 0.9;
+}
+
+/* 特定按钮可以覆盖这些样式 */
+.start-btn {
+    font-size: 16px;
+    padding: 10px 20px;
+}
+
+
+
 /* 搜索组件样式 */
 .search-container {
     display: flex;
