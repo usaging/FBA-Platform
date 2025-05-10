@@ -1,11 +1,5 @@
 [
   {
-    "ID": "e_coli_core",
-    "Metabolite_count": 72,
-    "Gene_count": 137,
-    "Reaction_count": 95
-  },
-  {
     "ID": "iJN678",
     "Metabolite_count": 795,
     "Gene_count": 622,
@@ -64,5 +58,11 @@
     "Metabolite_count": 998,
     "Gene_count": 1008,
     "Reaction_count": 1226
+  },
+  {
+    "ID": "e_coli_core",
+    "Metabolite_count": 72,
+    "Gene_count": 137,
+    "Reaction_count": 95
   }
 ]

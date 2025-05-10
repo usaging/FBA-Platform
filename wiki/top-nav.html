@@ -38,33 +38,6 @@
     </div>
 </nav>
 
-<script>
-    document.getElementById('importBtn').addEventListener('click', () => {
-        document.getElementById('fileInput').click();
-    });
-
-    document.getElementById('fileInput').addEventListener('change', async (e) => {
-        const files = e.target.files;
-        if (files.length === 0) return;
-
-        const formData = new FormData();
-        for (const file of files) {
-            formData.append('files', file);
-        }
-
-        try {
-            const response = await fetch('/upload', {
-                method: 'POST',
-                body: formData
-            });
-
-            const result = await response.json();
-            alert(result.message);
-        } catch (error) {
-            alert('上传失败，请检查网络连接');
-        }
-    });
-</script>
 
 <script>
     // 下一步跳转功能

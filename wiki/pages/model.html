@@ -6,14 +6,15 @@
 
 <link href="{{ url_for('static', filename = 'css/base.css')}}" rel="stylesheet">
 
-<div class="main" style="padding-top: 10px"> 
+<div class="main" style="padding-top: 10px">
     <div class="search-container">
         <input type="text" id="searchInput" placeholder="搜索模型ID或名称..." class="search-input">
         <button id="searchBtn" class="search-btn">搜索</button>
+        <input type="file" id="fileInput" style="display: none;"></input>
         <button id="import-btn" class="search-btn">导入</button>
         <button id="clear-btn" class="search-btn">清空</button>
     </div>
-    
+
     <div class="content">
         <table id="model-table">
             <thead></thead>
@@ -22,6 +23,36 @@
     </div>
     <div id="pagination" style="margin-top: 1em; text-align: center; margin-bottom: 20px;"></div>
 </div>
+
+<script>
+    // 添加导入按钮点击事件
+    document.getElementById('import-btn').addEventListener('click', () => {
+        document.getElementById('fileInput').click();
+    });
+
+    document.getElementById('fileInput').addEventListener('change', async (e) => {
+        const files = e.target.files;
+        if (files.length === 0) return;
+
+        const formData = new FormData();
+        for (const file of files) {
+            formData.append('files', file);
+        }
+
+        try {
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+            alert(result.message);
+        } catch (error) {
+            alert('上传失败，请检查网络连接');
+        }
+    });
+</script>
+
 
 <script>
     const rowsPerPage = 15;
@@ -148,35 +179,36 @@
         localStorage.setItem('selectedModelId', modelId);
         document.getElementById('modelIdText').textContent = modelId;
         renderTable(); // 重新渲染表格以更新圆点状态
-        
+
         // 保持原有的后端请求
         fetch('/model/' + modelId);
     }
 
-    // 添加导入按钮点击事件
-    document.getElementById('import-btn').addEventListener('click', function() {
-        // 这里可以添加导入逻辑
-        console.log('导入按钮被点击');
-    });
-
-    // 添加清空按钮点击事件
-    document.getElementById('clear-btn').addEventListener('click', function() {
-        // 清空选择状态
+    // 清空按钮点击事件（添加错误处理和响应提示）
+    document.getElementById('clear-btn').addEventListener('click', function () {
         selectedModelId = null;
         localStorage.removeItem('selectedModelId');
         renderTable();
-        
-        // 这里可以添加清空数据的后端请求
+
         fetch('/clear-models', { method: 'POST' })
             .then(response => {
                 if (!response.ok) {
-                    console.error('清空数据失败');
+                    throw new Error('清空请求失败');
                 }
+                return response.json();
+            })
+            .then(data => {
+                alert(data.message); // 显示后端返回的提示
+                window.location.reload(); // 关键代码：刷新页面
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('清空失败: ' + error.message);
             });
     });
 
     // 搜索按钮暂时不做任何操作
-    document.getElementById('searchBtn').addEventListener('click', function() {
+    document.getElementById('searchBtn').addEventListener('click', function () {
         console.log('搜索功能暂未实现');
     });
 </script>
@@ -188,14 +220,14 @@
         margin-bottom: 10px;
         padding: 0 20px;
     }
-    
+
     .search-input {
         padding: 8px 12px;
         border: 1px solid #ddd;
         border-radius: 4px;
         margin-right: 10px;
     }
-    
+
     .search-btn {
         padding: 8px 16px;
         background-color: var(--primary-color);

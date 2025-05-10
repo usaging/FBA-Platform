@@ -195,6 +195,16 @@ def set_confirm():
         json.dump(confirm, f, indent=2)
     return render_template('pages/confirm.html')
 
+@app.route('/clear-models', methods=['POST'])  # 明确指定允许 POST 方法
+def clear_models():
+    global model
+    try:
+        model = None
+        # 如果还有其他需要清理的数据，可以在此操作
+        return jsonify({"status": "success", "message": "模型数据已清空"})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 @app.route('/cancel')
 def clear_confirm():
     global confirm
