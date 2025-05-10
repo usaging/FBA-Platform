@@ -211,6 +211,16 @@ def clear_models():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+@app.route('/clear-constraints', methods=['POST'])  # 明确指定允许 POST 方法
+def clear_constraints():
+    global confirm
+    try:
+        confirm['modified_reactions'] = []
+        # 如果还有其他需要清理的数据，可以在此操作
+        return jsonify({"status": "success", "message": "操作函数已清空"})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 @app.route('/clear-objective', methods=['POST'])  # 明确指定允许 POST 方法
 def clear_objective():
     global confirm

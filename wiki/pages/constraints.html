@@ -9,7 +9,6 @@
 <div class="main" style="padding-top: 10px">
     <div class="search-container">
         <input type="text" id="searchInput" placeholder="搜索反应ID或名称..." class="search-input">
-        <button id="searchBtn" class="search-btn">搜索</button>
         <button id="clear-btn" class="search-btn">清空</button>
     </div>
     <div class="content">
@@ -21,28 +20,75 @@
     <div id="pagination" style="margin-top: 1em; text-align: center; margin-bottom: 80px ;"></div>
 </div>
 
+<!-- 引入 Fuse.js -->
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+
 <script>
     const rowsPerPage = 15;
     let currentPage = 1;
     let totalPages = 1;
-    let rowData = [];
+    let originalData = [];  // 原始数据（本地+导入）
+    let filteredData = [];   // 过滤后的数据
+    let fuse = null;
+
+    let selectedReactionId = localStorage.getItem('selectedReactionId') || null;
 
     // 加载数据并初始化表格和分页
     fetch('/reaction.json')
         .then(res => res.json())
         .then(data => {
-            rowData = data;
-            totalPages = Math.ceil(data.length / rowsPerPage);
+
+            originalData = data
+            // 初始化 Fuse.js（根据实际字段修改 keys）
+            fuse = new Fuse(originalData, {
+                keys: ['name','reaction'], // 根据你的 JSON 字段名修改
+                threshold: 0.3,
+                includeMatches: true,
+                minMatchCharLength: 1
+            });
+
+            // 初始显示全部数据
+            filteredData = originalData;
+            totalPages = Math.ceil(filteredData.length / rowsPerPage);
             renderTable();
             renderPagination();
         });
+
+         // 防抖函数
+            function debounce(func, delay = 300) {
+                let timer;
+                return (...args) => {
+                    clearTimeout(timer);
+                    timer = setTimeout(() => func.apply(this, args), delay);
+                };
+            }
+
+            // 搜索输入监听（即时触发）
+            document.getElementById('searchInput').addEventListener('input', debounce(function (e) {
+                const query = e.target.value.trim();
+
+                if (!query) {
+                    // 空搜索时恢复全部数据
+                    filteredData = originalData;
+                } else {
+                    // 使用 Fuse.js 搜索
+                    const results = fuse.search(query);
+                    filteredData = results.map(r => r.item);
+                }
+
+                // 重置分页
+                currentPage = 1;
+                totalPages = Math.ceil(filteredData.length / rowsPerPage);
+                renderTable();
+                renderPagination();
+            }));
 
     function renderTable() {
         const table = document.getElementById('reaction-table');
         const thead = table.querySelector('thead');
         const tbody = table.querySelector('tbody');
 
-        if (rowData.length === 0) {
+        if (filteredData.length === 0) {
             thead.innerHTML = '<tr><th>没有数据</th></tr>';
             tbody.innerHTML = '';
             return;
@@ -50,7 +96,7 @@
 
         // 表头只在首次渲染
         if (!thead.hasChildNodes()) {
-            const headers = Object.keys(rowData[0])
+            const headers = Object.keys(filteredData[0])
                 .concat(['操作']);
             thead.innerHTML = '<tr>' +
                 headers.map(h => `<th>${h}</th>`).join('') +
@@ -58,7 +104,7 @@
         }
 
         const start = (currentPage - 1) * rowsPerPage;
-        const pageData = rowData.slice(start, start + rowsPerPage);
+        const pageData = filteredData.slice(start, start + rowsPerPage);
 
         tbody.innerHTML = pageData.map((row, idx) => {
             const realIndex = start + idx;
@@ -91,6 +137,8 @@
             return `<tr>${cells.join('')}</tr>`;
         }).join('');
     }
+
+    
 
     function renderPagination() {
         const container = document.getElementById('pagination');
@@ -132,13 +180,6 @@
         renderPagination();
     }
 
-    // 选择Objective按钮逻辑
-    function selectObjective(index) {
-        const item = rowData[index];
-        const id = item.name;
-        fetch('/objective/' + id);
-    }
-
     // 提交上下限按钮逻辑
     function submitBounds(index) {
         const item = rowData[index];
@@ -148,13 +189,29 @@
         fetch('/reaction/' + id + '/' + lower + '/' + upper);
     }
 
-     // 添加清空按钮点击事件
-    document.getElementById('clear-btn').addEventListener('click', function() {
-        console.log('清空按钮被点击');
-        // 这里可以添加清空逻辑
+        // 清空按钮点击事件（添加错误处理和响应提示）
+            document.getElementById('clear-btn').addEventListener('click', function () {
+                selectedReactionId = null;
+                localStorage.removeItem('selectedReactionId');
+                renderTable();
+
+                fetch('/clear-constraints', { method: 'POST' })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('清空请求失败');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        alert(data.message); // 显示后端返回的提示
+                        window.location.reload(); // 关键代码：刷新页面
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('清空失败: ' + error.message);
+                    });
 
 
-        
 document.getElementById('darkModeToggle')?.addEventListener('change', () => {
     renderTable();
 });
@@ -165,7 +222,7 @@ if (document.body.classList.contains('dark')) {
 } else {
     document.documentElement.style.setProperty('--table-bg', 'white');
 }
-    });
+});
     
 </script>
 
