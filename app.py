@@ -232,15 +232,22 @@ def clear_genes():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500             
 
-@app.route('/cancel')
+@app.route('/clear-config', methods=['POST'])
 def clear_confirm():
     global confirm
-    confirm={
+    try:
+       confirm={
             "model": None,               # 存储模型名称（字符串）
             "objective": ["biomass"],             # 存储目标函数（字符串）
             "deleted_genes": [],         # 存储待删除基因（列表，如 ["gene1", "gene2"]）
             "modified_reactions": []     # 存储修改的反应（列表，元素为字典）
         }
+       with open("fba_config.json", "w") as f:
+        json.dump(confirm, f, indent=2)
+        return jsonify({"status": "success", "message": "配置已清空"})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500      
+       
 
 # @app.route('/setobjective')
 # def set_objective(reaction_list):
