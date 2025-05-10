@@ -23,13 +23,33 @@
         font-size: 24px;
         margin-bottom: 50px;
     }
+
+     .start-btn {
+        padding: 8px 16px;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .start-btn:hover {
+        background-color: var(--primary-dark);
+        opacity: 0.9;
+    }
+
 </style>
 
 <div class="welcome-container">
     <div class="welcome-logo">FBA ANALYSIS</div>
     <div class="welcome-text">代谢网络通量平衡分析平台</div>
-    <button class="next-btn" onclick="window.location.href='/model'">
-        开始分析 <i class="iconfont icon-arrow-right"></i>
+    <button class="start-btn" onclick="window.location.href='/model'">
+        开始分析  <i class="fa-solid fa-arrow-right"></i>
     </button>
 </div>
 {% endblock %}

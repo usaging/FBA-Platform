@@ -209,7 +209,7 @@ input:checked +.slider:before {
 
 .dark .nav-link a:hover,
 .dark .nav-link a.active {
-    background-color: #1e3a8a !important; /* 深蓝色背景 */
+    /* background-color: #1e3a8a !important; 深蓝色背景 */
     color: white !important;
 }
 
@@ -224,11 +224,6 @@ input:checked +.slider:before {
 
 .dark .slider {
     background-color: #555;
-}
-
-/* 修复分析计算按钮背景色问题 */
-.dark .nav-link#a3 a {
-    background-color: transparent !important;
 }
 
 /* 暗黑模式下的WIKI链接样式 */
