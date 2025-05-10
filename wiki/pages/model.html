@@ -146,21 +146,23 @@
         const start = (currentPage - 1) * rowsPerPage;
         const pageData = filteredData.slice(start, start + rowsPerPage);
 
-        tbody.innerHTML = pageData.map((row, idx) => {
-            const cells = Object.keys(row).map(key => {
-                if (key === '来源') {
-                    return `<td class="source-cell">${row[key]}</td>`;
-                }
-                return `<td>${row[key]}</td>`;
-            });
-            cells.push(`
-            <td class="select-cell">
-                <div class="select-dot ${selectedModelId === row.ID ? 'selected' : ''}" 
-                     onclick="selectModel('${row.ID}')"></div>
-            </td>
+       tbody.innerHTML = pageData.map((row, idx) => {
+        const cells = Object.keys(row).map(key => {
+            if (key === '来源') {
+                return `<td class="source-cell">${row[key]}</td>`;
+            }
+            return `<td>${row[key]}</td>`;
+        });
+        cells.push(`
+        <td class="select-cell">
+            <div class="select-dot ${selectedModelId === row.ID ? 'selected' : ''}" 
+                 onclick="selectModel('${row.ID}')"
+                 title="${selectedModelId === row.ID ? '点击取消选择' : '点击选择'}">
+            </div>
+        </td>
         `);
-            return `<tr>${cells.join('')}</tr>`;
-        }).join('');
+        return `<tr>${cells.join('')}</tr>`;
+    }).join('');
     }
 
     function renderPagination() {
@@ -223,13 +225,37 @@
     }
 
     function selectModel(modelId) {
+         if (selectedModelId === modelId) {
+        selectedModelId = null;
+        localStorage.removeItem('selectedModelId');
+        document.getElementById('modelIdText').textContent = "未选择模型";
+    } else {
         selectedModelId = modelId;
         localStorage.setItem('selectedModelId', modelId);
         document.getElementById('modelIdText').textContent = modelId;
-        renderTable(); // 重新渲染表格以更新圆点状态
-
-        // 保持原有的后端请求
+    }
+    
+    renderTable(); // 重新渲染表格以更新圆点状态
+    
+    // 保持原有的后端请求
+    if (selectedModelId) {
         fetch('/model/' + modelId);
+    } else {
+        
+        fetch('/clear-models', { method: 'POST' })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('清空请求失败');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data.message); // 控制台显示后端返回的提示
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
     }
 
     // 清空按钮点击事件（添加错误处理和响应提示）
@@ -283,6 +309,36 @@
 
    .dark #model-table th {
         border-bottom: 0.5px solid white;  /* 白色下边框 */
+    }
+
+    /* 选择圆点样式 */
+    .select-dot {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        border: 2px solid #ccc;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .select-dot.selected {
+        background-color: var(--primary-color);
+        border-color: var(--primary-dark);
+    }
+    
+    .select-dot:hover {
+        transform: scale(1.1);
+    }
+    
+    /* 暗黑模式下的圆点样式 */
+    .dark .select-dot {
+        border-color: #666;
+    }
+    
+    .dark .select-dot.selected {
+        background-color: var(--primary-color);
+        border-color: var(--primary-light);
     }
 
 
