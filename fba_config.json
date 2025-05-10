@@ -1,8 +1,8 @@
 {
-  "model": "iJN678",
-  "objective": {
-    "biomass": 1.0
-  },
+  "model": null,
+  "objective": [
+    "biomass"
+  ],
   "deleted_genes": [],
   "modified_reactions": []
 }

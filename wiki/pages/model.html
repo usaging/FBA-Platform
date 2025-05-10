@@ -241,8 +241,7 @@
     if (selectedModelId) {
         fetch('/model/' + modelId);
     } else {
-         localStorage.removeItem('selectedModelId');
-        renderTable();
+        
         fetch('/clear-models', { method: 'POST' })
             .then(response => {
                 if (!response.ok) {
