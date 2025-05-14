@@ -124,10 +124,24 @@
             // 导航链接点击事件
             document.querySelectorAll('.nav-link a').forEach(link => {
                 link.addEventListener('click', function (e) {
-                    if (this.getAttribute('href') !== '#') {
+                     if (this.getAttribute('href') === '/model') {
+                        // 模型选择链接始终可点击
+                        e.preventDefault();
+                        window.location.href = this.getAttribute('href');
+                    } else if (!selectedModelId) {
+                        // 未选择模型，阻止跳转
+                        e.preventDefault();
+                        alert('请先选择一个模型');
+                    } else {
+                        // 已选择模型，正常跳转
                         e.preventDefault();
                         window.location.href = this.getAttribute('href');
                     }
+
+                    // if (this.getAttribute('href') !== '#') {
+                    //     e.preventDefault();
+                    //     window.location.href = this.getAttribute('href');
+                    // }
                 });
             });
 

@@ -101,6 +101,10 @@ def model_page():
 def objective_page():
     return render_template('pages/objective.html')
 
+@app.route('/wSetting')
+def wSetting_page():
+    return render_template('pages/wSetting.html')
+
 @app.route('/constraints')
 def constraints_page():
     return render_template('pages/constraints.html')
