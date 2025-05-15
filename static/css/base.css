@@ -173,6 +173,38 @@ td.select-cell {
     color: white;
 }
 
+/* 表格固定宽度和列宽 */
+#reaction-table {
+    table-layout: fixed;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+/* 反应式列特殊处理 */
+#reaction-table td:nth-child(2) {  /* 假设反应式是第二列 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 300px; /* 根据需要调整 */
+    min-width: 200px; /* 根据需要调整 */
+}
+
+/* 其他列固定宽度 */
+#reaction-table th,
+#reaction-table td {
+    width: 120px; /* 默认宽度 */
+    min-width: 80px;
+    max-width: 200px;
+    padding: 8px 12px;
+    box-sizing: border-box;
+}
+
+/* 操作列固定宽度 */
+#reaction-table td:last-child {
+    width: 100px;
+}
+
 /* 翻页样式 */
 #pagination {
     margin-top: 15px;

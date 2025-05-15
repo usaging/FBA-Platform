@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}Test：这里写你要替换的标题{% endblock %}
+{% block title %}基因敲除{% endblock %}
 
 {% block page_content %}
 
@@ -206,26 +206,30 @@
 
     // 清空按钮点击事件（添加错误处理和响应提示）
     document.getElementById('clear-btn').addEventListener('click', function () {
-        selectedGenes = [];
-        localStorage.removeItem('selectedGenes');
-        renderTable();
+        if (confirm('确定要清空所有配置吗？')) {
+            selectedGenes = [];
+            localStorage.removeItem('selectedGenes');
+            renderTable();
+            fetch('/clear-genes', { method: 'POST' })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('清空请求失败');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message); // 显示后端返回的提示
+                    renderTable();
+                    renderPagination();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('清空失败: ' + error.message);
+                });
 
-        fetch('/clear-genes', { method: 'POST' })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('清空请求失败');
-                }
-                return response.json();
-            })
-            .then(data => {
-                alert(data.message); // 显示后端返回的提示
-                renderTable();
-                renderPagination();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('清空失败: ' + error.message);
-            });
+        }
+
+
     });
 
 
@@ -264,8 +268,9 @@
         color: var(--shell-color);
     }
 
-      .dark #gene-table th {
-        border-bottom: 0.5px solid white;  /* 白色下边框 */
+    .dark #gene-table th {
+        border-bottom: 0.5px solid white;
+        /* 白色下边框 */
     }
 </style>
 

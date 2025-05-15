@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}Test：模型选择{% endblock %}
+{% block title %}模型选择{% endblock %}
 
 {% block page_content %}
 
@@ -269,26 +269,30 @@
 
     // 清空按钮点击事件（添加错误处理和响应提示）
     document.getElementById('clear-btn').addEventListener('click', function () {
-        selectedModelId = null;
-        localStorage.removeItem('selectedModelId');
-        document.getElementById('modelIdText').textContent = "未选择模型";
-        renderTable();
 
-        fetch('/clear-models', { method: 'POST' })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('清空请求失败');
-                }
-                return response.json();
-            })
-            .then(data => {
-                alert(data.message); // 显示后端返回的提示
-                window.location.reload(); // 关键代码：刷新页面
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('清空失败: ' + error.message);
-            });
+        if (confirm('确定要清空所有配置吗？')) {
+            selectedModelId = null;
+            localStorage.removeItem('selectedModelId');
+            document.getElementById('modelIdText').textContent = "未选择模型";
+            renderTable();
+            fetch('/clear-models', { method: 'POST' })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('清空请求失败');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message); // 显示后端返回的提示
+                    renderTable();
+                    renderPagination();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('清空失败: ' + error.message);
+                });
+        }
+
     });
 
     // 刷新按钮点击事件（添加错误处理和响应提示）

@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}Test：这里写你要替换的标题{% endblock %}
+{% block title %}反应通量设置{% endblock %}
 
 {% block page_content %}
 
@@ -17,7 +17,7 @@
             <tbody></tbody>
         </table>
     </div>
-    <div id="pagination" style="margin-top: 1em; text-align: center; margin-bottom: 80px ;"></div>
+    <div id="pagination" style="margin-top: 1em; text-align: center; margin-bottom: 40px;"></div>
 </div>
 
 <!-- 引入 Fuse.js -->
@@ -120,7 +120,16 @@
                     cells.push(
                         `<td><input type="number" id="upper-${realIndex}" value="${row.upper_bound}" class="bound-input" /></td>`
                     );
-                } else {
+                } else if (key === 'reaction') {
+                    let reaction = row.reaction;
+                    if (reaction.length > 30) { // 可根据需要调整最大长度
+                        const startPart = reaction.slice(0, 15);
+                        const endPart = reaction.slice(-15);
+                        reaction = `${startPart}...${endPart}`;
+                    }
+                    cells.push(`<td>${reaction}</td>`);
+                }
+                else {
                     cells.push(`<td>${row[key]}</td>`);
                 }
             });
@@ -191,25 +200,27 @@
 
     // 清空按钮点击事件（添加错误处理和响应提示）
     document.getElementById('clear-btn').addEventListener('click', function () {
-        selectedReactionId = null;
-        localStorage.removeItem('selectedReactionId');
-        renderTable();
 
-        fetch('/clear-constraints', { method: 'POST' })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('清空请求失败');
-                }
-                return response.json();
-            })
-            .then(data => {
-                alert(data.message); // 显示后端返回的提示
-                window.location.reload(); // 关键代码：刷新页面
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('清空失败: ' + error.message);
-            });
+        if (confirm('确定要清空所有配置吗？')) {
+            selectedReactionId = null;
+            localStorage.removeItem('selectedReactionId');
+            renderTable();
+            fetch('/clear-constraints', { method: 'POST' })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('清空请求失败');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message); // 显示后端返回的提示
+                    window.location.reload(); // 关键代码：刷新页面
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('清空失败: ' + error.message);
+                });
+        }
 
 
         document.getElementById('darkModeToggle')?.addEventListener('change', () => {
@@ -227,9 +238,30 @@
 </script>
 
 <style>
+    /* 修改表格容器高度 */
+    .content {
+        min-height: calc(100vh - 250px);
+        padding-bottom: 20px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* 调整分页位置 */
+    #pagination {
+        position: sticky;
+        bottom: 0;
+        background: white;
+        padding: 10px 0;
+        margin-top: auto;
+        z-index: 10;
+    }
+
     /* 美化上下限输入框 */
     .bound-input {
-        width: 80px;
+        width: calc(100% - 16px);
+        /* 减去padding */
+        max-width: 100%;
         padding: 6px 10px;
         border: 1px solid #ddd;
         border-radius: 4px;
@@ -289,17 +321,36 @@
 
     /* 表格样式增强 */
     #reaction-table {
+        table-layout: fixed;
         width: 100%;
+        max-width: 100%;
+        overflow: hidden;
         border-collapse: collapse;
-        margin: 15px 0;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        margin: 0;
+        /* 移除外边距 */
+        flex-grow: 1;
+        /* 让表格填充可用空间 */
     }
+
+    /* 调整表格行高 */
+    #reaction-table tr {
+        height: 40px;
+        /* 设置固定行高 */
+    }
+
+
 
     #reaction-table th,
     #reaction-table td {
-        padding: 12px 15px;
-        border: 1px solid #e0e0e0;
-        text-align: left;
+        width: 120px;
+        /* 默认宽度 */
+        min-width: 80px;
+        max-width: 200px;
+        padding: 8px 12px;
+        box-sizing: border-box;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     #reaction-table th {
@@ -308,22 +359,33 @@
         color: #333;
     }
 
+    /* 反应式列特殊处理 */
+    #reaction-table td:nth-child(2) {
+        /* 假设反应式是第二列 */
+        max-width: 800px;
+        min-width: 700px;
+    }
+
+    /* 操作列固定宽度 */
+    #reaction-table td:last-child {
+        width: 100px;
+    }
+
     /* 分页样式增强 */
     #pagination {
-        margin: 20px 0;
-        display: flex;
-        justify-content: center;
-        gap: 5px;
+        position: sticky;
+        bottom: 0;
+        background: white;
+        padding: 10px 0;
+        margin-top: auto;
+        /* 将分页推到容器底部 */
+        z-index: 10;
     }
 
     #pagination button {
-        min-width: 32px;
-        height: 32px;
-        padding: 0 8px;
-        border: 1px solid #ddd;
-        background: white;
-        border-radius: 4px;
-        transition: all 0.2s;
+        margin: 0 2px;
+        padding: 4px 8px;
+        cursor: pointer;
     }
 
     #pagination button:hover:not(:disabled) {
@@ -389,6 +451,10 @@
         border-color: #555;
     }
 
+    .dark #pagination {
+        background: #333;
+    }
+
     .dark #pagination button {
         background-color: #444;
         color: #eee;
@@ -416,6 +482,21 @@
     }
 
     @media (max-width: 768px) {
+        .content {
+            min-height: calc(100vh - 220px);
+        }
+
+        #reaction-table tr {
+            height: auto;
+            /* 在小屏幕上恢复自动高度 */
+        }
+
+        #pagination {
+            position: static;
+            /* 小屏幕上取消固定定位 */
+        }
+
+        /* 
         .bound-input {
             width: 60px;
             padding: 4px 8px;
@@ -429,7 +510,7 @@
         #reaction-table th,
         #reaction-table td {
             padding: 8px 10px;
-        }
+        } */
     }
 </style>
 

@@ -35,8 +35,8 @@
 
     // 加载数据并初始化表格和分页
     fetch('/reaction.json')
-       .then(res => res.json())
-       .then(data => {
+        .then(res => res.json())
+        .then(data => {
             originalData = data.filter(item => selectedReactions.includes(item.name));
             // 初始化 Fuse.js（根据实际字段修改 keys）
             fuse = new Fuse(originalData, {
@@ -169,46 +169,32 @@
         fetch('/weight/' + id + '/' + weight);
     }
 
-    // 下一步按钮点击事件 - 检查比重总和
-    // document.getElementById('next-btn').addEventListener('click', function() {
-    //     let totalWeight = 0;
-    //     const weightInputs = document.querySelectorAll('.weight-input');
-        
-    //     weightInputs.forEach(input => {
-    //         totalWeight += parseFloat(input.value) || 0;
-    //     });
-        
-    //     if (Math.abs(totalWeight - 100) > 0.01) { // 浮点数精度处理
-    //         alert('比重总和必须为100%');
-    //         return;
-    //     }
-        
-    //     // 比重总和为100%，继续下一步操作
-    //     window.location.href = '/constraints'; // 替换为实际的下一步URL
-    // });
-
     // 清空按钮点击事件（添加错误处理和响应提示）
     document.getElementById('clear-btn').addEventListener('click', function () {
-        const weightInputs = document.querySelectorAll('.weight-input');
-        weightInputs.forEach(input => {
-            input.value = 0;
-        });
 
-        fetch('/clear-weights', { method: 'POST' })
-           .then(response => {
-                if (!response.ok) {
-                    throw new Error('清空请求失败');
-                }
-                return response.json();
-            })
-           .then(data => {
-                alert(data.message); // 显示后端返回的提示
-                window.location.reload(); // 关键代码：刷新页面
-            })
-           .catch(error => {
-                console.error('Error:', error);
-                alert('清空失败: ' + error.message);
+        if (confirm('确定要清空所有配置吗？')) {
+            const weightInputs = document.querySelectorAll('.weight-input');
+            weightInputs.forEach(input => {
+                input.value = 0;
             });
+            fetch('/clear-weights', { method: 'POST' })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('清空请求失败');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message); // 显示后端返回的提示
+                    window.location.reload(); // 关键代码：刷新页面
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('清空失败: ' + error.message);
+                });
+        }
+
+
     });
 </script>
 
