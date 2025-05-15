@@ -1,46 +1,7 @@
 {
-  "model": "yeast-GEM",
-  "objective": [
-    "EX_csn_e",
-    "EX_dtmp_e",
-    "EX_5mtr_e",
-    "EX_6pgc_e",
-    "EX_etha_e"
-  ],
-  "deleted_genes": [
-    "BSU36830",
-    "BSU36850",
-    "BSU07840",
-    "Q0085",
-    "Q0105",
-    "Q0130",
-    "Q0250"
-  ],
-  "modified_reactions": [
-    {
-      "reaction": "EX_etha_e",
-      "lower_bound": 10.0,
-      "upper_bound": 999999.0
-    },
-    {
-      "reaction": "r_0003",
-      "lower_bound": -10.0,
-      "upper_bound": 1000.0
-    },
-    {
-      "reaction": "r_0002",
-      "lower_bound": 10.0,
-      "upper_bound": 1000.0
-    }
-  ],
-  "weights": [
-    {
-      "reaction": "EX_etha_e",
-      "weight": "50"
-    },
-    {
-      "reaction": "EX_drib_e",
-      "weight": "50"
-    }
-  ]
+  "model": null,
+  "objective": [],
+  "deleted_genes": [],
+  "modified_reactions": [],
+  "weights": []
 }
