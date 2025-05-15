@@ -23,7 +23,7 @@ def update_file_records(new_files):
     except Exception as e:
         print(f"更新记录文件失败: {str(e)}")
 
-def process_file(file_path):
+def process_file(file_path,islocaled):
     """
     模型文件处理函数
     返回一个包含模型信息的字典
@@ -35,6 +35,10 @@ def process_file(file_path):
 
     # 提取文件名（不含后缀）
     base, _ = os.path.splitext(os.path.basename(file_path))
+    if(islocaled):
+        file_info['source']              = "local"  
+    else :
+        file_info['source']              = "online"
     file_info['ID']                = base
     file_info['Metabolite_count']  = len(model.metabolites)
     file_info['Gene_count']        = len(model.genes)
@@ -56,11 +60,11 @@ def scan_directory_and_generate_json(directory_path, output_json):
     # 收集所有文件信息
     all_files_info = []
     
-    for root,files in os.walk(directory_path):
+    for root,_,files in os.walk(directory_path):
         for filename in files:
             file_path = os.path.join(root, filename)
             try:
-                info = process_file(file_path)
+                info = process_file(file_path,True)
                 all_files_info.append(info)
             except Exception as e:
                 print(f"处理文件 {file_path} 时出错: {e}")
@@ -127,3 +131,5 @@ def export_genes_json(model,output_json_path):
         json.dump(genes, f, indent=2, ensure_ascii=False)
     
     print(f"✅ 成功导出 {len(genes)} 个反应到 {output_json_path}")
+
+

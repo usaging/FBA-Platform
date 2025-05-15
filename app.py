@@ -30,6 +30,11 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
+# @app.route('/refresh', methods=['POST'])
+# def refresh_model():
+#     tools.scan_directory_and_generate_json('models', 'model.json')
+#     return jsonify({"message": "刷新成功"}), 400
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'files' not in request.files:
@@ -50,7 +55,8 @@ def upload_file():
             file.save(save_path)
 
         # 构建记录信息
-        file_info=tools.process_file(save_path)
+        file_info=tools.process_file(save_path,False)
+
 
         new_records.append(file_info)
         success_files.append(filename)
@@ -325,4 +331,5 @@ def pages(page):
     return render_template(f'pages/{page.lower()}.html')
 
 if __name__ == "__main__":
+    #tools.scan_directory_and_generate_json("models","./model.json")
     app.run(port=8080)

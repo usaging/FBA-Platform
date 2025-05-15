@@ -15,7 +15,7 @@
         <input type="file" id="fileInput" style="display: none;"></input>
         <button id="import-btn" class="search-btn">导入</button>
         <button id="clear-btn" class="search-btn">清空</button>
-        <button id="organize-btn" class="search-btn">整理</button>
+        <button id="refresh-btn" class="search-btn">刷新</button>
     </div>
 
     <div class="content">
@@ -74,10 +74,7 @@
     fetch('/model.json')
         .then(res => res.json())
         .then(data => {
-            originalData = data.map(row => ({
-                '来源': '本地',
-                ...row
-            }));
+            originalData = data.reverse()
 
             // 初始化 Fuse.js（根据实际字段修改 keys）
             fuse = new Fuse(originalData, {
@@ -143,18 +140,29 @@
             headers.map(h => `<th>${h}</th>`).join('') +
             '</tr>';
 
+        // 处理数据：先复制数组，然后将选中项移到最前
+        let processedData = [...filteredData];
+        if (selectedModelId) {
+            const selectedIndex = processedData.findIndex(item => item.ID === selectedModelId);
+            if (selectedIndex !== -1) {
+                // 将选中项移到数组开头
+                const [selectedItem] = processedData.splice(selectedIndex, 1);
+                processedData.unshift(selectedItem);
+            }
+        }
+
         // 渲染分页数据
         const start = (currentPage - 1) * rowsPerPage;
-        const pageData = filteredData.slice(start, start + rowsPerPage);
+        const pageData = processedData.slice(start, start + rowsPerPage);
 
-       tbody.innerHTML = pageData.map((row, idx) => {
-        const cells = Object.keys(row).map(key => {
-            if (key === '来源') {
-                return `<td class="source-cell">${row[key]}</td>`;
-            }
-            return `<td>${row[key]}</td>`;
-        });
-        cells.push(`
+        tbody.innerHTML = pageData.map((row, idx) => {
+            const cells = Object.keys(row).map(key => {
+                if (key === 'source') {
+                    return `<td class="source-cell">${row[key]}</td>`;
+                }
+                return `<td>${row[key]}</td>`;
+            });
+            cells.push(`
         <td class="select-cell">
             <div class="select-dot ${selectedModelId === row.ID ? 'selected' : ''}" 
                  onclick="selectModel('${row.ID}')"
@@ -162,8 +170,8 @@
             </div>
         </td>
         `);
-        return `<tr>${cells.join('')}</tr>`;
-    }).join('');
+            return `<tr>${cells.join('')}</tr>`;
+        }).join('');
     }
 
     function renderPagination() {
@@ -226,13 +234,13 @@
     }
 
     function selectModel(modelId) {
-       // 如果点击已选中的模型，则取消选择（与清空按钮相同逻辑）
-    if (selectedModelId === modelId) {
-        selectedModelId = null;
+        // 如果点击已选中的模型，则取消选择（与清空按钮相同逻辑）
+        if (selectedModelId === modelId) {
+            selectedModelId = null;
             localStorage.removeItem('selectedModelId');
             document.getElementById('modelIdText').textContent = "未选择模型";
             renderTable();
-            
+
             // 调用清空API
             fetch('/clear-models', { method: 'POST' })
                 .then(response => {
@@ -247,22 +255,23 @@
                 .catch(error => {
                     console.error('Error:', error);
                 });
-    } 
-    // 否则选择新模型（原有逻辑）
-    else {
-        selectedModelId = modelId;
-        localStorage.setItem('selectedModelId', modelId);
-        document.getElementById('modelIdText').textContent = modelId;
-        renderTable();
-        fetch('/model/' + modelId);
-    }
+        }
+        // 否则选择新模型（原有逻辑）
+        else {
+            selectedModelId = modelId;
+            localStorage.setItem('selectedModelId', modelId);
+            document.getElementById('modelIdText').textContent = modelId;
+            currentPage = 1; // 新增：切换到第一页
+            renderTable();
+            fetch('/model/' + modelId);
+        }
     }
 
     // 清空按钮点击事件（添加错误处理和响应提示）
     document.getElementById('clear-btn').addEventListener('click', function () {
         selectedModelId = null;
         localStorage.removeItem('selectedModelId');
-         document.getElementById('modelIdText').textContent = "未选择模型";
+        document.getElementById('modelIdText').textContent = "未选择模型";
         renderTable();
 
         fetch('/clear-models', { method: 'POST' })
@@ -280,6 +289,26 @@
                 console.error('Error:', error);
                 alert('清空失败: ' + error.message);
             });
+    });
+
+    // 刷新按钮点击事件（添加错误处理和响应提示）
+    document.getElementById('refresh-btn').addEventListener('click', function () {
+        window.location.reload()
+        // fetch('/refresh', { method: 'POST' })
+        //     .then(response => {
+        //         if (!response.ok) {
+        //             throw new Error('刷新请求失败');
+        //         }
+        //         return response.json();
+        //     })
+        //     .then(data => {
+        //         alert(data.message); // 显示后端返回的提示
+        //         window.location.reload(); // 关键代码：刷新页面
+        //     })
+        //     .catch(error => {
+        //         console.error('Error:', error);
+        //         alert('刷新请求失败: ' + error.message);
+        //     });
     });
 
 </script>
@@ -308,8 +337,9 @@
         cursor: pointer;
     }
 
-   .dark #model-table th {
-        border-bottom: 0.5px solid white;  /* 白色下边框 */
+    .dark #model-table th {
+        border-bottom: 0.5px solid white;
+        /* 白色下边框 */
     }
 
     /* 选择圆点样式 */
@@ -322,27 +352,25 @@
         cursor: pointer;
         transition: all 0.3s;
     }
-    
+
     .select-dot.selected {
         background-color: var(--primary-color);
         border-color: var(--primary-dark);
     }
-    
+
     .select-dot:hover {
         transform: scale(1.1);
     }
-    
+
     /* 暗黑模式下的圆点样式 */
     .dark .select-dot {
         border-color: #666;
     }
-    
+
     .dark .select-dot.selected {
         background-color: var(--primary-color);
         border-color: var(--primary-light);
     }
-
-
 </style>
 
 {% endblock %}
