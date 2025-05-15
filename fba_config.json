@@ -1,25 +1,17 @@
 {
-  "model": "iMM904",
+  "model": "iJO1366",
   "objective": [
-    "MI13456PKn",
-    "PMI1346PS"
+    "EX_cm_e"
   ],
   "deleted_genes": [
-    "YLR300W",
-    "YOL086C",
-    "YGL184C"
+    "b2215",
+    "b0653"
   ],
   "modified_reactions": [
     {
-      "reaction": "13BGH",
-      "lower_bound": 10.0,
-      "upper_bound": 999999.0
-    },
-    {
-      "reaction": "DDPA",
-      "lower_bound": 10.0,
-      "upper_bound": 999999.0
+      "reaction": "DM_oxam_c",
+      "lower_bound": 0.0,
+      "upper_bound": 1005.0
     }
-  ],
-  "modified_objective": []
+  ]
 }

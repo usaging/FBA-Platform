@@ -91,6 +91,15 @@ def serve_gene():
 
 @app.route('/')
 def home():
+    global confirm
+    confirm={
+            "model": None,               # 存储模型名称（字符串）
+            "objective": [],             # 存储目标函数（字符串）
+            "deleted_genes": [],         # 存储待删除基因（列表，如 ["gene1", "gene2"]）
+            "modified_reactions": []     # 存储修改的反应（列表，元素为字典）
+        }
+    with open("fba_config.json", "w") as f:
+        json.dump(confirm, f, indent=2)
     return render_template('pages/index.html')
 
 @app.route('/model')
