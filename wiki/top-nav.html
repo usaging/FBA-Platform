@@ -8,132 +8,153 @@
 </head>
 
 <body>
-<!-- 顶部导航栏 -->
-<nav class="top-nav">
-    <div class="nav-container">
-        <!-- Logo和标题 -->
-        <div class="image-text">
-            <span class="image"><img src="{{url_for('static',filename='icons/logo.svg')}}" alt=""></span>
-            <div class="text logo-text">
-                <span class="name">FBA-PLATFORM</span> 
-                <span class="software">SCUT-CHINA_L</span>
+    <!-- 顶部导航栏 -->
+    <nav class="top-nav">
+        <div class="nav-container">
+            <!-- Logo和标题 -->
+            <div class="image-text">
+                <span class="image"><img src="{{url_for('static',filename='icons/logo.svg')}}" alt=""></span>
+                <div class="text logo-text">
+                    <span class="name">FBA-PLATFORM</span>
+                    <span class="software">SCUT-CHINA_L</span>
+                </div>
+            </div>
+
+            <!-- 模型显示区域 -->
+            <div class="selected-model" id="selectedModel">
+                <i class="fa-solid fa-database"></i>
+                <span id="modelIdText">未选择模型</span>
+            </div>
+
+            <!-- 操作按钮区域 -->
+            <div class="action-buttons">
+                <button class="prev-btn hidden" id="prevBtn">
+                    <i class="iconfont icon-arrow-left"></i> 上一步
+                </button>
+                <button class="next-btn" id="nextBtn">
+                    下一步 <i class="iconfont icon-arrow-right"></i>
+                </button>
             </div>
         </div>
-        
-        <!-- 模型显示区域 -->
-        <div class="selected-model" id="selectedModel">
-            <i class="fa-solid fa-database"></i>
-            <span id="modelIdText">未选择模型</span>
-        </div>
-
-        <!-- 操作按钮区域 -->
-        <div class="action-buttons">
-            <button class="prev-btn hidden" id="prevBtn">
-                <i class="iconfont icon-arrow-left"></i> 上一步
-            </button>
-            <button class="next-btn" id="nextBtn">
-                下一步 <i class="iconfont icon-arrow-right"></i>
-            </button>
-        </div>
-    </div>
-</nav>
+    </nav>
 
 
-<script>
-    // 下一步跳转功能
-    document.addEventListener('DOMContentLoaded', () => {
-        const currentPath = window.location.pathname;
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const modelIdText = document.getElementById('modelIdText');
+    <script>
 
-        // 从本地存储获取选中的模型ID
-        const selectedModelId = localStorage.getItem('selectedModelId');
-        // 监听存储变化事件
-    window.addEventListener('storage', function(e) {
-        if (e.key === 'selectedModelId') {
-            modelIdText.textContent = e.newValue || "未选择模型";
-        }
-    });
-    
-    // 初始化显示
-    if (selectedModelId) {
-        modelIdText.textContent = selectedModelId;
-    } else {
-        modelIdText.textContent = "未选择模型";
-    }
 
-        // 只在首页隐藏上一步按钮
-        if (currentPath === '/') {
-            prevBtn.classList.add('hidden');
-        } else {
-            prevBtn.classList.remove('hidden');
-        }
-        
-        // 设置按钮状态
-        if (currentPath.includes('/analysis')) {
-            nextBtn.textContent = '计算结果';
-        } else {
-            nextBtn.textContent = '下一步';
-        }
-        
-        // 下一步按钮点击事件
-        nextBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            
-            // 检查是否在模型选择页面且未选择模型
-            if (currentPath === '/model' && (modelIdText.textContent === "未选择模型")) {
-                alert('请先选择一个模型');
-                return;
+        // 下一步跳转功能
+        document.addEventListener('DOMContentLoaded', () => {
+            let selectedReactions = JSON.parse(localStorage.getItem('selectedReactions') || '[]');
+            const currentPath = window.location.pathname;
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const modelIdText = document.getElementById('modelIdText');
+
+            // 从本地存储获取选中的模型ID
+            const selectedModelId = localStorage.getItem('selectedModelId');
+            // 监听存储变化事件
+            window.addEventListener('storage', function (e) {
+                if (e.key === 'selectedModelId') {
+                    modelIdText.textContent = e.newValue || "未选择模型";
+                }
+            });
+
+            // 初始化显示
+            if (selectedModelId) {
+                modelIdText.textContent = selectedModelId;
+            } else {
+                modelIdText.textContent = "未选择模型";
             }
-             // 检查是否在目标权重设置页面且权重和非法
-            if (currentPath === '/wSetting'){ 
-                let totalWeight = 0;
-                const weightInputs = document.querySelectorAll('.weight-input');
-        
-                weightInputs.forEach(input => {
-                totalWeight += parseFloat(input.value) || 0;
-                });
-        
-            if (Math.abs(totalWeight - 100) > 0.01) { // 浮点数精度处理
-                alert('比重总和必须为100%');
-                return;
+
+            // 只在首页隐藏上一步按钮
+            if (currentPath === '/') {
+                prevBtn.classList.add('hidden');
+            } else {
+                prevBtn.classList.remove('hidden');
             }
-                
+
+            // 设置按钮状态
+            if (currentPath.includes('/analysis')) {
+                nextBtn.textContent = '计算结果';
+            } else {
+                nextBtn.textContent = '下一步';
             }
-            const routes = {
-                '/': '/model',
-                '/model': '/objective',
-                '/objective': '/wSetting',
-                '/wSetting':'/constraints',
-                '/constraints': '/gene',
-                '/gene': '/confirm',
-                '/confirm': '/result'
-            };
-            
-            const nextRoute = routes[currentPath] || '/model';
-            window.location.href = nextRoute;
+
+            // 下一步按钮点击事件
+            nextBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                // 检查是否在模型选择页面且未选择模型
+                if (currentPath === '/model' && (modelIdText.textContent === "未选择模型")) {
+                    alert('请先选择一个模型');
+                    return;
+                }
+                // 检查是否在目标权重设置页面且权重和非法
+                if (currentPath === '/wSetting') {
+                    let totalWeight = 0;
+                    const weightInputs = document.querySelectorAll('.weight-input');
+
+                    weightInputs.forEach(input => {
+                        totalWeight += parseFloat(input.value) || 0;
+                    });
+
+                    if (Math.abs(totalWeight - 100) > 0.01) { // 浮点数精度处理
+                        alert('比重总和必须为100%');
+                        return;
+                    }
+
+                    if (selectedReactions.length === 0) {
+                        window.location.href = '/constraints';//默认目标反应为biomass
+                    } else {
+                        window.location.href = '/wSetting';
+                    }
+
+                } else {
+                    const routes = {
+                        '/': '/model',
+                        '/model': '/objective',
+                        '/objective': '/wSetting',
+                        '/wSetting': '/constraints',
+                        '/constraints': '/gene',
+                        '/gene': '/confirm',
+                        '/confirm': '/result'
+                    };
+
+                    const nextRoute = routes[currentPath] || '/model';
+                    window.location.href = nextRoute;
+
+                }
+
+            });
+
+            // 上一步按钮点击事件
+            prevBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (currentPath === '/constraints') {
+                    if (selectedReactions.length === 0) {
+                        window.location.href = '/objective';//默认目标反应为biomass
+                    } else {
+                        window.location.href = '/wSetting';
+                    }
+                } else {
+                    const routes = {
+                        '/model': '/',
+                        '/objective': '/model',
+                        '/wSetting': '/objective',
+                        '/constraints': '/wSetting',
+                        '/gene': '/constraints',
+                        '/confirm': '/gene',
+                        '/result': '/confirm'
+                    };
+
+                    const prevRoute = routes[currentPath] || '/model';
+                    window.location.href = prevRoute;
+                }
+
+            });
         });
-        
-        // 上一步按钮点击事件
-        prevBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            
-            const routes = {
-                '/model': '/',
-                '/objective': '/model',
-                '/wSetting':'/objective',
-                '/constraints': '/wSetting',
-                '/gene': '/constraints',
-                '/confirm': '/gene',
-                '/result':'/confirm'
-            };
-            
-            const prevRoute = routes[currentPath] || '/model';
-            window.location.href = prevRoute;
-        });
-    });
-</script>
+    </script>
 
 </body>
+
 </html>
