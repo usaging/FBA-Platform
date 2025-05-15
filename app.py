@@ -23,12 +23,17 @@ confirm={
             "objective": [],             # 存储目标函数（字符串）
             "deleted_genes": [],         # 存储待删除基因（列表，如 ["gene1", "gene2"]）
             "modified_reactions": [],     # 存储修改的反应（列表，元素为字典）
-            "modified_objective":[]       # 存储修改的目标函数（字符串）
+            "weights":[]       # 存储修改的目标函数（字符串）
         }
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+
+# @app.route('/refresh', methods=['POST'])
+# def refresh_model():
+#     tools.scan_directory_and_generate_json('models', 'model.json')
+#     return jsonify({"message": "刷新成功"}), 400
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -50,7 +55,8 @@ def upload_file():
             file.save(save_path)
 
         # 构建记录信息
-        file_info=tools.process_file(save_path)
+        file_info=tools.process_file(save_path,False)
+
 
         new_records.append(file_info)
         success_files.append(filename)
@@ -91,6 +97,16 @@ def serve_gene():
 
 @app.route('/')
 def home():
+    global confirm
+    confirm={
+            "model": None,               # 存储模型名称（字符串）
+            "objective": [],             # 存储目标函数（字符串）
+            "deleted_genes": [],         # 存储待删除基因（列表，如 ["gene1", "gene2"]）
+            "modified_reactions": [],     # 存储修改的反应（列表，元素为字典）
+             "weights":[]
+        }
+    with open("fba_config.json", "w") as f:
+        json.dump(confirm, f, indent=2)
     return render_template('pages/index.html')
 
 @app.route('/model')
@@ -143,6 +159,23 @@ def set_objective(reaction_id):
         return f"Reaction {reaction_id} added to objectives."
     else:
         return f"Reaction {reaction_id} already exists in objectives."
+    
+@app.route('/weight/<reaction_id>/<weight>')
+def set_weight(reaction_id,weight):
+    global confirm
+    global model
+    if model is None:
+        return "No model loaded."
+    
+    existing_reactions = {item["reaction"] for item in confirm['weights']}
+    if reaction_id not in existing_reactions:
+        confirm['weights'].append({
+            "reaction": reaction_id,
+            "weight": weight
+    })
+    return f"Reaction {reaction_id} weight added to objectives."
+    # else:
+    #     return f"Reaction {reaction_id} already exists in objectives."
 
 @app.route('/reaction/<reaction_id>/<lower>/<upper>')
 def set_reaction(reaction_id, lower, upper):
@@ -174,7 +207,7 @@ def knock_out_gene(gene_id):
     else:
         return f"Gene {gene_id} already exists in deleted_genes."
 
-@app.route('/config')
+@app.route('/config',methods=['POST'])
 def set_config():
     global model
     global confirm
@@ -188,13 +221,18 @@ def set_config():
             else:
                 print(f"警告: 基因 {gene_id} 不存在于模型中")
 
-    if confirm['modified_objective']:
-        combined_objective=cobra.Model().problem.Objective(0)  # 初始化为零表达式
-        for reaction in confirm['modified_objective']:
+    if confirm['weights']:
+        combined_objective = cobra.Model().problem.Objective(0)  # 初始化为零表达式
+        for reaction in confirm['weights']:
             reaction_id = reaction['reaction']
             if reaction_id in model.reactions:
                 rxn = model.reactions.get_by_id(reaction_id)
-                combined_objective += rxn.flux_expression * reaction['weight']
+                try:
+                    # 将权重转换为浮点数
+                    weight = float(reaction['weight'])
+                    combined_objective += rxn.flux_expression * weight
+                except ValueError:
+                    print(f"错误: 反应 {reaction_id} 的权重无效 '{reaction['weight']}'，无法转换为浮点数")
             else:
                 print(f"警告: 反应 {reaction_id} 不存在于模型中")
         model.objective = combined_objective
@@ -211,6 +249,8 @@ def set_config():
                 model.reactions.get_by_id(reaction_id).upper_bound = upper_bound
             else:
                 print(f"警告: reaction {reaction_id} 不存在于模型中")
+    return jsonify({"status": "success", "message": "配置已提交"})
+    
 
 @app.route('/confirm')
 def set_confirm():
@@ -267,7 +307,8 @@ def clear_confirm():
             "model": None,               # 存储模型名称（字符串）
             "objective": [],             # 存储目标函数（字符串）
             "deleted_genes": [],         # 存储待删除基因（列表，如 ["gene1", "gene2"]）
-            "modified_reactions": []     # 存储修改的反应（列表，元素为字典）
+            "modified_reactions": [],     # 存储修改的反应（列表，元素为字典）
+             "weights":[]
         }
        with open("fba_config.json", "w") as f:
         json.dump(confirm, f, indent=2)
@@ -316,4 +357,5 @@ def pages(page):
     return render_template(f'pages/{page.lower()}.html')
 
 if __name__ == "__main__":
+    #tools.scan_directory_and_generate_json("models","./model.json")
     app.run(port=8080)

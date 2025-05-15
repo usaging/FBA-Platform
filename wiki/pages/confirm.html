@@ -111,7 +111,7 @@
     // 添加确定提交按钮点击事件
     document.getElementById('ensure-btn').addEventListener('click', function() {
         if (confirm('确定要提交所有配置吗？')) {
-            fetch('/ensure-config', { method: 'POST' })
+            fetch('/config', { method: 'POST' })
                 .then(response => {
                     if (response.ok) {
                         alert('配置提交成功');
@@ -122,6 +122,8 @@
                 });
         }
     });
+
+
 </script>
 
 <style>

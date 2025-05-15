@@ -15,7 +15,7 @@
         <input type="file" id="fileInput" style="display: none;"></input>
         <button id="import-btn" class="search-btn">导入</button>
         <button id="clear-btn" class="search-btn">清空</button>
-        <button id="organize-btn" class="search-btn">整理</button>
+        <button id="refresh-btn" class="search-btn">刷新</button>
     </div>
 
     <div class="content">
@@ -74,10 +74,7 @@
     fetch('/model.json')
         .then(res => res.json())
         .then(data => {
-            originalData = data.map(row => ({
-                '来源': '本地',
-                ...row
-            }));
+            originalData = data.reverse()
 
             // 初始化 Fuse.js（根据实际字段修改 keys）
             fuse = new Fuse(originalData, {
@@ -143,13 +140,24 @@
             headers.map(h => `<th>${h}</th>`).join('') +
             '</tr>';
 
+        // 处理数据：先复制数组，然后将选中项移到最前
+        let processedData = [...filteredData];
+        if (selectedModelId) {
+            const selectedIndex = processedData.findIndex(item => item.ID === selectedModelId);
+            if (selectedIndex !== -1) {
+                // 将选中项移到数组开头
+                const [selectedItem] = processedData.splice(selectedIndex, 1);
+                processedData.unshift(selectedItem);
+            }
+        }
+
         // 渲染分页数据
         const start = (currentPage - 1) * rowsPerPage;
-        const pageData = filteredData.slice(start, start + rowsPerPage);
+        const pageData = processedData.slice(start, start + rowsPerPage);
 
         tbody.innerHTML = pageData.map((row, idx) => {
             const cells = Object.keys(row).map(key => {
-                if (key === '来源') {
+                if (key === 'source') {
                     return `<td class="source-cell">${row[key]}</td>`;
                 }
                 return `<td>${row[key]}</td>`;
@@ -253,6 +261,7 @@
             selectedModelId = modelId;
             localStorage.setItem('selectedModelId', modelId);
             document.getElementById('modelIdText').textContent = modelId;
+            currentPage = 1; // 新增：切换到第一页
             renderTable();
             fetch('/model/' + modelId);
         }
@@ -284,6 +293,26 @@
                 });
         }
 
+    });
+
+    // 刷新按钮点击事件（添加错误处理和响应提示）
+    document.getElementById('refresh-btn').addEventListener('click', function () {
+        window.location.reload()
+        // fetch('/refresh', { method: 'POST' })
+        //     .then(response => {
+        //         if (!response.ok) {
+        //             throw new Error('刷新请求失败');
+        //         }
+        //         return response.json();
+        //     })
+        //     .then(data => {
+        //         alert(data.message); // 显示后端返回的提示
+        //         window.location.reload(); // 关键代码：刷新页面
+        //     })
+        //     .catch(error => {
+        //         console.error('Error:', error);
+        //         alert('刷新请求失败: ' + error.message);
+        //     });
     });
 
 </script>

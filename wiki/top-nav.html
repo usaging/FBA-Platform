@@ -25,7 +25,35 @@
                 <i class="fa-solid fa-database"></i>
                 <span id="modelIdText">未选择模型</span>
             </div>
+    <!-- 顶部导航栏 -->
+    <nav class="top-nav">
+        <div class="nav-container">
+            <!-- Logo和标题 -->
+            <div class="image-text">
+                <span class="image"><img src="{{url_for('static',filename='icons/logo.svg')}}" alt=""></span>
+                <div class="text logo-text">
+                    <span class="name">FBA-PLATFORM</span>
+                    <span class="software">SCUT-CHINA_L</span>
+                </div>
+            </div>
 
+            <!-- 模型显示区域 -->
+            <div class="selected-model" id="selectedModel">
+                <i class="fa-solid fa-database"></i>
+                <span id="modelIdText">未选择模型</span>
+            </div>
+
+            <!-- 操作按钮区域 -->
+            <div class="action-buttons">
+                <button class="prev-btn hidden" id="prevBtn">
+                    <i class="iconfont icon-arrow-left"></i> 上一步
+                </button>
+                <button class="next-btn" id="nextBtn">
+                    下一步 <i class="iconfont icon-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
             <!-- 操作按钮区域 -->
             <div class="action-buttons">
                 <button class="prev-btn hidden" id="prevBtn">
@@ -50,6 +78,21 @@
             const nextBtn = document.getElementById('nextBtn');
             const modelIdText = document.getElementById('modelIdText');
 
+            // 从本地存储获取选中的模型ID
+            const selectedModelId = localStorage.getItem('selectedModelId');
+            // 监听存储变化事件
+            window.addEventListener('storage', function (e) {
+                if (e.key === 'selectedModelId') {
+                    modelIdText.textContent = e.newValue || "未选择模型";
+                }
+            });
+
+            // 初始化显示
+            if (selectedModelId) {
+                modelIdText.textContent = selectedModelId;
+            } else {
+                modelIdText.textContent = "未选择模型";
+            }
             // 从本地存储获取选中的模型ID
             const selectedModelId = localStorage.getItem('selectedModelId');
             // 监听存储变化事件
@@ -156,5 +199,6 @@
     </script>
 
 </body>
+
 
 </html>

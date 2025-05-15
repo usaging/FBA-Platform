@@ -1,68 +1,79 @@
 [
   {
-    "ID": "iJN678",
-    "Metabolite_count": 795,
-    "Gene_count": 622,
-    "Reaction_count": 863
+    "source": "local",
+    "ID": "e_coli_core",
+    "Metabolite_count": 72,
+    "Gene_count": 137,
+    "Reaction_count": 95
   },
   {
-    "ID": "iJN746",
-    "Metabolite_count": 907,
-    "Gene_count": 746,
-    "Reaction_count": 1054
-  },
-  {
-    "ID": "iJO1366",
-    "Metabolite_count": 1805,
-    "Gene_count": 1367,
-    "Reaction_count": 2583
-  },
-  {
-    "ID": "iMM904",
-    "Metabolite_count": 1226,
-    "Gene_count": 905,
-    "Reaction_count": 1577
-  },
-  {
-    "ID": "iND750",
-    "Metabolite_count": 1059,
-    "Gene_count": 750,
-    "Reaction_count": 1266
-  },
-  {
-    "ID": "iNF517",
-    "Metabolite_count": 650,
-    "Gene_count": 516,
-    "Reaction_count": 754
-  },
-  {
-    "ID": "iNJ661",
-    "Metabolite_count": 825,
-    "Gene_count": 661,
-    "Reaction_count": 1025
-  },
-  {
-    "ID": "iYO844",
-    "Metabolite_count": 990,
-    "Gene_count": 844,
-    "Reaction_count": 1250
-  },
-  {
-    "ID": "yeast-GEM",
-    "Metabolite_count": 2806,
-    "Gene_count": 1161,
-    "Reaction_count": 4131
-  },
-  {
+    "source": "local",
     "ID": "iEK1008",
     "Metabolite_count": 998,
     "Gene_count": 1008,
     "Reaction_count": 1226
   },
   {
-    "ID": "e_coli_core",
-    "Metabolite_count": 72,
-    "Gene_count": 137,
-    "Reaction_count": 95
+    "source": "local",
+    "ID": "iJN678",
+    "Metabolite_count": 795,
+    "Gene_count": 622,
+    "Reaction_count": 863
+  },
+  {
+    "source": "local",
+    "ID": "iJN746",
+    "Metabolite_count": 907,
+    "Gene_count": 746,
+    "Reaction_count": 1054
+  },
+  {
+    "source": "local",
+    "ID": "iJO1366",
+    "Metabolite_count": 1805,
+    "Gene_count": 1367,
+    "Reaction_count": 2583
+  },
+  {
+    "source": "local",
+    "ID": "iMM904",
+    "Metabolite_count": 1226,
+    "Gene_count": 905,
+    "Reaction_count": 1577
+  },
+  {
+    "source": "local",
+    "ID": "iND750",
+    "Metabolite_count": 1059,
+    "Gene_count": 750,
+    "Reaction_count": 1266
+  },
+  {
+    "source": "local",
+    "ID": "iNF517",
+    "Metabolite_count": 650,
+    "Gene_count": 516,
+    "Reaction_count": 754
+  },
+  {
+    "source": "local",
+    "ID": "iNJ661",
+    "Metabolite_count": 825,
+    "Gene_count": 661,
+    "Reaction_count": 1025
+  },
+  {
+    "source": "local",
+    "ID": "iYO844",
+    "Metabolite_count": 990,
+    "Gene_count": 844,
+    "Reaction_count": 1250
+  },
+  {
+    "source": "local",
+    "ID": "yeast-GEM",
+    "Metabolite_count": 2806,
+    "Gene_count": 1161,
+    "Reaction_count": 4131
   }
 ]
