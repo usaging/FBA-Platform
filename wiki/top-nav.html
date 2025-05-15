@@ -25,35 +25,35 @@
                 <i class="fa-solid fa-database"></i>
                 <span id="modelIdText">未选择模型</span>
             </div>
-    <!-- 顶部导航栏 -->
-    <nav class="top-nav">
-        <div class="nav-container">
-            <!-- Logo和标题 -->
-            <div class="image-text">
-                <span class="image"><img src="{{url_for('static',filename='icons/logo.svg')}}" alt=""></span>
-                <div class="text logo-text">
-                    <span class="name">FBA-PLATFORM</span>
-                    <span class="software">SCUT-CHINA_L</span>
+            <!-- 顶部导航栏 -->
+            <nav class="top-nav">
+                <div class="nav-container">
+                    <!-- Logo和标题 -->
+                    <div class="image-text">
+                        <span class="image"><img src="{{url_for('static',filename='icons/logo.svg')}}" alt=""></span>
+                        <div class="text logo-text">
+                            <span class="name">FBA-PLATFORM</span>
+                            <span class="software">SCUT-CHINA_L</span>
+                        </div>
+                    </div>
+
+                    <!-- 模型显示区域 -->
+                    <div class="selected-model" id="selectedModel">
+                        <i class="fa-solid fa-database"></i>
+                        <span id="modelIdText">未选择模型</span>
+                    </div>
+
+                    <!-- 操作按钮区域 -->
+                    <div class="action-buttons">
+                        <button class="prev-btn hidden" id="prevBtn">
+                            <i class="iconfont icon-arrow-left"></i> 上一步
+                        </button>
+                        <button class="next-btn" id="nextBtn">
+                            下一步 <i class="iconfont icon-arrow-right"></i>
+                        </button>
+                    </div>
                 </div>
-            </div>
-
-            <!-- 模型显示区域 -->
-            <div class="selected-model" id="selectedModel">
-                <i class="fa-solid fa-database"></i>
-                <span id="modelIdText">未选择模型</span>
-            </div>
-
-            <!-- 操作按钮区域 -->
-            <div class="action-buttons">
-                <button class="prev-btn hidden" id="prevBtn">
-                    <i class="iconfont icon-arrow-left"></i> 上一步
-                </button>
-                <button class="next-btn" id="nextBtn">
-                    下一步 <i class="iconfont icon-arrow-right"></i>
-                </button>
-            </div>
-        </div>
-    </nav>
+            </nav>
             <!-- 操作按钮区域 -->
             <div class="action-buttons">
                 <button class="prev-btn hidden" id="prevBtn">
@@ -69,8 +69,6 @@
 
     <script>
 
-
-        // 下一步跳转功能
         document.addEventListener('DOMContentLoaded', () => {
             let selectedReactions = JSON.parse(localStorage.getItem('selectedReactions') || '[]');
             const currentPath = window.location.pathname;
@@ -80,12 +78,6 @@
 
             // 从本地存储获取选中的模型ID
             const selectedModelId = localStorage.getItem('selectedModelId');
-            // 监听存储变化事件
-            window.addEventListener('storage', function (e) {
-                if (e.key === 'selectedModelId') {
-                    modelIdText.textContent = e.newValue || "未选择模型";
-                }
-            });
 
             // 初始化显示
             if (selectedModelId) {
@@ -93,21 +85,13 @@
             } else {
                 modelIdText.textContent = "未选择模型";
             }
-            // 从本地存储获取选中的模型ID
-            const selectedModelId = localStorage.getItem('selectedModelId');
+
             // 监听存储变化事件
             window.addEventListener('storage', function (e) {
                 if (e.key === 'selectedModelId') {
                     modelIdText.textContent = e.newValue || "未选择模型";
                 }
             });
-
-            // 初始化显示
-            if (selectedModelId) {
-                modelIdText.textContent = selectedModelId;
-            } else {
-                modelIdText.textContent = "未选择模型";
-            }
 
             // 只在首页隐藏上一步按钮
             if (currentPath === '/') {
@@ -131,9 +115,14 @@
                 if (currentPath === '/model' && (modelIdText.textContent === "未选择模型")) {
                     alert('请先选择一个模型');
                     return;
-                }
-                // 检查是否在目标权重设置页面且权重和非法
-                if (currentPath === '/wSetting') {
+                }else if (currentPath === '/objective') {
+                    if (selectedReactions.length === 0) {
+                        alert('默认唯一目标反应为Biomass');
+                        window.location.href = '/constraints';//默认目标反应为biomass
+                    } else {
+                        window.location.href = '/wSetting';
+                    }
+                }else if (currentPath === '/wSetting') {
                     let totalWeight = 0;
                     const weightInputs = document.querySelectorAll('.weight-input');
 
@@ -144,20 +133,17 @@
                     if (Math.abs(totalWeight - 100) > 0.01) { // 浮点数精度处理
                         alert('比重总和必须为100%');
                         return;
+                    }else{
+                        window.location.href ='/constraints';
                     }
 
-                    if (selectedReactions.length === 0) {
-                        window.location.href = '/constraints';//默认目标反应为biomass
-                    } else {
-                        window.location.href = '/wSetting';
-                    }
 
                 } else {
                     const routes = {
                         '/': '/model',
                         '/model': '/objective',
-                        '/objective': '/wSetting',
-                        '/wSetting': '/constraints',
+                        // '/objective': '/wSetting',
+                        // '/wSetting': '/constraints',
                         '/constraints': '/gene',
                         '/gene': '/confirm',
                         '/confirm': '/result'

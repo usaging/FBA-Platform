@@ -1,7 +1,7 @@
 {
-  "model": "iJO1366",
+  "model": null,
   "objective": [],
   "deleted_genes": [],
   "modified_reactions": [],
-  "modified_objective": []
+  "weights": []
 }
