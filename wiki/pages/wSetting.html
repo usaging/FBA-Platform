@@ -1,0 +1,397 @@
+{% extends "layout.html" %}
+
+{% block title %}设置反应权重{% endblock %}
+
+{% block page_content %}
+
+<link href="{{ url_for('static', filename = 'css/base.css')}}" rel="stylesheet">
+
+<div class="main" style="padding-top: 10px">
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="搜索反应ID或名称..." class="search-input">
+        <button id="clear-btn" class="search-btn">清空</button>
+    </div>
+    <div class="content">
+        <table id="weight-table">
+            <thead></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div id="pagination" style="margin-top: 1em; text-align: center; margin-bottom: 80px ;"></div>
+</div>
+
+<!-- 引入 Fuse.js -->
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+
+<script>
+    const rowsPerPage = 15;
+    let currentPage = 1;
+    let totalPages = 1;
+    let originalData = [];  // 原始数据（本地+导入）
+    let filteredData = [];   // 过滤后的数据
+    let fuse = null;
+
+    let selectedReactions = JSON.parse(localStorage.getItem('selectedReactions') || '[]');
+
+    // 加载数据并初始化表格和分页
+    fetch('/reaction.json')
+       .then(res => res.json())
+       .then(data => {
+            originalData = data.filter(item => selectedReactions.includes(item.name));
+            // 初始化 Fuse.js（根据实际字段修改 keys）
+            fuse = new Fuse(originalData, {
+                keys: ['name', 'reaction'], // 根据你的 JSON 字段名修改
+                threshold: 0.3,
+                includeMatches: true,
+                minMatchCharLength: 1
+            });
+
+            // 初始显示全部数据
+            filteredData = originalData;
+            totalPages = Math.ceil(filteredData.length / rowsPerPage);
+            renderTable();
+            renderPagination();
+        });
+
+    // 防抖函数
+    function debounce(func, delay = 300) {
+        let timer;
+        return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => func.apply(this, args), delay);
+        };
+    }
+
+    // 搜索输入监听（即时触发）
+    document.getElementById('searchInput').addEventListener('input', debounce(function (e) {
+        const query = e.target.value.trim();
+
+        if (!query) {
+            // 空搜索时恢复全部数据
+            filteredData = originalData;
+        } else {
+            // 使用 Fuse.js 搜索
+            const results = fuse.search(query);
+            filteredData = results.map(r => r.item);
+        }
+
+        // 重置分页
+        currentPage = 1;
+        totalPages = Math.ceil(filteredData.length / rowsPerPage);
+        renderTable();
+        renderPagination();
+    }));
+
+    function renderTable() {
+        const table = document.getElementById('weight-table');
+        const thead = table.querySelector('thead');
+        const tbody = table.querySelector('tbody');
+
+        // 确保表头始终存在
+        if (!thead.hasChildNodes()) {
+            const headers = ['名称', '反应式', '比重(%)', '操作'];
+            thead.innerHTML = '<tr>' +
+                headers.map(h => `<th>${h}</th>`).join('') +
+                '</tr>';
+        }
+
+        if (filteredData.length === 0) {
+            thead.innerHTML = '<tr><th>没有数据</th></tr>';
+            tbody.innerHTML = '';
+            return;
+        }
+
+        const start = (currentPage - 1) * rowsPerPage;
+        const pageData = filteredData.slice(start, start + rowsPerPage);
+
+        tbody.innerHTML = pageData.map((row, idx) => {
+            const realIndex = start + idx;
+            const cells = [
+                `<td>${row.name}</td>`,
+                `<td>${row.reaction}</td>`,
+                `<td><input type="number" id="weight-${realIndex}" value="0" min="0" max="100" class="weight-input" oninput="checkTotalWeight()" /></td>`,
+                `<td>
+                    <button class="btn submit-btn" onclick="submitWeight(${realIndex})">
+                        提交修改
+                    </button>
+                </td>`
+            ];
+
+            return `<tr>${cells.join('')}</tr>`;
+        }).join('');
+    }
+
+    function renderPagination() {
+        const container = document.getElementById('pagination');
+        let html = '';
+
+        // 上一页
+        html += `<button ${currentPage === 1 ? 'disabled' : ''} onclick="goToPage(${currentPage - 1})">‹</button>`;
+
+        function addPage(num) {
+            if (num === '...') {
+                html += `<span class="ellipsis">…</span>`;
+            } else {
+                html += `<button ${num === currentPage ? 'class="active"' : ''}` +
+                    ` onclick="goToPage(${num})">${num}</button>`;
+            }
+        }
+
+        if (totalPages <= 7) {
+            for (let i = 1; i <= totalPages; i++) addPage(i);
+        } else {
+            addPage(1);
+            if (currentPage > 4) addPage('...');
+            const start = Math.max(2, currentPage - 2);
+            const end = Math.min(totalPages - 1, currentPage + 2);
+            for (let i = start; i <= end; i++) addPage(i);
+            if (currentPage < totalPages - 3) addPage('...');
+            addPage(totalPages);
+        }
+
+        // 下一页
+        html += `<button ${currentPage === totalPages ? 'disabled' : ''} onclick="goToPage(${currentPage + 1})">›</button>`;
+        container.innerHTML = html;
+    }
+
+    function goToPage(page) {
+        if (page < 1 || page > totalPages || page === currentPage) return;
+        currentPage = page;
+        renderTable();
+        renderPagination();
+    }
+
+    // 提交比重按钮逻辑
+    function submitWeight(index) {
+        const item = filteredData[index];
+        const id = item.name;
+        const weight = document.getElementById(`weight-${index}`).value;
+        fetch('/weight/' + id + '/' + weight);
+    }
+
+    // 下一步按钮点击事件 - 检查比重总和
+    // document.getElementById('next-btn').addEventListener('click', function() {
+    //     let totalWeight = 0;
+    //     const weightInputs = document.querySelectorAll('.weight-input');
+        
+    //     weightInputs.forEach(input => {
+    //         totalWeight += parseFloat(input.value) || 0;
+    //     });
+        
+    //     if (Math.abs(totalWeight - 100) > 0.01) { // 浮点数精度处理
+    //         alert('比重总和必须为100%');
+    //         return;
+    //     }
+        
+    //     // 比重总和为100%，继续下一步操作
+    //     window.location.href = '/constraints'; // 替换为实际的下一步URL
+    // });
+
+    // 清空按钮点击事件（添加错误处理和响应提示）
+    document.getElementById('clear-btn').addEventListener('click', function () {
+        const weightInputs = document.querySelectorAll('.weight-input');
+        weightInputs.forEach(input => {
+            input.value = 0;
+        });
+
+        fetch('/clear-weights', { method: 'POST' })
+           .then(response => {
+                if (!response.ok) {
+                    throw new Error('清空请求失败');
+                }
+                return response.json();
+            })
+           .then(data => {
+                alert(data.message); // 显示后端返回的提示
+                window.location.reload(); // 关键代码：刷新页面
+            })
+           .catch(error => {
+                console.error('Error:', error);
+                alert('清空失败: ' + error.message);
+            });
+    });
+</script>
+
+<style>
+    /* 美化比重输入框 */
+    .weight-input {
+        width: 80px;
+        padding: 6px 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 0.9em;
+        transition: all 0.2s ease;
+        text-align: center;
+        background-color: white;
+    }
+
+    .weight-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.2);
+    }
+
+    /* 新增输入框响应式样式 */
+    .weight-input:hover {
+        border-color: #c0c4cc;
+    }
+
+    /* 按钮通用样式 */
+    .btn {
+        padding: 8px 16px;
+        border-radius: 4px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .search-btn:hover {
+        background-color: var(--primary-dark);
+    }
+
+    .submit-btn {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    .submit-btn:hover {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    /* 表格样式增强 */
+    #weight-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    #weight-table th,
+    #weight-table td {
+        padding: 12px 15px;
+        border: 1px solid #e0e0e0;
+        text-align: left;
+    }
+
+    #weight-table th {
+        background-color: #f5f7fa;
+        font-weight: 600;
+        color: #333;
+    }
+
+    /* 分页样式增强 */
+    #pagination {
+        margin: 20px 0;
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+    }
+
+    #pagination button {
+        min-width: 32px;
+        height: 32px;
+        padding: 0 8px;
+        border: 1px solid #ddd;
+        background: white;
+        border-radius: 4px;
+        transition: all 0.2s;
+    }
+
+    #pagination button:hover:not(:disabled) {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+
+    #pagination button.active {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+
+    .ellipsis {
+        display: inline-block;
+        margin: 0 4px;
+        font-size: 1.2em;
+        vertical-align: middle;
+    }
+
+    /* 新增暗黑模式样式 */
+    .dark .weight-input {
+        background-color: #444;
+        color: #eee;
+        border-color: #666;
+    }
+
+    .dark .weight-input:focus {
+        border-color: #409eff;
+        box-shadow: 0 0 5px rgba(64, 158, 255, 0.5);
+    }
+
+    .dark .submit-btn {
+        background-color: #337ecc;
+    }
+
+    .dark .submit-btn:hover {
+        background-color: #409eff;
+    }
+
+    .dark #weight-table {
+        background-color: #333;
+        color: #eee;
+    }
+
+    .dark #weight-table th {
+        background-color: #444;
+        color: var(--primary-color);
+    }
+
+    .dark #weight-table td {
+        border-color: #555;
+    }
+
+    .dark #pagination button {
+        background-color: #444;
+        color: #eee;
+        border: 1px solid #555;
+    }
+
+    .dark #pagination button.active {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    /* 暗黑模式表格行悬停 */
+    .dark #weight-table tr:hover td {
+        background-color: #444;
+    }
+
+    /* 暗黑模式输入框placeholder颜色 */
+    .dark .weight-input::placeholder {
+        color: #999;
+    }
+
+    @media (max-width: 768px) {
+        .weight-input {
+            width: 60px;
+            padding: 4px 8px;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        #weight-table th,
+        #weight-table td {
+            padding: 8px 10px;
+        }
+    }
+</style>
+
+{% endblock %}

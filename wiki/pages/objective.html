@@ -12,6 +12,7 @@
         <input type="text" id="searchInput" placeholder="搜索反应ID或名称..." class="search-input">
         <button id="clear-btn" class="search-btn">清空</button>
         <button id="organize-btn" class="search-btn">整理</button>
+        <button id="confirm-btn" class="search-btn" style="width: 140px;">设置权重</button>
     </div>
 
     <div class="content">
@@ -225,6 +226,21 @@
                 alert('清空失败: ' + error.message);
             });
     });
+
+    // 设置权重按钮点击事件
+    document.getElementById('confirm-btn').addEventListener('click', (e) => {
+        e.preventDefault();
+
+        if (selectedReactions.length === 0) {
+            alert('请先选择至少一个目标反应');
+            return;
+        }
+        //  const routes = {
+        //         '/objective': '/wSetting'
+        //     };
+        window.location.href = '/wSetting';
+    });
+
 </script>
 
 

@@ -86,11 +86,26 @@
                 alert('请先选择一个模型');
                 return;
             }
-            
+             // 检查是否在目标权重设置页面且权重和非法
+            if (currentPath === '/wSetting'){ 
+                let totalWeight = 0;
+                const weightInputs = document.querySelectorAll('.weight-input');
+        
+                weightInputs.forEach(input => {
+                totalWeight += parseFloat(input.value) || 0;
+                });
+        
+            if (Math.abs(totalWeight - 100) > 0.01) { // 浮点数精度处理
+                alert('比重总和必须为100%');
+                return;
+            }
+                
+            }
             const routes = {
                 '/': '/model',
                 '/model': '/objective',
-                '/objective': '/constraints',
+                '/objective': '/wSetting',
+                '/wSetting':'/constraints',
                 '/constraints': '/gene',
                 '/gene': '/confirm',
                 '/confirm': '/result'
@@ -107,7 +122,8 @@
             const routes = {
                 '/model': '/',
                 '/objective': '/model',
-                '/constraints': '/objective',
+                '/wSetting':'/objective',
+                '/constraints': '/wSetting',
                 '/gene': '/constraints',
                 '/confirm': '/gene',
                 '/result':'/confirm'

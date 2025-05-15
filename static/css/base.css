@@ -185,6 +185,7 @@ td.select-cell {
     border: 1px solid #ddd;
     background: white;
     cursor: pointer;
+    color: #666; /* 默认灰色文本 */
 }
 
 #pagination button.active {
