@@ -1,16 +1,7 @@
 {
-  "model": "yeast-GEM",
-  "objective": [
-    "r_0108"
-  ],
-  "deleted_genes": [
-    "Q0085"
-  ],
+  "model": "iYO844",
+  "objective": [],
+  "deleted_genes": [],
   "modified_reactions": [],
-  "weights": [
-    {
-      "reaction": "r_0108",
-      "weight": "100"
-    }
-  ]
+  "weights": []
 }

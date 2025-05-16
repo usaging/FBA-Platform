@@ -324,33 +324,35 @@ def clear_confirm():
 
 
 @app.route('/result')
-def optimize():
-    global model
-    if model is None:
-        return "No model loaded."
+def result():
+    return render_template('./flux_map_galactose_AHG.html')
+# def optimize():
+#     global model
+#     if model is None:
+#         return "No model loaded."
 
-    # 查看数据结构
-    print(json.dumps(confirm, indent=2))
-    solution = model.optimize()
- # 1. 创建 StringIO 并替换 stdout
-    buf = io.StringIO()
-    old_stdout = sys.stdout
-    sys.stdout = buf
-    print()
-    # 2. 执行原本会打印的逻辑
-    print('Optimal flux:', solution.objective_value)
-    print(model.objective.expression)
-    print('Status:', solution.status)
-    summary_str = str(model.summary())
-    print(summary_str)
+#     # 查看数据结构
+#     print(json.dumps(confirm, indent=2))
+#     solution = model.optimize()
+#  # 1. 创建 StringIO 并替换 stdout
+#     buf = io.StringIO()
+#     old_stdout = sys.stdout
+#     sys.stdout = buf
+#     print()
+#     # 2. 执行原本会打印的逻辑
+#     print('Optimal flux:', solution.objective_value)
+#     print(model.objective.expression)
+#     print('Status:', solution.status)
+#     summary_str = str(model.summary())
+#     print(summary_str)
 
-    # 3. 恢复 stdout，并获取输出内容
-    sys.stdout = old_stdout
-    output = buf.getvalue()
-    buf.close()
+#     # 3. 恢复 stdout，并获取输出内容
+#     sys.stdout = old_stdout
+#     output = buf.getvalue()
+#     buf.close()
 
-    # 4. 渲染到模板
-    return render_template('pages/result.html', result=output)
+#     # 4. 渲染到模板
+#     return render_template('pages/result.html', result=output)
 
 @app.route('/pages/<page>')
 def pages(page):
