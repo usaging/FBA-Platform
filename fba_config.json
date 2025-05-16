@@ -1,5 +1,5 @@
 {
-  "model": "yeast-GEM",
+  "model": null,
   "objective": [],
   "deleted_genes": [],
   "modified_reactions": [],
