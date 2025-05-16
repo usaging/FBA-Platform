@@ -28,7 +28,7 @@
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
 
 <script>
-    const rowsPerPage = 15;
+    const rowsPerPage = 14;
     let currentPage = 1;
     let totalPages = 1;
     let originalData = [];  // 原始数据（本地+导入）
@@ -100,7 +100,7 @@
             return;
         }
 
-        // 添加选择列表头
+        // 添加表头
         thead.innerHTML = `
             <tr>
                 <th>名称</th>
@@ -114,12 +114,7 @@
 
         // 添加选择列单元格
         tbody.innerHTML = pageData.map(row => {
-            let reaction = row.reaction;
-            if (reaction.length > 30) { // 可根据需要调整最大长度
-                const startPart = reaction.slice(0, 15);
-                const endPart = reaction.slice(-15);
-                reaction = `${startPart}...${endPart}`;
-            } return `
+            return `
             <tr>
                 <td>${row.name}</td>
                 <td>${row.reaction}</td>
@@ -244,20 +239,15 @@
         if (selectedReactions.length === 0) {
             alert('默认唯一目标反应为Biomass');
             window.location.href = '/constraints';//默认目标反应为biomass
-        }else{
-        window.location.href = '/wSetting';}
+        } else {
+            window.location.href = '/wSetting';
+        }
     });
 
 </script>
 
 
 <style>
-    /* 添加选择列样式 */
-    /* .select-cell {
-        text-align: center;
-        width: 60px;
-    } */
-
     .select-dot {
         width: 16px;
         height: 16px;
@@ -297,9 +287,6 @@
         cursor: pointer;
     }
 
-    /* .dark #objective-table th {
-        border-bottom: 0.5px solid white;
-    } */
 
     /* 表格固定宽度和响应式处理 */
     #objective-table {
@@ -312,13 +299,19 @@
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 
+    /* 修改表格行高 */
+    #objective-table tr {
+        height: 50px;
+        /* 从原来的40px增加到50px */
+    }
+
     #objective-table th,
     #objective-table td {
         width: 120px;
         /* 默认宽度 */
         min-width: 80px;
         max-width: 200px;
-        padding: 8px 12px;
+        padding: 12px 15px;
         box-sizing: border-box;
         white-space: nowrap;
         overflow: hidden;
@@ -326,23 +319,66 @@
         border: 1px solid #ddd;
     }
 
+    /* 操作列固定宽度 */
+    #objective-table td:last-child {
+        width: 60px;
+    }
+
+    /* 名字列特殊处理 - 添加滑动条 */
+    #objective-table td:nth-child(1) {
+        max-width: 200px;
+        min-width: 180px;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        text-overflow: unset;
+    }
+
     /* 反应式列特殊处理 */
     #objective-table td:nth-child(2) {
         /* 假设反应式是第二列 */
         max-width: 1100px;
-        min-width: 1000px;
+        min-width: 1100px;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        /* 平滑滚动 */
+        scrollbar-width: thin;
+        /* Firefox */
+        text-overflow: unset;
+        /* 移除省略号 */
     }
 
-    
-
-    /* 表头样式 */
-    #objective-table th {
-        background-color: #f5f7fa;
-        font-weight: 600;
-        color: #333;
-        position: sticky;
-        top: 0;
+    /* 自定义滚动条样式 */
+    #objective-table td:nth-child(1)::-webkit-scrollbar,
+    #objective-table td:nth-child(2)::-webkit-scrollbar {
+        height: 6px;
     }
+
+    #objective-table td:nth-child(1)::-webkit-scrollbar-thumb,
+    #objective-table td:nth-child(2)::-webkit-scrollbar-thumb {
+        background-color: var(--primary-color);
+        border-radius: 3px;
+    }
+
+    #objective-table td:nth-child(1)::-webkit-scrollbar-track,
+    #objective-table td:nth-child(2)::-webkit-scrollbar-track {
+        background-color: #f1f1f1;
+    }
+
+    .dark #objective-table td:nth-child(1)::-webkit-scrollbar-thumb,
+    .dark #objective-table td:nth-child(2)::-webkit-scrollbar-thumb {
+        background-color: var(--primary-light)
+    }
+
+    .dark #objective-table td:nth-child(1)::-webkit-scrollbar-track 
+    .dark #objective-table td:nth-child(2)::-webkit-scrollbar-track {
+        background-color: #444;
+    }
+
+
+   
 
     /* 暗黑模式样式 */
     .dark #objective-table {
@@ -353,8 +389,9 @@
     .dark #objective-table th {
         background-color: #444;
         color: var(--primary-color);
-        border-bottom: 2px solid #666;
+        border-bottom: 0.5px solid white;
     }
+
 
     .dark #objective-table td {
         border-color: #555;

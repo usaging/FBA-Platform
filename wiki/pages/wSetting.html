@@ -271,6 +271,62 @@
         color: #333;
     }
 
+    /* 名字式列特殊处理 */
+    #weight-table td:nth-child(1) {
+        max-width: 200px;
+        min-width: 180px;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        /* 平滑滚动 */
+        scrollbar-width: thin;
+        /* Firefox */
+        text-overflow: unset;
+        /* 移除省略号 */
+    }
+
+    /* 反应式列特殊处理 */
+    #weight-table td:nth-child(2) {
+        /* 假设反应式是第二列 */
+        max-width: 900px;
+        min-width: 800px;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        /* 平滑滚动 */
+        scrollbar-width: thin;
+        /* Firefox */
+        text-overflow: unset;
+        /* 移除省略号 */
+    }
+
+    /* 自定义滚动条样式 */
+    #weight-table td:nth-child(1)::-webkit-scrollbar,
+    #weight-table td:nth-child(2)::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    #weight-table td:nth-child(1)::-webkit-scrollbar-thumb,
+    #weight-table td:nth-child(2)::-webkit-scrollbar-thumb {
+        background-color: var(--primary-color);
+        border-radius: 3px;
+    }
+
+    #weight-table td:nth-child(1)::-webkit-scrollbar-track,
+    #weight-table td:nth-child(2)::-webkit-scrollbar-track {
+        background-color: #f1f1f1;
+    }
+
+    .dark #weight-table td:nth-child(1)::-webkit-scrollbar-thumb,
+    .dark #weight-table td:nth-child(2)::-webkit-scrollbar-thumb {
+        background-color: var(--primary-light)
+    }
+
+    .dark #weight-table td:nth-child(1)::-webkit-scrollbar-track,
+    .dark #weight-table td:nth-child(2)::-webkit-scrollbar-track {
+        background-color: #444;
+    }
+
     /* 分页样式增强 */
     #pagination {
         margin: 20px 0;
