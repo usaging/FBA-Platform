@@ -14,7 +14,7 @@
     </div>
     <div class="content">
         <!-- 美化的模型ID显示 -->
-        <div class="model-id-display" >
+        <div class="model-id-display">
             <i class="fa-solid fa-database"></i>
             <span id="model-id-text">Loading model ID...</span>
         </div>
@@ -63,15 +63,30 @@
         .then(data => {
             // 显示模型ID
             document.getElementById('model-id-text').textContent = data.model || "未选择模型";
-            
+
+
+
             // 填充 Objective 表格
             const objTbody = document.querySelector('#objective-table tbody');
-            const objRow = document.createElement('tr');
-            objRow.innerHTML = `
-                <td>${data.objective || '未设置'}</td>
+            if (data.objective.length === 0) {
+                const objRow = document.createElement('tr');
+
+                objRow.innerHTML = `
+                <td>${'Biomass'}</td>
                 <td>1.0</td> <!-- 默认权重为1.0 -->
             `;
-            objTbody.appendChild(objRow);
+                objTbody.appendChild(objRow);
+            }
+            else {
+                data.weights.forEach(reaction => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                    <td>${reaction.reaction}</td>
+                    <td>${reaction.weight}</td>
+                `;
+                    objTbody.appendChild(row);
+                });
+            }
 
             // 填充 Deleted Genes
             const delTbody = document.querySelector('#deleted-genes-table tbody');
@@ -92,11 +107,17 @@
                 `;
                 modTbody.appendChild(row);
             });
+
         });
 
     // 添加清空按钮点击事件
-    document.getElementById('clear-btn').addEventListener('click', function() {
+    document.getElementById('clear-btn').addEventListener('click', function () {
         if (confirm('确定要清空所有配置吗？')) {
+            localStorage.removeItem('selectedModelId');
+            document.getElementById('modelIdText').textContent = "未选择模型";
+            localStorage.removeItem('selectedGenes');
+            localStorage.removeItem('selectedReactions');
+            localStorage.removeItem('selectedReactionId');
             fetch('/clear-config', { method: 'POST' })
                 .then(response => {
                     if (response.ok) {
@@ -109,7 +130,7 @@
     });
 
     // 添加确定提交按钮点击事件
-    document.getElementById('ensure-btn').addEventListener('click', function() {
+    document.getElementById('ensure-btn').addEventListener('click', function () {
         if (confirm('确定要提交所有配置吗？')) {
             fetch('/config', { method: 'POST' })
                 .then(response => {
@@ -133,7 +154,8 @@
         align-items: center;
         gap: 10px;
         margin-bottom: 20px;
-        min-width: 50px; /* 根据实际情况调整 */
+        min-width: 50px;
+        /* 根据实际情况调整 */
         font-size: 1.2em;
         padding: 10px 15px;
         background-color: rgba(0, 123, 255, 0.1);
@@ -152,7 +174,8 @@
         margin-bottom: 1.5em;
     }
 
-    th, td {
+    th,
+    td {
         border: 1px solid #ccc;
         padding: 10px;
         text-align: left;

@@ -3,14 +3,5 @@
   "objective": [],
   "deleted_genes": [],
   "modified_reactions": [],
-  "weights": [
-    {
-      "reaction": "EX_ctbt_e",
-      "weight": "100"
-    },
-    {
-      "reaction": "EX_glc__D_e",
-      "weight": "100"
-    }
-  ]
+  "weights": []
 }
