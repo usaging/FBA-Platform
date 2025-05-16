@@ -263,26 +263,26 @@
         // 否则选择新模型（原有逻辑）
         else {
             // 清空constraints相关的本地存储
-        let submittedReactions = [];
-        let localBounds = {};
-        localStorage.setItem('submittedReactions', JSON.stringify(submittedReactions));
-        localStorage.setItem('localBounds', JSON.stringify(localBounds));
+            let submittedReactions = [];
+            let localBounds = {};
+            localStorage.setItem('submittedReactions', JSON.stringify(submittedReactions));
+            localStorage.setItem('localBounds', JSON.stringify(localBounds));
 
-        // 发送清空constraints的请求
-        fetch('/clear-constraints', { method: 'POST' })
-           .then(response => {
-                if (!response.ok) {
-                    throw new Error('清空constraints请求失败');
-                }
-                return response.json();
-            })
-           .then(data => {
-                console.log(data.message); // 控制台记录即可，不需要alert
-            })
-           .catch(error => {
-                console.error('Error:', error);
-            });
-            
+            // 发送清空constraints的请求
+            fetch('/clear-constraints', { method: 'POST' })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('清空constraints请求失败');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data.message); // 控制台记录即可，不需要alert
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+
             selectedModelId = modelId;
             localStorage.setItem('selectedModelId', modelId);
             // 直接更新所有页面中的显示
@@ -390,7 +390,8 @@
 
     #model-table th:nth-child(2),
     #model-table td:nth-child(2) {
-        width: 200px; /* ID列 */
+        width: 200px;
+        /* ID列 */
         min-width: 200px;
     }
 
@@ -398,7 +399,8 @@
     #model-table td:nth-child(3),
     #model-table th:nth-child(4),
     #model-table td:nth-child(4) {
-        width: 120px; /* m_count列 */
+        width: 120px;
+        /* m_count列 */
         min-width: 120px;
     }
 

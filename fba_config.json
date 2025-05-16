@@ -1,22 +1,7 @@
 {
-  "model": "iJN678",
+  "model": null,
   "objective": [],
   "deleted_genes": [],
-  "modified_reactions": [
-    {
-      "reaction": "34DHOXPEGOX",
-      "lower_bound": -1000.0,
-      "upper_bound": 1001.0
-    }
-  ],
-  "weights": [
-    {
-      "reaction": "EX_drib_e",
-      "weight": "25"
-    },
-    {
-      "reaction": "EX_5mtr_e",
-      "weight": "75"
-    }
-  ]
+  "modified_reactions": [],
+  "weights": []
 }

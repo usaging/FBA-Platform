@@ -82,6 +82,7 @@
         renderPagination();
     }));
 
+
     function renderTable() {
         const table = document.getElementById('weight-table');
         const thead = table.querySelector('thead');
@@ -95,11 +96,6 @@
                 '</tr>';
         }
 
-        if (filteredData.length === 0) {
-            thead.innerHTML = '<tr><th>没有数据</th></tr>';
-            tbody.innerHTML = '';
-            return;
-        }
 
         const start = (currentPage - 1) * rowsPerPage;
         const pageData = filteredData.slice(start, start + rowsPerPage);
@@ -269,9 +265,12 @@
     }
 
     #weight-table th {
-        background-color: #f5f7fa;
         font-weight: 600;
-        color: #333;
+        text-align: center;
+        background-color: var(--primary-light);
+        color: var(--primary-dark);
+        position: sticky;
+        top: 0;
     }
 
     /* 名字式列特殊处理 */
