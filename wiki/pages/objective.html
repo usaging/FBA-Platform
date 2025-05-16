@@ -319,9 +319,22 @@
         border: 1px solid #ddd;
     }
 
+    #objective-table th {
+        text-align: center;
+    }
+
     /* 操作列固定宽度 */
+    #objective-table th:last-child,
     #objective-table td:last-child {
-        width: 60px;
+        width: 40px;
+    }
+
+    #objective-table th:nth-child(1) {
+        text-align: center;
+    }
+
+    #objective-table th:last-child {
+        text-align: center;
     }
 
     /* 名字列特殊处理 - 添加滑动条 */
@@ -333,6 +346,7 @@
         -webkit-overflow-scrolling: touch;
         scrollbar-width: thin;
         text-overflow: unset;
+        text-align: center;
     }
 
     /* 反应式列特殊处理 */
@@ -372,13 +386,12 @@
         background-color: var(--primary-light)
     }
 
-    .dark #objective-table td:nth-child(1)::-webkit-scrollbar-track 
-    .dark #objective-table td:nth-child(2)::-webkit-scrollbar-track {
+    .dark #objective-table td:nth-child(1)::-webkit-scrollbar-track .dark #objective-table td:nth-child(2)::-webkit-scrollbar-track {
         background-color: #444;
     }
 
 
-   
+
 
     /* 暗黑模式样式 */
     .dark #objective-table {

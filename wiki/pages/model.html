@@ -354,6 +354,33 @@
         /* 白色下边框 */
     }
 
+    #model-table th,
+    #model-table td {
+        text-align: center;
+    }
+
+    /* 设置各列宽度 */
+    #model-table th:nth-child(1),
+    #model-table td:nth-child(1) {
+        width: 150px;
+        /* sorce列 */
+        min-width: 150px;
+    }
+
+    #model-table th:nth-child(2),
+    #model-table td:nth-child(2) {
+        width: 200px; /* ID列 */
+        min-width: 200px;
+    }
+
+    #model-table th:nth-child(3),
+    #model-table td:nth-child(3),
+    #model-table th:nth-child(4),
+    #model-table td:nth-child(4) {
+        width: 120px; /* m_count列 */
+        min-width: 120px;
+    }
+
     /* 选择圆点样式 */
     .select-dot {
         display: inline-block;

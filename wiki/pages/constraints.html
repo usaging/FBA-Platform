@@ -331,7 +331,6 @@
     /* 调整表格行高 */
     #reaction-table tr {
         height: 40px;
-        /* 设置固定行高 */
     }
 
     #reaction-table th,
@@ -351,6 +350,7 @@
         background-color: #f5f7fa;
         font-weight: 600;
         color: #333;
+        text-align: center;
     }
 
     /* 名字列特殊处理 - 添加滑动条 */
@@ -362,7 +362,9 @@
         -webkit-overflow-scrolling: touch;
         scrollbar-width: thin;
         text-overflow: unset;
+        text-align: center;
     }
+
 
     /* 反应式列特殊处理 */
     #reaction-table td:nth-child(2) {
@@ -373,9 +375,7 @@
         -webkit-overflow-scrolling: touch;
         /* 平滑滚动 */
         scrollbar-width: thin;
-        /* Firefox */
         text-overflow: unset;
-        /* 移除省略号 */
     }
 
     /* 自定义滚动条样式 */

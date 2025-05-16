@@ -104,7 +104,7 @@
 
         // 表头只在首次渲染
         if (!thead.hasChildNodes()) {
-            const headers = Object.keys(filteredData[0]).concat('操作');
+            const headers = Object.keys(filteredData[0]).concat('选择');
             thead.innerHTML = '<tr>' +
                 headers.map(h => `<th>${h}</th>`).join('') +
                 '</tr>';
@@ -236,6 +236,11 @@
 </script>
 
 <style>
+    #gene-table th,
+    #gene-table td {
+        text-align: center;
+    }
+
     #pagination button {
         margin: 0 2px;
         padding: 4px 8px;

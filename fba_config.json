@@ -1,7 +1,16 @@
 {
-  "model": null,
-  "objective": [],
-  "deleted_genes": [],
+  "model": "yeast-GEM",
+  "objective": [
+    "r_0108"
+  ],
+  "deleted_genes": [
+    "Q0085"
+  ],
   "modified_reactions": [],
-  "weights": []
+  "weights": [
+    {
+      "reaction": "r_0108",
+      "weight": "100"
+    }
+  ]
 }
