@@ -238,7 +238,11 @@
         if (selectedModelId === modelId) {
             selectedModelId = null;
             localStorage.removeItem('selectedModelId');
-            document.getElementById('modelIdText').textContent = "未选择模型";
+            // 直接更新所有页面中的显示
+            document.querySelectorAll('#modelIdText').forEach(el => {
+                el.textContent = "未选择模型";
+            });
+            // document.getElementById('modelIdText').textContent = "未选择模型";
             renderTable();
 
             // 调用清空API
@@ -260,7 +264,11 @@
         else {
             selectedModelId = modelId;
             localStorage.setItem('selectedModelId', modelId);
-            document.getElementById('modelIdText').textContent = modelId;
+            // 直接更新所有页面中的显示
+            document.querySelectorAll('#modelIdText').forEach(el => {
+                el.textContent = modelId;
+            });
+            // document.getElementById('modelIdText').textContent = modelId;
             currentPage = 1; // 新增：切换到第一页
             renderTable();
             fetch('/model/' + modelId);

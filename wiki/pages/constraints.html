@@ -24,7 +24,7 @@
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
 
 <script>
-    const rowsPerPage = 15;
+    const rowsPerPage = 11;
     let currentPage = 1;
     let totalPages = 1;
     let originalData = [];  // 原始数据（本地+导入）
@@ -121,13 +121,7 @@
                         `<td><input type="number" id="upper-${realIndex}" value="${row.upper_bound}" class="bound-input" /></td>`
                     );
                 } else if (key === 'reaction') {
-                    let reaction = row.reaction;
-                    if (reaction.length > 30) { // 可根据需要调整最大长度
-                        const startPart = reaction.slice(0, 15);
-                        const endPart = reaction.slice(-15);
-                        reaction = `${startPart}...${endPart}`;
-                    }
-                    cells.push(`<td>${reaction}</td>`);
+                    cells.push(`<td>${row.reaction}</td>`);
                 }
                 else {
                     cells.push(`<td>${row[key]}</td>`);
@@ -330,6 +324,8 @@
         /* 移除外边距 */
         flex-grow: 1;
         /* 让表格填充可用空间 */
+        height: 600px;
+        /* 15行 x 40px/行 = 600px */
     }
 
     /* 调整表格行高 */
@@ -337,8 +333,6 @@
         height: 40px;
         /* 设置固定行高 */
     }
-
-
 
     #reaction-table th,
     #reaction-table td {
@@ -359,12 +353,59 @@
         color: #333;
     }
 
+    /* 名字列特殊处理 - 添加滑动条 */
+    #reaction-table td:nth-child(1) {
+        max-width: 200px;
+        min-width: 180px;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        text-overflow: unset;
+    }
+
     /* 反应式列特殊处理 */
     #reaction-table td:nth-child(2) {
-        /* 假设反应式是第二列 */
         max-width: 800px;
-        min-width: 700px;
+        min-width: 800px;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        /* 平滑滚动 */
+        scrollbar-width: thin;
+        /* Firefox */
+        text-overflow: unset;
+        /* 移除省略号 */
     }
+
+    /* 自定义滚动条样式 */
+    #reaction-table td:nth-child(1) ::-webkit-scrollbar,
+    #reaction-table td:nth-child(2) ::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    #reaction-table td:nth-child(1) ::-webkit-scrollbar-thumb,
+    #reaction-table td:nth-child(2) ::-webkit-scrollbar-thumb {
+        background-color: #c1c1c1;
+        border-radius: 2px;
+    }
+
+    #reaction-table td:nth-child(1) ::-webkit-scrollbar-track,
+    #reaction-table td:nth-child(2) ::-webkit-scrollbar-track {
+        background-color: #f1f1f1;
+        ;
+    }
+
+    .dark #reaction-table td:nth-child(1) ::-webkit-scrollbar-thumb,
+    .dark #reaction-table td:nth-child(2) ::-webkit-scrollbar-thumb {
+        background-color: #666;
+    }
+
+    .dark #reaction-table td:nth-child(1) ::-webkit-scrollbar-track,
+    .dark #reaction-table td:nth-child(2) ::-webkit-scrollbar-track {
+        background-color: #444;
+    }
+
 
     /* 操作列固定宽度 */
     #reaction-table td:last-child {
