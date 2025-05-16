@@ -1,7 +1,33 @@
 {
-  "model": null,
-  "objective": [],
-  "deleted_genes": [],
-  "modified_reactions": [],
-  "weights": []
+  "model": "iYO844",
+  "objective": [
+    "EX_drib_e",
+    "EX_5mtr_e"
+  ],
+  "deleted_genes": [
+    "BSU16730",
+    "BSU16740"
+  ],
+  "modified_reactions": [
+    {
+      "reaction": "ADEt2",
+      "lower_bound": 10.0,
+      "upper_bound": 999999.0
+    },
+    {
+      "reaction": "EX_etha_e",
+      "lower_bound": 0.0,
+      "upper_bound": 999999.0
+    }
+  ],
+  "weights": [
+    {
+      "reaction": "EX_drib_e",
+      "weight": "25"
+    },
+    {
+      "reaction": "EX_5mtr_e",
+      "weight": "75"
+    }
+  ]
 }

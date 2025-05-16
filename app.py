@@ -207,6 +207,56 @@ def knock_out_gene(gene_id):
     else:
         return f"Gene {gene_id} already exists in deleted_genes."
 
+def apply_knockouts(model, genes):
+    for gid in genes:
+        if gid in model.genes:
+            model.genes.get_by_id(gid).knock_out()
+        else:
+            print(f"警告: 基因 {gid} 不存在于模型中")
+
+
+def set_objective(model, obj_list=None, weights=None):
+    # 优先使用加权目标
+    if weights:
+        expr = 0
+        for w in weights:
+            rid = w['reaction']
+            try:
+                weight = float(w['weight'])
+            except ValueError:
+                print(f"错误: 权重 '{w['weight']}' 无法转换为浮点数")
+                continue
+            if rid in model.reactions:
+                rxn = model.reactions.get_by_id(rid)
+                expr += rxn.flux_expression * weight
+            else:
+                print(f"警告: 反应 {rid} 不存在于模型中")
+        model.objective = model.problem.Objective(expr, direction='max')
+    # 其次使用单纯目标列表
+    elif obj_list:
+        obj_dict = {}
+        for rid in obj_list:
+            if rid in model.reactions:
+                obj_dict[rid] = 1.0
+            else:
+                print(f"警告: 反应 {rid} 不存在于模型中")
+        model.objective = obj_dict
+    else:
+        model.objective = 'Biomass'
+
+
+def modify_bounds(model, mods):
+    for m in mods:
+        rid = m['reaction']
+        lb, ub = m['lower_bound'], m['upper_bound']
+        if rid in model.reactions:
+            rxn = model.reactions.get_by_id(rid)
+            rxn.lower_bound = lb
+            rxn.upper_bound = ub
+        else:
+            print(f"警告: 反应 {rid} 不存在于模型中")
+
+
 @app.route('/config',methods=['POST'])
 def set_config():
     global model
@@ -214,41 +264,36 @@ def set_config():
     if model is None:
         return "No model loaded."
     
-    if confirm["deleted_genes"]:
-        for gene_id in confirm["deleted_genes"]:
-            if gene_id in model.genes:
-                model.genes.get_by_id(gene_id).knock_out()
-            else:
-                print(f"警告: 基因 {gene_id} 不存在于模型中")
+  # 应用基因敲除
+    apply_knockouts(model, confirm.get('deleted_genes', []))
+    # 设置目标函数
+    set_objective(model,
+                  obj_list=confirm.get('objective'),
+                  weights=confirm.get('weights'))
+    # 修改反应通量界限
+    modify_bounds(model, confirm.get('modified_reactions', []))
+    
+#######################################################################
+        # 打印配置
+    print(json.dumps(confirm, indent=2, ensure_ascii=False))
 
-    if confirm['weights']:
-        combined_objective = cobra.Model().problem.Objective(0)  # 初始化为零表达式
-        for reaction in confirm['weights']:
-            reaction_id = reaction['reaction']
-            if reaction_id in model.reactions:
-                rxn = model.reactions.get_by_id(reaction_id)
-                try:
-                    # 将权重转换为浮点数
-                    weight = float(reaction['weight'])
-                    combined_objective += rxn.flux_expression * weight
-                except ValueError:
-                    print(f"错误: 反应 {reaction_id} 的权重无效 '{reaction['weight']}'，无法转换为浮点数")
-            else:
-                print(f"警告: 反应 {reaction_id} 不存在于模型中")
-        model.objective = combined_objective
+    # 运行优化
+    solution = model.optimize()
+
+    # 输出结果
+    print(f"Optimal flux: {solution.objective_value}")
+    print(f"Status: {solution.status}")
+    # 仅在可行或最优时打印 summary
+    if solution.status == 'optimal' or solution.status == 'feasible':
+        try:
+            summary = model.summary()
+            print(str(summary))
+        except Exception as e:
+            print(f"生成 summary 时出错: {e}")
     else:
-        model.objective = "Biomass"
+        print("模型不可行，无法生成 summary。")
 
-    if confirm["modified_reactions"]:
-        for reaction in confirm["modified_reactions"]:
-            reaction_id = reaction["reaction"]
-            lower_bound = reaction["lower_bound"]
-            upper_bound = reaction["upper_bound"]
-            if reaction_id in model.reactions:
-                model.reactions.get_by_id(reaction_id).lower_bound = lower_bound
-                model.reactions.get_by_id(reaction_id).upper_bound = upper_bound
-            else:
-                print(f"警告: reaction {reaction_id} 不存在于模型中")
+#########################################################################        
     return jsonify({"status": "success", "message": "配置已提交"})
     
 
