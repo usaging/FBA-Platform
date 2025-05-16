@@ -79,19 +79,18 @@
             // 从本地存储获取选中的模型ID
             const selectedModelId = localStorage.getItem('selectedModelId');
 
-            // 初始化显示
-            if (selectedModelId) {
-                modelIdText.textContent = selectedModelId;
-            } else {
-                modelIdText.textContent = "未选择模型";
-            }
-
             // 监听存储变化事件
             window.addEventListener('storage', function (e) {
                 if (e.key === 'selectedModelId') {
                     modelIdText.textContent = e.newValue || "未选择模型";
                 }
             });
+            // 初始化显示
+            if (selectedModelId) {
+                modelIdText.textContent = selectedModelId;
+            } else {
+                modelIdText.textContent = "未选择模型";
+            }
 
             // 只在首页隐藏上一步按钮
             if (currentPath === '/') {
