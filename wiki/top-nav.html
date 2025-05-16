@@ -104,6 +104,7 @@
                     alert('请先选择一个模型');
                     return;
                 } else if (currentPath === '/objective') {
+                    selectedReactions = JSON.parse(localStorage.getItem('selectedReactions') || '[]');
                     if (selectedReactions.length === 0) {
                         alert('默认唯一目标反应为Biomass');
                         window.location.href = '/constraints';//默认目标反应为biomass
