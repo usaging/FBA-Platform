@@ -1,18 +1,18 @@
 {
-  "model": "iYO844",
+  "model": "iNF517",
   "objective": [
-    "EX_ctbt_e"
+    "ACTNdiff"
   ],
-  "deleted_genes": [],
-  "modified_reactions": [],
-  "weights": [
+  "deleted_genes": [
+    "LLMG_RS09720",
+    "LLMG_RS10345"
+  ],
+  "modified_reactions": [
     {
-      "reaction": "EX_ctbt_e",
-      "weight": "100"
-    },
-    {
-      "reaction": "EX_glc__D_e",
-      "weight": "100"
+      "reaction": "ACMANApts",
+      "lower_bound": 0.0,
+      "upper_bound": 994.0
     }
-  ]
+  ],
+  "weights": []
 }

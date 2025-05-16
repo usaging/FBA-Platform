@@ -353,14 +353,13 @@
         table-layout: fixed;
         width: 100%;
         max-width: 100%;
-        overflow: hidden;
+        overflow: auto;
         border-collapse: collapse;
         margin: 0;
-        /* 移除外边距 */
         flex-grow: 1;
-        /* 让表格填充可用空间 */
         height: 600px;
-        /* 15行 x 40px/行 = 600px */
+        display: block;
+        max-height: calc(100vh - 150px);
     }
 
     /* 调整表格行高 */
