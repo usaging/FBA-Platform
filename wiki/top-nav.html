@@ -147,7 +147,9 @@
             // 上一步按钮点击事件
             prevBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                if (currentPath === '/constraints') {
+                if (currentPath === '/result') {
+                    window.location.href = '/confirm';
+                } else if (currentPath === '/constraints') {
                     if (selectedReactions.length === 0) {
                         window.location.href = '/objective';//默认目标反应为biomass
                     } else {

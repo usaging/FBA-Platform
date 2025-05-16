@@ -1,15 +1,17 @@
 {
-  "model": "yeast-GEM",
+  "model": "iYO844",
   "objective": [
-    "r_0108"
+    "EX_ctbt_e"
   ],
-  "deleted_genes": [
-    "Q0085"
-  ],
+  "deleted_genes": [],
   "modified_reactions": [],
   "weights": [
     {
-      "reaction": "r_0108",
+      "reaction": "EX_ctbt_e",
+      "weight": "100"
+    },
+    {
+      "reaction": "EX_glc__D_e",
       "weight": "100"
     }
   ]

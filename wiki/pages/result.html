@@ -6,7 +6,7 @@
 
 <link href="{{ url_for('static', filename = 'css/base.css')}}" rel="stylesheet">
 
-<div class="main"  style="padding-top: 10px">
+<div class="main" style="padding-top: 10px">
     <div class="content" style="padding: 20px">
         <pre>
         {{result}}
@@ -16,6 +16,17 @@
 </div>
 
 <style>
+    .action-buttons {
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+    }
+
+    /* 隐藏下一步按钮 */
+    .next-btn {
+        display: none;
+    }
+
     .shell li a#a5 {
         background-color: var(--primary-color);
     }
