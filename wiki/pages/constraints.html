@@ -34,7 +34,7 @@
     let selectedReactionId = localStorage.getItem('selectedReactionId') || null;
 
     // 1. 添加存储已提交反应的变量（放在原有变量声明处）
-    let submittedReactions = JSON.parse(localStorage.getItem('submittedReactions') || [];
+    let submittedReactions = JSON.parse(localStorage.getItem('submittedReactions') || '[]');
 
     // 加载数据并初始化表格和分页
     fetch('/reaction.json')

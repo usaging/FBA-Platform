@@ -16,13 +16,13 @@
         height: calc(100vh - 160px);
         text-align: center;
     }
-    
+
     .welcome-logo {
         font-size: 72px;
         color: var(--primary-color);
         margin-bottom: 30px;
     }
-    
+
     .welcome-text {
         font-size: 24px;
         margin-bottom: 50px;
@@ -46,14 +46,22 @@
         background-color: var(--primary-dark);
         opacity: 0.9;
     }
-
 </style>
 
 <div class="welcome-container">
     <div class="welcome-logo">FBA ANALYSIS</div>
     <div class="welcome-text">代谢网络通量平衡分析平台</div>
     <button class="start-btn" onclick="window.location.href='/model'">
-        开始分析  <i class="fa-solid fa-arrow-right"></i>
+        开始分析 <i class="fa-solid fa-arrow-right"></i>
     </button>
 </div>
+
+<script>
+    localStorage.removeItem('selectedModelId');
+    document.getElementById('modelIdText').textContent = "未选择模型";
+    localStorage.removeItem('selectedGenes');
+    localStorage.removeItem('selectedReactions');
+    localStorage.removeItem('selectedReactionId');
+</script>
+
 {% endblock %}
