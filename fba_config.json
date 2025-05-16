@@ -9,5 +9,14 @@
       "upper_bound": 1001.0
     }
   ],
-  "weights": []
+  "weights": [
+    {
+      "reaction": "EX_drib_e",
+      "weight": "25"
+    },
+    {
+      "reaction": "EX_5mtr_e",
+      "weight": "75"
+    }
+  ]
 }
