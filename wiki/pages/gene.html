@@ -232,6 +232,23 @@
 
     });
 
+    // 整理按钮点击事件（新增排序逻辑）
+    document.getElementById('organize-btn').addEventListener('click', function () {
+        // 对当前过滤后的数据进行排序（选中在前）
+        filteredData = [...filteredData].sort((a, b) => {
+            const aSelected = selectedGenes.includes(a.id);
+            const bSelected = selectedGenes.includes(b.id);
+            if (aSelected && !bSelected) return -1;
+            if (!aSelected && bSelected) return 1;
+            return 0;
+        });
+
+        currentPage = 1; // 重置到第一页
+        totalPages = Math.ceil(filteredData.length / rowsPerPage);
+        renderTable();
+        renderPagination();
+    });
+
 
 </script>
 

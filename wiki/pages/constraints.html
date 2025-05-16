@@ -33,12 +33,21 @@
 
     let selectedReactionId = localStorage.getItem('selectedReactionId') || null;
 
+    // 1. 添加存储已提交反应的变量（放在原有变量声明处）
+    let submittedReactions = JSON.parse(localStorage.getItem('submittedReactions') || '[]');
+
     // 加载数据并初始化表格和分页
     fetch('/reaction.json')
         .then(res => res.json())
         .then(data => {
 
             originalData = data
+            // 初始排序（已提交的排前面）
+            originalData.sort((a, b) => {
+                const aSubmitted = submittedReactions.includes(a.name);
+                const bSubmitted = submittedReactions.includes(b.name);
+                return bSubmitted - aSubmitted;
+            });
             // 初始化 Fuse.js（根据实际字段修改 keys）
             fuse = new Fuse(originalData, {
                 keys: ['name', 'reaction'], // 根据你的 JSON 字段名修改
@@ -75,6 +84,12 @@
             const results = fuse.search(query);
             filteredData = results.map(r => r.item);
         }
+
+        filteredData = filteredData.sort((a, b) => {
+            const aSubmitted = submittedReactions.includes(a.name);
+            const bSubmitted = submittedReactions.includes(b.name);
+            return bSubmitted - aSubmitted;
+        });
 
         // 重置分页
         currentPage = 1;
@@ -183,13 +198,31 @@
         renderPagination();
     }
 
-    // 提交上下限按钮逻辑
+    // 2. 修改提交函数（替换原有submitBounds函数）
     function submitBounds(index) {
         const item = filteredData[index];
         const id = item.name;
         const lower = document.getElementById(`lower-${index}`).value;
         const upper = document.getElementById(`upper-${index}`).value;
-        fetch('/reaction/' + id + '/' + lower + '/' + upper);
+
+        // 添加记录到已提交列表
+        if (!submittedReactions.includes(id)) {
+            submittedReactions.push(id);
+            localStorage.setItem('submittedReactions', JSON.stringify(submittedReactions));
+        }
+
+        // 发送请求
+        fetch('/reaction/' + id + '/' + lower + '/' + upper)
+            .then(() => {
+                // 自动重新排序
+                filteredData = [...filteredData].sort((a, b) => {
+                    const aSubmitted = submittedReactions.includes(a.name);
+                    const bSubmitted = submittedReactions.includes(b.name);
+                    return bSubmitted - aSubmitted; // 已提交的排前面
+                });
+                renderTable();
+                renderPagination();
+            });
     }
 
     // 清空按钮点击事件（添加错误处理和响应提示）
@@ -197,6 +230,8 @@
 
         if (confirm('确定要清空所有配置吗？')) {
             selectedReactionId = null;
+            // 添加清空已提交记录
+            submittedReactions = [];
             localStorage.removeItem('selectedReactionId');
             renderTable();
             fetch('/clear-constraints', { method: 'POST' })
