@@ -123,6 +123,12 @@
                         alert('比重总和必须为100%');
                         return;
                     } else {
+                        // 先触发所有“提交修改”按钮
+                        document.querySelectorAll('.submit-btn').forEach(btn => {
+                            // 如果想要顺序提交或等待响应，可改成 btn.click() 后加延时或 Promise 逻辑
+                            btn.click();
+                        });
+                        // 再跳转到下一个页面
                         window.location.href = '/constraints';
                     }
 

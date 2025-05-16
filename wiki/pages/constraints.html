@@ -10,7 +10,8 @@
     <div class="search-container">
         <input type="text" id="searchInput" placeholder="搜索反应ID或名称..." class="search-input">
         <button id="clear-btn" class="search-btn">清空</button>
-        <button id="clear-btn" class="search-btn">整理</button>
+        <!-- 整理按钮改成 organize-btn -->
+        <button id="organize-btn" class="search-btn">整理</button>
     </div>
     <div class="content">
         <table id="reaction-table">
@@ -21,110 +22,71 @@
     <div id="pagination" style="margin-top: 1em; text-align: center; margin-bottom: 40px;"></div>
 </div>
 
-<!-- 引入 Fuse.js -->
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
-
 <script>
     const rowsPerPage = 11;
-    let currentPage = 1;
-    let totalPages = 1;
-    let originalData = [];  // 原始数据（本地+导入）
-    let filteredData = [];   // 过滤后的数据
-    let fuse = null;
-
-    // 1. 添加存储已提交反应的变量（放在原有变量声明处）
+    let currentPage = 1, totalPages = 1;
+    let originalData = [], filteredData = [];
     let submittedReactions = JSON.parse(localStorage.getItem('submittedReactions') || '[]');
     let localBounds = JSON.parse(localStorage.getItem('localBounds') || '{}');
+    let fuse = null;
 
-    // 加载数据并初始化表格和分页
-    fetch('/reaction.json')
-        .then(res => res.json())
-        .then(data => {
+    // 加载并初始化
+    fetch('/reaction.json').then(res => res.json()).then(data => {
+        originalData = data.map(item => localBounds[item.name]
+            ? { ...item, ...localBounds[item.name] }
+            : item
+        );
+        filteredData = originalData.slice();
 
-            originalData = data.map(item => {
-                // 如果有本地缓存，则替换掉原始值
-                if (localBounds[item.name]) {
-                    return { ...item, ...localBounds[item.name] };
-                }
-                return item;
-            });
-
-
-            // originalData = data;
-            // 初始排序（已提交的排前面）
-            originalData.sort((a, b) => {
-                const aSubmitted = submittedReactions.includes(a.name);
-                const bSubmitted = submittedReactions.includes(b.name);
-                return bSubmitted - aSubmitted;
-            });
-            // 初始化 Fuse.js（根据实际字段修改 keys）
-            fuse = new Fuse(originalData, {
-                keys: ['name', 'reaction'], // 根据你的 JSON 字段名修改
-                threshold: 0.3,
-                includeMatches: true,
-                minMatchCharLength: 1
-            });
-
-            // 初始显示全部数据
-            filteredData = originalData;
-            totalPages = Math.ceil(filteredData.length / rowsPerPage);
-            renderTable();
-            renderPagination();
+        // 初始化 Fuse.js
+        fuse = new Fuse(originalData, {
+            keys: ['name', 'reaction'],
+            threshold: 0.3,
+            includeMatches: true,
+            minMatchCharLength: 1
         });
 
-    // 防抖函数
-    function debounce(func, delay = 300) {
-        let timer;
-        return (...args) => {
-            clearTimeout(timer);
-            timer = setTimeout(() => func.apply(this, args), delay);
-        };
-    }
-
-    // 搜索输入监听（即时触发）
-    document.getElementById('searchInput').addEventListener('input', debounce(function (e) {
-        const query = e.target.value.trim();
-
-        if (!query) {
-            // 空搜索时恢复全部数据
-            filteredData = originalData;
-        } else {
-            // 使用 Fuse.js 搜索
-            const results = fuse.search(query);
-            filteredData = results.map(r => r.item);
-        }
-
-        filteredData = filteredData.sort((a, b) => {
-            const aSubmitted = submittedReactions.includes(a.name);
-            const bSubmitted = submittedReactions.includes(b.name);
-            return bSubmitted - aSubmitted;
-        });
-
-        // 重置分页
-        currentPage = 1;
         totalPages = Math.ceil(filteredData.length / rowsPerPage);
         renderTable();
         renderPagination();
-    }));
+    });
+
+    // 防抖搜素
+    function debounce(fn, d = 300) {
+        let t;
+        return (...args) => {
+            clearTimeout(t);
+            t = setTimeout(() => fn.apply(this, args), d);
+        };
+    }
+    document.getElementById('searchInput')
+        .addEventListener('input', debounce(e => {
+            const q = e.target.value.trim();
+            filteredData = q
+                ? fuse.search(q).map(r => r.item)
+                : originalData.slice();
+
+            // 保持原排序（不自动把已提交排前）
+            currentPage = 1;
+            totalPages = Math.ceil(filteredData.length / rowsPerPage);
+            renderTable();
+            renderPagination();
+        }));
 
     function renderTable() {
         const table = document.getElementById('reaction-table');
-        const thead = table.querySelector('thead');
-        const tbody = table.querySelector('tbody');
+        const thead = table.querySelector('thead'), tbody = table.querySelector('tbody');
 
-        if (filteredData.length === 0) {
+        if (!filteredData.length) {
             thead.innerHTML = '<tr><th>没有数据</th></tr>';
             tbody.innerHTML = '';
             return;
         }
-
-        // 表头只在首次渲染
+        // 表头只渲染一次
         if (!thead.hasChildNodes()) {
-            const headers = Object.keys(filteredData[0])
-                .concat(['操作']);
-            thead.innerHTML = '<tr>' +
-                headers.map(h => `<th>${h}</th>`).join('') +
-                '</tr>';
+            const headers = [...Object.keys(filteredData[0]), '操作'];
+            thead.innerHTML = '<tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
         }
 
         const start = (currentPage - 1) * rowsPerPage;
@@ -134,25 +96,16 @@
             const realIndex = start + idx;
             const cells = [];
 
-            // 动态生成数据列和输入框列
-            Object.keys(row).forEach(key => {
+            Object.entries(row).forEach(([key, val]) => {
                 if (key === 'lower_bound') {
-                    cells.push(
-                        `<td><input type="number" id="lower-${realIndex}" value="${row.lower_bound}" class="bound-input" /></td>`
-                    );
+                    cells.push(`<td><input type="number" id="lower-${realIndex}" value="${val}" class="bound-input"></td>`);
                 } else if (key === 'upper_bound') {
-                    cells.push(
-                        `<td><input type="number" id="upper-${realIndex}" value="${row.upper_bound}" class="bound-input" /></td>`
-                    );
-                } else if (key === 'reaction') {
-                    cells.push(`<td>${row.reaction}</td>`);
-                }
-                else {
-                    cells.push(`<td>${row[key]}</td>`);
+                    cells.push(`<td><input type="number" id="upper-${realIndex}" value="${val}" class="bound-input"></td>`);
+                } else {
+                    cells.push(`<td>${val}</td>`);
                 }
             });
 
-            // 原操作列只保留提交按钮
             cells.push(`
                 <td>
                     <button class="btn submit-btn" onclick="submitBounds(${realIndex})">
@@ -160,44 +113,28 @@
                     </button>
                 </td>
             `);
-
             return `<tr>${cells.join('')}</tr>`;
         }).join('');
     }
 
-
-
     function renderPagination() {
-        const container = document.getElementById('pagination');
-        let html = '';
-
-        // 上一页
-        html += `<button ${currentPage === 1 ? 'disabled' : ''} onclick="goToPage(${currentPage - 1})">‹</button>`;
-
-        function addPage(num) {
-            if (num === '...') {
-                html += `<span class="ellipsis">…</span>`;
-            } else {
-                html += `<button ${num === currentPage ? 'class="active"' : ''}` +
-                    ` onclick="goToPage(${num})">${num}</button>`;
-            }
+        const c = document.getElementById('pagination');
+        let html = `<button ${currentPage === 1 ? 'disabled' : ''} onclick="goToPage(${currentPage - 1})">‹</button>`;
+        function p(n) {
+            if (n === '...') html += `<span class="ellipsis">…</span>`;
+            else html += `<button ${n === currentPage ? 'class="active"' : ''} onclick="goToPage(${n})">${n}</button>`;
         }
-
         if (totalPages <= 7) {
-            for (let i = 1; i <= totalPages; i++) addPage(i);
+            for (let i = 1; i <= totalPages; i++) p(i);
         } else {
-            addPage(1);
-            if (currentPage > 4) addPage('...');
-            const start = Math.max(2, currentPage - 2);
-            const end = Math.min(totalPages - 1, currentPage + 2);
-            for (let i = start; i <= end; i++) addPage(i);
-            if (currentPage < totalPages - 3) addPage('...');
-            addPage(totalPages);
+            p(1);
+            if (currentPage > 4) p('...');
+            for (let i = Math.max(2, currentPage - 2); i <= Math.min(totalPages - 1, currentPage + 2); i++) p(i);
+            if (currentPage < totalPages - 3) p('...');
+            p(totalPages);
         }
-
-        // 下一页
         html += `<button ${currentPage === totalPages ? 'disabled' : ''} onclick="goToPage(${currentPage + 1})">›</button>`;
-        container.innerHTML = html;
+        c.innerHTML = html;
     }
 
     function goToPage(page) {
@@ -207,108 +144,77 @@
         renderPagination();
     }
 
-    // 2. 修改提交函数（替换原有submitBounds函数）
+    // 仅保存本地修改与提交记录，不自动排序
     function submitBounds(index) {
         const item = filteredData[index];
         const id = item.name;
-        const lower = document.getElementById(`lower-${index}`).value;
-        const upper = document.getElementById(`upper-${index}`).value;
+        const lower = parseFloat(document.getElementById(`lower-${index}`).value);
+        const upper = parseFloat(document.getElementById(`upper-${index}`).value);
 
-        // 更新本地缓存
-        localBounds[id] = {
-            lower_bound: parseFloat(lower),
-            upper_bound: parseFloat(upper)
-        };
+        localBounds[id] = { lower_bound: lower, upper_bound: upper };
         localStorage.setItem('localBounds', JSON.stringify(localBounds));
 
-        // 添加记录到已提交列表
         if (!submittedReactions.includes(id)) {
             submittedReactions.push(id);
             localStorage.setItem('submittedReactions', JSON.stringify(submittedReactions));
         }
 
-        // 更新当前数据源
-        const originalIndex = originalData.findIndex(d => d.name === id);
-        if (originalIndex > -1) {
-            originalData[originalIndex].lower_bound = parseFloat(lower);
-            originalData[originalIndex].upper_bound = parseFloat(upper);
-        }
+        // 更新 originalData 和 filteredData 中的值
+        [originalData, filteredData].forEach(arr => {
+            const idx = arr.findIndex(d => d.name === id);
+            if (idx > -1) {
+                arr[idx].lower_bound = lower;
+                arr[idx].upper_bound = upper;
+            }
+        });
 
-        const filteredIndex = filteredData.findIndex(d => d.name === id);
-        if (filteredIndex > -1) {
-            filteredData[filteredIndex].lower_bound = parseFloat(lower);
-            filteredData[filteredIndex].upper_bound = parseFloat(upper);
-        }
-
-
-        // 发送请求
-        fetch('/reaction/' + id + '/' + lower + '/' + upper)
+        fetch(`/reaction/${id}/${lower}/${upper}`)
             .then(() => {
-                // 自动重新排序
-                filteredData = [...filteredData].sort((a, b) => {
-                    const aSubmitted = submittedReactions.includes(a.name);
-                    const bSubmitted = submittedReactions.includes(b.name);
-                    return bSubmitted - aSubmitted; // 已提交的排前面
-                });
-                renderTable();
-                renderPagination();
+                // 不做排序，页面保持不变，等用户点击“整理”
             });
     }
 
-    // 清空按钮点击事件（添加错误处理和响应提示）
-    document.getElementById('clear-btn').addEventListener('click', function () {
-
-        if (confirm('确定要清空所有配置吗？')) {
-            selectedReactionId = null;
-            // 添加清空已提交记录
-            submittedReactions = [];
-            localBounds = {};
-
-            localStorage.setItem('submittedReactions', JSON.stringify(submittedReactions));
-            localStorage.setItem('localBounds', JSON.stringify(localBounds));
-
-            localStorage.removeItem('selectedReactionId');
-            renderTable();
-            fetch('/clear-constraints', { method: 'POST' })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('清空请求失败');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    alert(data.message); // 显示后端返回的提示
-
-                    // 重新加载数据并刷新表格
-                    fetch('/reaction.json')
-                        .then(res => res.json())
-                        .then(data => {
-                            originalData = data;
-                            filteredData = originalData.slice(); // 复制原始数据到过滤数据
-                            totalPages = Math.ceil(filteredData.length / rowsPerPage);
-                            renderTable();
-                            renderPagination();
-                        });
-
-                    //window.location.reload(); // 关键代码：刷新页面
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('清空失败: ' + error.message);
-                });
-        }
-
-
-        document.getElementById('darkModeToggle')?.addEventListener('change', () => {
-            renderTable();
+    // 整理按钮：把已提交的排到前面
+    document.getElementById('organize-btn').addEventListener('click', () => {
+        filteredData = filteredData.slice().sort((a, b) => {
+            const aSub = submittedReactions.includes(a.name);
+            const bSub = submittedReactions.includes(b.name);
+            return bSub - aSub;
         });
+        currentPage = 1;
+        totalPages = Math.ceil(filteredData.length / rowsPerPage);
+        renderTable();
+        renderPagination();
+    });
 
-        // 初始化时检查暗黑模式
-        if (document.body.classList.contains('dark')) {
-            document.documentElement.style.setProperty('--table-bg', '#333');
-        } else {
-            document.documentElement.style.setProperty('--table-bg', 'white');
-        }
+    // 清空按钮
+    document.getElementById('clear-btn').addEventListener('click', () => {
+        if (!confirm('确定要清空所有配置吗？')) return;
+
+        submittedReactions = [];
+        localBounds = {};
+        localStorage.setItem('submittedReactions', JSON.stringify([]));
+        localStorage.setItem('localBounds', JSON.stringify({}));
+
+        fetch('/clear-constraints', { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.message);
+                // 重新加载
+                return fetch('/reaction.json');
+            })
+            .then(res => res.json())
+            .then(data => {
+                originalData = data;
+                filteredData = originalData.slice();
+                totalPages = Math.ceil(filteredData.length / rowsPerPage);
+                renderTable();
+                renderPagination();
+            })
+            .catch(err => {
+                console.error(err);
+                alert('清空失败：' + err.message);
+            });
     });
 
 </script>
