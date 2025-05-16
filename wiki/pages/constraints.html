@@ -10,6 +10,7 @@
     <div class="search-container">
         <input type="text" id="searchInput" placeholder="搜索反应ID或名称..." class="search-input">
         <button id="clear-btn" class="search-btn">清空</button>
+        <button id="clear-btn" class="search-btn">整理</button>
     </div>
     <div class="content">
         <table id="reaction-table">
@@ -31,17 +32,25 @@
     let filteredData = [];   // 过滤后的数据
     let fuse = null;
 
-    let selectedReactionId = localStorage.getItem('selectedReactionId') || null;
-
     // 1. 添加存储已提交反应的变量（放在原有变量声明处）
     let submittedReactions = JSON.parse(localStorage.getItem('submittedReactions') || '[]');
+    let localBounds = JSON.parse(localStorage.getItem('localBounds') || '{}');
 
     // 加载数据并初始化表格和分页
     fetch('/reaction.json')
         .then(res => res.json())
         .then(data => {
 
-            originalData = data
+            originalData = data.map(item => {
+                // 如果有本地缓存，则替换掉原始值
+                if (localBounds[item.name]) {
+                    return { ...item, ...localBounds[item.name] };
+                }
+                return item;
+            });
+
+
+            // originalData = data;
             // 初始排序（已提交的排前面）
             originalData.sort((a, b) => {
                 const aSubmitted = submittedReactions.includes(a.name);
@@ -205,11 +214,32 @@
         const lower = document.getElementById(`lower-${index}`).value;
         const upper = document.getElementById(`upper-${index}`).value;
 
+        // 更新本地缓存
+        localBounds[id] = {
+            lower_bound: parseFloat(lower),
+            upper_bound: parseFloat(upper)
+        };
+        localStorage.setItem('localBounds', JSON.stringify(localBounds));
+
         // 添加记录到已提交列表
         if (!submittedReactions.includes(id)) {
             submittedReactions.push(id);
             localStorage.setItem('submittedReactions', JSON.stringify(submittedReactions));
         }
+
+        // 更新当前数据源
+        const originalIndex = originalData.findIndex(d => d.name === id);
+        if (originalIndex > -1) {
+            originalData[originalIndex].lower_bound = parseFloat(lower);
+            originalData[originalIndex].upper_bound = parseFloat(upper);
+        }
+
+        const filteredIndex = filteredData.findIndex(d => d.name === id);
+        if (filteredIndex > -1) {
+            filteredData[filteredIndex].lower_bound = parseFloat(lower);
+            filteredData[filteredIndex].upper_bound = parseFloat(upper);
+        }
+
 
         // 发送请求
         fetch('/reaction/' + id + '/' + lower + '/' + upper)
@@ -232,6 +262,11 @@
             selectedReactionId = null;
             // 添加清空已提交记录
             submittedReactions = [];
+            localBounds = {};
+
+            localStorage.setItem('submittedReactions', JSON.stringify(submittedReactions));
+            localStorage.setItem('localBounds', JSON.stringify(localBounds));
+
             localStorage.removeItem('selectedReactionId');
             renderTable();
             fetch('/clear-constraints', { method: 'POST' })
@@ -243,7 +278,19 @@
                 })
                 .then(data => {
                     alert(data.message); // 显示后端返回的提示
-                    window.location.reload(); // 关键代码：刷新页面
+
+                    // 重新加载数据并刷新表格
+                    fetch('/reaction.json')
+                        .then(res => res.json())
+                        .then(data => {
+                            originalData = data;
+                            filteredData = originalData.slice(); // 复制原始数据到过滤数据
+                            totalPages = Math.ceil(filteredData.length / rowsPerPage);
+                            renderTable();
+                            renderPagination();
+                        });
+
+                    //window.location.reload(); // 关键代码：刷新页面
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -359,6 +406,7 @@
         flex-grow: 1;
         height: 600px;
         display: block;
+        overflow-x: auto;
         max-height: calc(100vh - 150px);
     }
 

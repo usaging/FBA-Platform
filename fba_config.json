@@ -1,17 +1,12 @@
 {
-  "model": "iNF517",
-  "objective": [
-    "ACTNdiff"
-  ],
-  "deleted_genes": [
-    "LLMG_RS09720",
-    "LLMG_RS10345"
-  ],
+  "model": "iJN678",
+  "objective": [],
+  "deleted_genes": [],
   "modified_reactions": [
     {
-      "reaction": "ACMANApts",
-      "lower_bound": 0.0,
-      "upper_bound": 994.0
+      "reaction": "34DHOXPEGOX",
+      "lower_bound": -1000.0,
+      "upper_bound": 1001.0
     }
   ],
   "weights": []
