@@ -19,7 +19,7 @@
     </div>
 
     <div class="content">
-        <table id="model-table">
+        <table id="model-table" >
             <thead></thead>
             <tbody></tbody>
         </table>
@@ -347,11 +347,13 @@
 </script>
 
 <style>
+
     .search-container {
         display: flex;
         gap: 10px;
         margin-bottom: 10px;
-        padding: 0 20px;
+        padding: 0 10px;
+        padding-right: 20px;
     }
 
     .search-input {
@@ -370,10 +372,16 @@
         cursor: pointer;
     }
 
-    .dark #model-table th {
-        border-bottom: 0.5px solid white;
-        /* 白色下边框 */
+    /* 
+    /* 表格容器背景色 */
+    #model-table {
+        background-color: white !important;
     }
+
+    #model-table th {
+        background-color: var(--primary-light) !important;
+    }
+
 
     #model-table th,
     #model-table td {
@@ -390,7 +398,7 @@
 
     #model-table th:nth-child(2),
     #model-table td:nth-child(2) {
-        width: 200px;
+        width: 250px;
         /* ID列 */
         min-width: 200px;
     }
@@ -398,11 +406,14 @@
     #model-table th:nth-child(3),
     #model-table td:nth-child(3),
     #model-table th:nth-child(4),
-    #model-table td:nth-child(4) {
-        width: 120px;
+    #model-table td:nth-child(4),
+    #model-table th:nth-child(5),
+    #model-table td:nth-child(5)  {
+        width: 230px;
         /* m_count列 */
-        min-width: 120px;
+        min-width: 230px;
     }
+
 
     /* 选择圆点样式 */
     .select-dot {
@@ -416,8 +427,8 @@
     }
 
     .select-dot.selected {
-        background-color: var(--primary-color);
-        border-color: var(--primary-dark);
+        background-color: var(--primary--chosen);
+        border: 2px solid var(--primary--hlight);
     }
 
     .select-dot:hover {
@@ -432,6 +443,22 @@
     .dark .select-dot.selected {
         background-color: var(--primary-color);
         border-color: var(--primary-light);
+    }
+
+    /* 暗黑模式下的表格背景色（保持不变） */
+    .dark #model-table,
+    .dark #model-table th,
+    .dark #model-table td {
+        background-color: #333 !important;
+    }
+
+    .dark .content {
+        background-color: #333 !important;
+    }
+
+    .dark #model-table th {
+        border-bottom: 0.5px solid white;
+        /* 白色下边框 */
     }
 </style>
 

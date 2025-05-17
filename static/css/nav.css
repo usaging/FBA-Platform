@@ -6,7 +6,7 @@
     height: calc(100vh - 80px);
     width: 220px;
     padding: 15px 0;
-    background: white;
+    background: #E0F4FB !important;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     z-index: 100;
     overflow-y: auto;
@@ -25,17 +25,18 @@
     padding-left: 20px;
 }
 
-.nav-link::before {
-    display: none; /* 去掉第一级之间的虚线 */
-}
-
-.nav-link:last-child::before {
+/* .nav-link::before {
     display: none;
-}
+    /* 去掉第一级之间的虚线 */
+/* } */
+
+/* .nav-link:last-child::before {
+    display: none;
+} */ 
 
 .nav-link a {
     text-decoration: none;
-    color: #333;
+    color: #267289!important;
     display: flex;
     align-items: center;
     padding: 8px 10px;
@@ -44,13 +45,14 @@
 
 .nav-link a.active,
 .nav-link a:hover {
-    color: var(--primary-color);
-    background-color: rgba(0, 123, 255, 0.05);
+    background-color: #FFFFFF!important;
+    color: #267289 !important;
 }
 
 .step-icon {
     margin-right: 10px;
     font-size: 18px;
+    color: inherit; /* 继承父元素颜色 */
 }
 
 /* 子菜单项 */
@@ -76,13 +78,14 @@
     top: 0;
     left: 30px;
     height: 100%;
-    border-left: 2px dashed #888; /* 更粗、更深色的虚线 */
+    border-left: 2px dashed #B7E0E6;
+    /* 更粗、更深色的虚线 */
     z-index: -1;
 }
 
 .submenu .nav-link a {
     text-decoration: none;
-    color: #333;
+    color:  #267289;
     display: flex;
     align-items: center;
     padding: 8px 10px;
@@ -91,13 +94,23 @@
 
 .submenu .nav-link a.active,
 .submenu .nav-link a:hover {
-    color: var(--primary-color);
-    background-color: rgba(0, 123, 255, 0.05);
+    color: #267289 ;
+    background-color: #FFFFFF;
+}
+
+/* 子菜单展开键颜色 */
+.submenu-toggle {
+    color: #BA213D !important;
+}
+
+/* 条件设置键样式 */
+.step-item {
+    color: #267289 !important; /* 默认颜色 */
 }
 
 /* 条件设置激活时变色 */
 .step-item.active {
-    color: var(--primary-color);
+    color: #267289;
 }
 
 /* 暗黑模式切换 */
@@ -158,11 +171,11 @@
     transition: 0.4s;
 }
 
-input:checked +.slider {
+input:checked+.slider {
     background-color: var(--primary-color);
 }
 
-input:checked +.slider:before {
+input:checked+.slider:before {
     transform: translateX(20px);
 }
 
@@ -204,12 +217,13 @@ input:checked +.slider:before {
 }
 
 .dark .nav-link a {
-    color: #eee;
+    color: #eee  !important;
 }
 
 .dark .nav-link a:hover,
 .dark .nav-link a.active {
-    background-color: #1e3a8a !important; /*深蓝色背景*/
+    background-color: #1e3a8a !important;
+    /*深蓝色背景*/
     color: white !important;
 }
 
@@ -219,7 +233,7 @@ input:checked +.slider:before {
 }
 
 .dark .step-item.active {
-    color: var(--primary-light);
+    color: #aaa;
 }
 
 .dark .bottom-content {
@@ -233,6 +247,10 @@ input:checked +.slider:before {
 
 .dark .slider {
     background-color: #555;
+}
+
+.dark .submenu-toggle {
+    color: #aaa; /* 暗黑模式三角键保持红色 */
 }
 
 /* 暗黑模式下的WIKI链接样式 */

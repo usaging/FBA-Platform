@@ -30,8 +30,10 @@
     let originalData = [];  // 原始数据（本地+导入）
     let filteredData = [];   // 过滤后的数据
     let fuse = null;
-
+    let buttonStates = JSON.parse(localStorage.getItem('buttonStates')) || {};   // 跟踪按钮状态 {index: {modified: bool, submitted: bool}}
+    let weightValues = JSON.parse(localStorage.getItem('weightValues')) || {};   // 跟踪权重值 {index: value}
     let selectedReactions = JSON.parse(localStorage.getItem('selectedReactions') || '[]');
+
 
     // 加载数据并初始化表格和分页
     fetch('/reaction.json')
@@ -45,6 +47,18 @@
                 includeMatches: true,
                 minMatchCharLength: 1
             });
+
+            // 初始化按钮状态和权重值
+            originalData.forEach((item, index) => {
+                buttonStates[index] = {
+                    modified: false,
+                    submitted: false
+                };
+                if (!weightValues[index]) {
+                    weightValues[index] = 0;
+                }
+            });
+
 
             // 初始显示全部数据
             filteredData = originalData;
@@ -60,6 +74,15 @@
             clearTimeout(timer);
             timer = setTimeout(() => func.apply(this, args), delay);
         };
+    }
+
+    // **新增防抖函数**
+    let debounceTimer = null;
+    function debounceRenderTable() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            renderTable();
+        }, 200); // 延迟渲染表格时间，单位ms
     }
 
     // 搜索输入监听（即时触发）
@@ -88,33 +111,86 @@
         const thead = table.querySelector('thead');
         const tbody = table.querySelector('tbody');
 
-        // 确保表头始终存在
-        if (!thead.hasChildNodes()) {
-            const headers = ['名称', '反应式', '比重(%)', '操作'];
-            thead.innerHTML = '<tr>' +
-                headers.map(h => `<th>${h}</th>`).join('') +
-                '</tr>';
+        // 清空表头和表体
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        if (filteredData.length === 0) {
+            // 无数据时显示提示
+            thead.innerHTML = '<tr><th>没有找到匹配的反应</th></tr>';
+            return;
         }
 
+        // 动态生成表头（每次渲染都重新生成）
+        const headers = ['名称', '反应式', '比重(%)', '操作'];
+        thead.innerHTML = '<tr>' +
+            headers.map(h => `<th>${h}</th>`).join('') +
+            '</tr>';
 
         const start = (currentPage - 1) * rowsPerPage;
         const pageData = filteredData.slice(start, start + rowsPerPage);
 
         tbody.innerHTML = pageData.map((row, idx) => {
             const realIndex = start + idx;
+            const state = buttonStates[realIndex] || { modified: false, submitted: false };
+            const weightValue = weightValues[realIndex] || 0;
+
+            // 确定按钮样式和文本
+            let buttonClass = 'btn submit-btn';
+            let buttonText = '未修改';
+            let buttonStyle = '';
+
+            if (state.submitted) {
+                buttonClass += ' submitted';
+                buttonText = '已提交';
+                buttonStyle = 'background-color: var(--primary-color); color: white;';
+            } else if (state.modified) {
+                buttonClass += ' modified';
+                buttonText = '待提交';
+                buttonStyle = 'background-color: var(--primary--hlight); color: white;';
+            } else {
+                buttonClass += ' default';
+                buttonStyle = 'background-color: var(--primary-light); color: var(--primary-color);';
+            }
+
             const cells = [
                 `<td>${row.name}</td>`,
                 `<td>${row.reaction}</td>`,
-                `<td><input type="number" id="weight-${realIndex}" value="0" min="0" max="100" class="weight-input" oninput="checkTotalWeight()" /></td>`,
+                `<td><input type="number" inputmode="numeric" id="weight-${realIndex}" value="${weightValue}" min="0" max="100" class="weight-input" onchange="handleWeightChange(${realIndex}, this.value)" /></td>`,
                 `<td>
-                    <button class="btn submit-btn" onclick="submitWeight(${realIndex})">
-                        提交修改
-                    </button>
+                   <button class="${buttonClass}" onclick="submitWeight(${realIndex})" 
+                                style="${buttonStyle}">
+                            ${buttonText}
+                        </button>
                 </td>`
             ];
 
             return `<tr>${cells.join('')}</tr>`;
         }).join('');
+
+        // 为每个输入框添加 input 事件监听器
+        // const weightInputs = document.querySelectorAll('.weight-input');
+        // weightInputs.forEach((input, index) => {
+        //     input.addEventListener('input', () => {
+        //         const realIndex = (currentPage - 1) * rowsPerPage + index;
+        //         buttonStates[realIndex] = {
+        //             modified: true,
+        //             submitted: false
+        //         };
+        //         saveEditState();
+        //         renderTable();
+        //     });
+        // });
+    }
+
+    function handleWeightChange(index, value) {
+        weightValues[index] = value;
+        buttonStates[index] = {
+            modified: value !== "0",
+            submitted: false
+        };
+        saveEditState();
+        debounceRenderTable(); // 使用防抖函数延迟渲染
     }
 
     function renderPagination() {
@@ -162,36 +238,64 @@
         const item = filteredData[index];
         const id = item.name;
         const weight = document.getElementById(`weight-${index}`).value;
-        fetch('/weight/' + id + '/' + weight);
+        // 更新按钮状态
+        buttonStates[index] = {
+            modified: false,
+            submitted: true
+        };
+        saveEditState();
+
+        // 发送请求
+        fetch('/weight/' + id + '/' + weight)
+            .then(() => {
+                renderTable();
+            });
     }
 
     // 清空按钮点击事件（添加错误处理和响应提示）
     document.getElementById('clear-btn').addEventListener('click', function () {
 
         if (confirm('确定要清空所有配置吗？')) {
-            const weightInputs = document.querySelectorAll('.weight-input');
-            weightInputs.forEach(input => {
-                input.value = 0;
+            // 先本地更新状态
+            Object.keys(buttonStates).forEach(index => {
+                buttonStates[index] = { modified: false, submitted: false };
+                weightValues[index] = 0;
             });
+            saveEditState();
+            renderTable(); // 立即更新UI
+
+            // 然后发送清空请求
             fetch('/clear-weights', { method: 'POST' })
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error('清空请求失败');
-                    }
+                    if (!response.ok) throw new Error('清空请求失败');
                     return response.json();
                 })
                 .then(data => {
-                    alert(data.message); // 显示后端返回的提示
-                    window.location.reload(); // 关键代码：刷新页面
+                    alert(data.message);
                 })
                 .catch(error => {
                     console.error('Error:', error);
                     alert('清空失败: ' + error.message);
+                    // 失败时恢复之前的状态
+                    saveEditState();
+                    renderTable();
                 });
         }
 
 
     });
+
+    // 保存编辑状态到本地存储
+    function saveEditState() {
+        localStorage.setItem('buttonStates', JSON.stringify(buttonStates));
+        localStorage.setItem('weightValues', JSON.stringify(weightValues));
+    }
+
+    // 从本地存储恢复编辑状态
+    function restoreEditState() {
+        buttonStates = JSON.parse(localStorage.getItem('buttonStates')) || {};
+        weightValues = JSON.parse(localStorage.getItem('weightValues')) || {};
+    }
 </script>
 
 <style>
@@ -241,6 +345,21 @@
         color: white;
     }
 
+    .submit-btn.default {
+        background-color: var(--primary-light);
+        color: var(--primary-color);
+    }
+
+    .submit-btn.modified {
+        background-color: var(--primary--hlight);
+        color: white;
+    }
+
+    .submit-btn.submitted {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
     .submit-btn:hover {
         background-color: var(--primary-color);
         color: white;
@@ -261,7 +380,11 @@
     #weight-table td {
         padding: 12px 15px;
         border: 1px solid #e0e0e0;
-        text-align: left;
+        text-align: center;
+        box-sizing: border-box;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     #weight-table th {
@@ -285,15 +408,11 @@
         text-align: center;
     }
 
-    #weight-table th {
-        text-align: center;
-    }
-
     /* 反应式列特殊处理 */
     #weight-table td:nth-child(2) {
         /* 假设反应式是第二列 */
-        max-width: 900px;
-        min-width: 800px;
+        max-width: 720px;
+        min-width: 720px;
         overflow-x: auto;
         white-space: nowrap;
         -webkit-overflow-scrolling: touch;
@@ -301,7 +420,7 @@
         scrollbar-width: thin;
         /* Firefox */
         text-overflow: unset;
-        /* 移除省略号 */
+        text-align: left;
     }
 
     /* 自定义滚动条样式 */
@@ -405,6 +524,11 @@
         background-color: #444;
         color: #eee;
         border: 1px solid #555;
+    }
+
+    .dark .submit-btn.default {
+        background-color: #444;
+        color: var(--primary-color);
     }
 
     .dark #pagination button.active {

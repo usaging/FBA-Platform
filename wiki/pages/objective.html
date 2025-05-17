@@ -15,7 +15,7 @@
         <button id="confirm-btn" class="search-btn" style="width: 140px;">设置权重</button>
     </div>
 
-    <div class="content">
+    <div class="content" style="margin-right: 20px; margin-left: 120px; height: calc(100vh - 200px); overflow: hidden;">
         <table id="objective-table">
             <thead></thead>
             <tbody></tbody>
@@ -276,8 +276,8 @@
     }
 
     .select-dot.selected {
-        background: var(--primary-color);
-        border-color: var(--primary-color);
+        background: var(--primary--chosen);
+        border-color: var(--primary--hlight);
     }
 
     /* 保留原有搜索样式 */
@@ -285,8 +285,10 @@
         display: flex;
         gap: 10px;
         margin-bottom: 15px;
-        padding: 0 20px;
+        padding: 0 10px;
+        padding-right: 20px;
     }
+
 
     .search-input {
         flex: 1;
@@ -312,17 +314,18 @@
         max-width: 100%;
         overflow: hidden;
         border-collapse: collapse;
+        margin-bottom: 0;
         margin: 15px 0;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         display: block;
         overflow-x: auto;
-        max-height: calc(100vh - 150px);
+        height: calc(100% - 30px);
+        /* Take full height minus margins */
     }
 
     /* 修改表格行高 */
     #objective-table tr {
-        height: 50px;
-        /* 从原来的40px增加到50px */
+        height: calc((100% - 60px) / 14); /* Divide available height by number of rows */
     }
 
     #objective-table th,
@@ -330,7 +333,7 @@
         width: 120px;
         /* 默认宽度 */
         min-width: 80px;
-        max-width: 200px;
+        max-width: 80px;
         padding: 12px 15px;
         box-sizing: border-box;
         white-space: nowrap;
@@ -351,7 +354,7 @@
     #objective-table th:last-child,
     #objective-table td:last-child {
         width: 40px;
-        
+
     }
 
     #objective-table th:nth-child(1) {
@@ -364,7 +367,7 @@
 
     /* 名字列特殊处理 - 添加滑动条 */
     #objective-table td:nth-child(1) {
-        max-width: 200px;
+        max-width: 180px;
         min-width: 180px;
         overflow-x: auto;
         white-space: nowrap;
@@ -377,8 +380,8 @@
     /* 反应式列特殊处理 */
     #objective-table td:nth-child(2) {
         /* 假设反应式是第二列 */
-        max-width: 1100px;
-        min-width: 1100px;
+        max-width: 880px;
+        min-width: 880px;
         overflow-x: auto;
         white-space: nowrap;
         -webkit-overflow-scrolling: touch;
@@ -404,6 +407,14 @@
     #objective-table td:nth-child(1)::-webkit-scrollbar-track,
     #objective-table td:nth-child(2)::-webkit-scrollbar-track {
         background-color: #f1f1f1;
+    }
+
+    /* Adjust the pagination margin */
+    #pagination {
+        margin-top: 1em;
+        text-align: center;
+        margin-bottom: 20px;
+        /* Reduced from 80px */
     }
 
     .dark #objective-table td:nth-child(1)::-webkit-scrollbar-thumb,

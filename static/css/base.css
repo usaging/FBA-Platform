@@ -1,8 +1,10 @@
 /* 基础样式 */
 :root {
-    --primary-color: #409EFF; /* 浅蓝色主色调 */
-    --primary-light: #ECF5FF;
-    --primary-dark: #337ecc;
+    --primary-color: #267289; /* 深蓝色主色调 */
+    --primary-light: #E0F4FB;
+    --primary-dark: #B7E0E6;
+    --primary--hlight:#BA213D;
+    --primary--chosen:#FC8C8B;
 }
 
 body {
@@ -20,7 +22,7 @@ body {
     margin-left: 120px;
     padding: 10px;
     min-height: calc(100vh - 30px);
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color:white;
     position: relative;
     z-index: 1;
     width: calc(100% - 120px);
@@ -106,7 +108,7 @@ th, td {
 
 th {
     background-color: var(--primary-light);
-    color: var(--primary-dark);
+    color: var(--primary-color)!important;
     position: sticky;
     top: 0;
 }

@@ -60,6 +60,7 @@
             t = setTimeout(() => fn.apply(this, args), d);
         };
     }
+
     document.getElementById('searchInput')
         .addEventListener('input', debounce(e => {
             const q = e.target.value.trim();
@@ -76,18 +77,22 @@
 
     function renderTable() {
         const table = document.getElementById('reaction-table');
-        const thead = table.querySelector('thead'), tbody = table.querySelector('tbody');
+        const thead = table.querySelector('thead');
+        const tbody = table.querySelector('tbody');
+
+        // 清空表头和表体
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
 
         if (!filteredData.length) {
             thead.innerHTML = '<tr><th>没有数据</th></tr>';
-            tbody.innerHTML = '';
             return;
         }
-        // 表头只渲染一次
-        if (!thead.hasChildNodes()) {
-            const headers = [...Object.keys(filteredData[0]), '操作'];
-            thead.innerHTML = '<tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
-        }
+
+
+        const headers = [...Object.keys(filteredData[0]), '操作'];
+        thead.innerHTML = '<tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
+        
 
         const start = (currentPage - 1) * rowsPerPage;
         const pageData = filteredData.slice(start, start + rowsPerPage);
@@ -335,10 +340,12 @@
     }
 
     #reaction-table th {
-        background-color: #f5f7fa;
         font-weight: 600;
-        color: #333;
         text-align: center;
+        background-color: var(--primary-light);
+        color: var(--primary-dark);
+        position: sticky;
+        top: 0;
     }
 
     /* 名字列特殊处理 - 添加滑动条 */
@@ -356,8 +363,8 @@
 
     /* 反应式列特殊处理 */
     #reaction-table td:nth-child(2) {
-        max-width: 800px;
-        min-width: 800px;
+        max-width: 700px;
+        min-width: 700px;
         overflow-x: auto;
         white-space: nowrap;
         -webkit-overflow-scrolling: touch;
