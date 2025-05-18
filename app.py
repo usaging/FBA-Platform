@@ -5,8 +5,44 @@ import io, sys
 import json
 from werkzeug.utils import secure_filename
 import os
+# from escher import Builder
+
+
+# import pandas as pd
+# import re
+# import matplotlib.pyplot as plt
+# import pickle
 
 import tools
+
+# rxn_csv='./new_model/data/rxn.csv'
+# met_csv='./new_model/data/met.csv'
+
+# #csv读取
+# df_rxn = pd.read_csv(rxn_csv,header=None)
+# df_met = pd.read_csv(met_csv,header=None)
+# df_all=pd.concat([df_met,df_rxn])
+# id_col = df_all.columns[0]
+# name_col = df_all.columns[1]
+
+# def replace_rs(text):
+#     '''把r_xxxx 或 s_xxxx匹配成对于的 反应 和 代谢物 名字'''
+
+#     def replacer(match):
+#         rs_id = match.group(1)  # 获取匹配的 r_xxxx 或 s_xxxx
+#         # 在 df_all 中查找该 ID，并返回对应的名称
+#         matched_row = df_all[df_all[id_col].str[:6] == rs_id]
+#         if not matched_row.empty:
+#             return matched_row.iloc[0][name_col] # 返回名称
+#         else:
+#             return rs_id + '\t\t'  # 如果没找到，保留原字符串
+
+#     pattern = re.compile(r'\b([rs]_\d{4})\b')  # 匹配 r_xxxx 或 s_xxxx 格式
+#     replaced_text = pattern.sub(replacer, str(text))
+#     return replaced_text
+# #检查模型
+# print('参数加载完毕\n')
+
 
 app = Flask(__name__, template_folder='wiki')
 
@@ -272,6 +308,7 @@ def set_config():
                   weights=confirm.get('weights'))
     # 修改反应通量界限
     modify_bounds(model, confirm.get('modified_reactions', []))
+
     
 #######################################################################
         # 打印配置
@@ -293,7 +330,68 @@ def set_config():
     else:
         print("模型不可行，无法生成 summary。")
 
-#########################################################################        
+#########################################################################  
+
+    #     # 导出代谢物信息为JSON文件（中文）
+    # metabolite_data = {}
+
+    # # 遍历模型中的所有代谢物
+    # for met in model.metabolites:
+    #     # 获取代谢物ID和名称
+    #     met_id = met.id
+    #     met_name = replace_rs(met.name)  # 使用您现有的函数转换名称
+
+    #     # 获取代谢物其他信息
+    #     metabolite_data[met_name] = {
+    #         "name": met_name,
+    #         "formula": met.formula,
+    #         "charge": met.charge,
+    #         "compartments": met.compartment,
+    #     }
+
+    # # 保存为中文文件名的JSON文件
+    # output_filename = "metablites.json"  # 中文文件名
+
+    # with open(output_filename, 'w', encoding='utf-8') as f:
+    #     json.dump(metabolite_data, f, ensure_ascii=False, indent=2)
+
+    # print(f"模型代谢物信息已保存到 {output_filename}")
+
+
+    # # 读取模型
+    # model = cobra.io.read_sbml_model("new_model/yeast-GEM-new.xml")
+
+    # # 读取 flux_comparison.json
+    # with open('flux_comparison.json', encoding='utf-8') as f:
+    #     raw_flux = json.load(f)
+    # with open('metabolites.json', encoding='utf-8') as f:
+    #     met = json.load(f)
+    # # 选择要显示的模式，例如 'glucose'
+    # selected_mode ='galactose_AHG' #'glucose'
+
+    # # 提取平面通量字典（reaction_id: flux_value）
+    # flat_flux_data = {
+    #     rxn_id: mode_flux[selected_mode]
+    #     for rxn_id, mode_flux in raw_flux.items()
+    #     if selected_mode in mode_flux
+    # }
+
+    # # 构建 Escher builder
+    # builder = Builder(
+    #     model=model,
+    #     map_json='iMM904.Central carbon metabolism.json'
+    # )
+
+    # # 设置通量数据
+    # builder.reaction_data = flat_flux_data
+    # builder.metabolite_data=met
+    # # 保存 HTML 显示通量
+    # builder.save_html(f'flux_map_{selected_mode}.html')
+    # print(f"完成：已保存 {selected_mode} 通量地图")
+
+###################################################################################
+
+
     return jsonify({"status": "success", "message": "配置已提交"})
     
 

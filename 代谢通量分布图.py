@@ -5,6 +5,7 @@ import re
 from escher import Builder
 import matplotlib.pyplot as plt
 import pickle
+
 rxn_csv='./new_model/data/rxn.csv'
 met_csv='./new_model/data/met.csv'
 
@@ -124,27 +125,27 @@ for rxn in set(flux_dict1) | set(flux_dict2):
 with open('flux_comparison.json', 'w') as f:
     json.dump(flux_comparison, f, indent=2)
 
-# 导出代谢物信息为JSON文件（中文）
-metabolite_data = {}
+# # 导出代谢物信息为JSON文件（中文）
+# metabolite_data = {}
 
-# 遍历模型中的所有代谢物
-for met in model1.metabolites:
-    # 获取代谢物ID和名称
-    met_id = met.id
-    met_name = replace_rs(met.name)  # 使用您现有的函数转换名称
+# # 遍历模型中的所有代谢物
+# for met in model1.metabolites:
+#     # 获取代谢物ID和名称
+#     met_id = met.id
+#     met_name = replace_rs(met.name)  # 使用您现有的函数转换名称
 
-    # 获取代谢物其他信息
-    metabolite_data[met_name] = {
-        "name": met_name,
-        "formula": met.formula,
-        "charge": met.charge,
-        "compartments": met.compartment,
-    }
+#     # 获取代谢物其他信息
+#     metabolite_data[met_name] = {
+#         "name": met_name,
+#         "formula": met.formula,
+#         "charge": met.charge,
+#         "compartments": met.compartment,
+#     }
 
-# 保存为中文文件名的JSON文件
-output_filename = "metablites.json"  # 中文文件名
+# # 保存为中文文件名的JSON文件
+# output_filename = "metablites.json"  # 中文文件名
 
-with open(output_filename, 'w', encoding='utf-8') as f:
-    json.dump(metabolite_data, f, ensure_ascii=False, indent=2)
+# with open(output_filename, 'w', encoding='utf-8') as f:
+#     json.dump(metabolite_data, f, ensure_ascii=False, indent=2)
 
-print(f"模型代谢物信息已保存到 {output_filename}")
+# print(f"模型代谢物信息已保存到 {output_filename}")
