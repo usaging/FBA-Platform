@@ -21,31 +21,25 @@
 
 <body>
 
-     <!-- 添加加载动画容器 -->
-    <div id="loading" style="position:fixed;top:0;left:0;width:100%;height:100%;background:white;z-index:9999;display:flex;justify-content:center;align-items:center;">
-        <div>Loading...</div>
-    </div>
-
     {% include 'nav.html' %}
     {% include 'top-nav.html' %}
-    
+
     <!-- Page Content -->
     <div class="content" style="opacity:0;transition:opacity 0.3s ease">
         {% block page_content %}{% endblock %}
     </div>
 
     <script>
-        
-        // 页面加载完成后隐藏加载动画
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                document.getElementById('loading').style.display = 'none';
+
+        window.addEventListener('load', function () {
+            setTimeout(function () {
+                document.getElementById('loading-overlay').style.display = 'none';
                 document.querySelector('.content').style.opacity = 1;
             }, 300);
         });
 
-       // 暗黑模式切换
-       const darkModeToggle = document.getElementById('darkModeToggle');
+        // 暗黑模式切换
+        const darkModeToggle = document.getElementById('darkModeToggle');
         if (darkModeToggle) {
             darkModeToggle.addEventListener('change', () => {
                 document.body.classList.toggle('dark');

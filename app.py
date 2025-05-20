@@ -258,7 +258,7 @@ def set_objective(model, obj_list=None, weights=None):
         for w in weights:
             rid = w['reaction']
             try:
-                weight = float(w['weight'])
+                weight = float(w['weight'])/100
             except ValueError:
                 print(f"错误: 权重 '{w['weight']}' 无法转换为浮点数")
                 continue
