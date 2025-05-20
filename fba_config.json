@@ -1,14 +1,7 @@
 {
   "model": null,
-  "objective": [
-    "EX_drib_e"
-  ],
+  "objective": [],
   "deleted_genes": [],
   "modified_reactions": [],
-  "weights": [
-    {
-      "reaction": "EX_drib_e",
-      "weight": "100"
-    }
-  ]
+  "weights": []
 }

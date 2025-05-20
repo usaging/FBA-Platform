@@ -21,6 +21,10 @@
 
 <body>
 
+    <div id="loading-overlay">
+        <img src="{{url_for('static', filename = 'loading.gif')}}" alt="加载中" class="loading-gif">
+    </div>
+
     {% include 'nav.html' %}
     {% include 'top-nav.html' %}
 

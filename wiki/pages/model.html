@@ -19,7 +19,7 @@
     </div>
 
     <div class="content">
-        <table id="model-table" >
+        <table id="model-table">
             <thead></thead>
             <tbody></tbody>
         </table>
@@ -246,19 +246,19 @@
             renderTable();
 
             // 调用清空API
-            fetch('/clear-models', { method: 'POST' })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('清空请求失败');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log(data.message); // 控制台记录即可，不需要alert
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
+            // fetch('/clear-config', { method: 'POST' })
+            //     .then(response => {
+            //         if (!response.ok) {
+            //             throw new Error('清空请求失败');
+            //         }
+            //         return response.json();
+            //     })
+            //     .then(data => {
+            //         console.log(data.message); // 控制台记录即可，不需要alert
+            //     })
+            //     .catch(error => {
+            //         console.error('Error:', error);
+            //     });
         }
         // 否则选择新模型（原有逻辑）
         else {
@@ -268,20 +268,20 @@
             localStorage.setItem('submittedReactions', JSON.stringify(submittedReactions));
             localStorage.setItem('localBounds', JSON.stringify(localBounds));
 
-            // 发送清空constraints的请求
-            fetch('/clear-constraints', { method: 'POST' })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('清空constraints请求失败');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log(data.message); // 控制台记录即可，不需要alert
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
+            // 发送清空的请求
+            // fetch('/clear-config', { method: 'POST' })
+            //     .then(response => {
+            //         if (!response.ok) {
+            //             throw new Error('清空config请求失败');
+            //         }
+            //         return response.json();
+            //     })
+            //     .then(data => {
+            //         console.log(data.message); // 控制台记录即可，不需要alert
+            //     })
+            //     .catch(error => {
+            //         console.error('Error:', error);
+            //     });
 
             selectedModelId = modelId;
             localStorage.setItem('selectedModelId', modelId);
@@ -304,7 +304,7 @@
             localStorage.removeItem('selectedModelId');
             document.getElementById('modelIdText').textContent = "未选择模型";
             renderTable();
-            fetch('/clear-models', { method: 'POST' })
+            fetch('/clear-config', { method: 'POST' })
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('清空请求失败');
@@ -327,27 +327,11 @@
     // 刷新按钮点击事件（添加错误处理和响应提示）
     document.getElementById('refresh-btn').addEventListener('click', function () {
         window.location.reload()
-        // fetch('/refresh', { method: 'POST' })
-        //     .then(response => {
-        //         if (!response.ok) {
-        //             throw new Error('刷新请求失败');
-        //         }
-        //         return response.json();
-        //     })
-        //     .then(data => {
-        //         alert(data.message); // 显示后端返回的提示
-        //         window.location.reload(); // 关键代码：刷新页面
-        //     })
-        //     .catch(error => {
-        //         console.error('Error:', error);
-        //         alert('刷新请求失败: ' + error.message);
-        //     });
     });
 
 </script>
 
 <style>
-
     .search-container {
         display: flex;
         gap: 10px;
@@ -408,7 +392,7 @@
     #model-table th:nth-child(4),
     #model-table td:nth-child(4),
     #model-table th:nth-child(5),
-    #model-table td:nth-child(5)  {
+    #model-table td:nth-child(5) {
         width: 230px;
         /* m_count列 */
         min-width: 230px;

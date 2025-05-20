@@ -119,14 +119,14 @@ def serve_model():
 
 @app.route('/reaction.json')
 def serve_reaction():
-    if model is None:
+    if model_id is None:
         return "No model loaded."
     r_path=model_id+'.json'
     return send_from_directory('reactions', r_path)
 
 @app.route('/gene.json')
 def serve_gene():
-    if model is None:
+    if model_id is None:
         return "No model loaded."
     g_path=model_id+'.json'
     return send_from_directory('genes', g_path)
@@ -173,20 +173,29 @@ def set_model(id):
     global confirm
 
     model_id=id
-    confirm['model']=model_id
-    model_path = Path('models') / f'{id}.xml'
-    model = cobra.io.read_sbml_model(str(model_path))
     export_r_path='reactions/'+id+'.json'
     export_g_path='genes/'+id+'.json'
-    tools.export_reactions_json(model,export_r_path )
-    tools.export_genes_json(model,export_g_path )
+    if not os.path.exists(export_r_path):
+        tools.export_reactions_json(model,export_r_path )
+    if not os.path.exists(export_r_path):
+        tools.export_genes_json(model,export_g_path )
+    confirm={
+            "model": model_id,               # 存储模型名称（字符串）
+            "objective": [],             # 存储目标函数（字符串）
+            "deleted_genes": [],         # 存储待删除基因（列表，如 ["gene1", "gene2"]）
+            "modified_reactions": [],     # 存储修改的反应（列表，元素为字典）
+            "weights":[]
+        }
+    with open("fba_config.json", "w") as f:
+        json.dump(confirm, f, indent=2)
+
     return f"Model {id} loaded successfully."
 
 @app.route('/objective/<reaction_id>')
 def set_objective(reaction_id):
     global confirm
     global model
-    if model is None:
+    if model_id is None:
         return "No model loaded."
     
     # 添加判重逻辑
@@ -200,7 +209,7 @@ def set_objective(reaction_id):
 def set_weight(reaction_id,weight):
     global confirm
     global model
-    if model is None:
+    if model_id is None:
         return "No model loaded."
     
     existing_reactions = {item["reaction"] for item in confirm['weights']}
@@ -217,7 +226,7 @@ def set_weight(reaction_id,weight):
 def set_reaction(reaction_id, lower, upper):
     global confirm
     global model
-    if model is None:
+    if model_id is None:
         return "No model loaded."
     # reaction = model.reactions.get_by_id(reaction_id)
     # reaction.lower_bound = float(lower)
@@ -233,7 +242,7 @@ def set_reaction(reaction_id, lower, upper):
 def knock_out_gene(gene_id):
     global confirm
     global model
-    if model is None:
+    if model_id is None:
         return "No model loaded."
     
     # 添加判重逻辑
@@ -297,8 +306,10 @@ def modify_bounds(model, mods):
 def set_config():
     global model
     global confirm
-    if model is None:
+    if model_id is None:
         return "No model loaded."
+    model_path = Path('models') / f'{id}.xml'
+    model = cobra.io.read_sbml_model(str(model_path))
     
   # 应用基因敲除
     apply_knockouts(model, confirm.get('deleted_genes', []))
@@ -401,15 +412,15 @@ def set_confirm():
         json.dump(confirm, f, indent=2)
     return render_template('pages/confirm.html')
 
-@app.route('/clear-models', methods=['POST'])  # 明确指定允许 POST 方法
-def clear_models():
-    global model
-    try:
-        model = None
-        # 如果还有其他需要清理的数据，可以在此操作
-        return jsonify({"status": "success", "message": "模型数据已清空"})
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
+# @app.route('/clear-models', methods=['POST'])  # 明确指定允许 POST 方法
+# def clear_models():
+#     global model
+#     try:
+#         model = None
+#         # 如果还有其他需要清理的数据，可以在此操作
+#         return jsonify({"status": "success", "message": "模型数据已清空"})
+#     except Exception as e:
+#         return jsonify({"status": "error", "message": str(e)}), 500
 
 @app.route('/clear-constraints', methods=['POST'])  # 明确指定允许 POST 方法
 def clear_constraints():
