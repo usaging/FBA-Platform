@@ -186,7 +186,7 @@
     function handleWeightChange(index, value) {
         weightValues[index] = value;
         buttonStates[index] = {
-            modified: value !== "0",
+            modified: true,
             submitted: false
         };
         saveEditState();
