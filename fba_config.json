@@ -1,14 +1,24 @@
 {
-  "model": null,
+  "model": "e_coli_core",
   "objective": [
-    "EX_drib_e"
+    "PFK",
+    "PGK",
+    "PFL"
   ],
   "deleted_genes": [],
   "modified_reactions": [],
   "weights": [
     {
-      "reaction": "EX_drib_e",
-      "weight": "100"
+      "reaction": "PGK",
+      "weight": "20"
+    },
+    {
+      "reaction": "PFL",
+      "weight": "80"
+    },
+    {
+      "reaction": "PFK",
+      "weight": "0"
     }
   ]
 }

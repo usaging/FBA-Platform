@@ -280,6 +280,35 @@
         cursor: default;
     }
 
+    .select-dot {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        border: 2px solid #ccc;
+        cursor: pointer;
+        margin: 0 auto;
+        transition: all 0.3s;
+    }
+
+    .select-dot.selected {
+        background-color: var(--primary--chosen);
+        border-color: var(--primary--hlight);
+    }
+
+    .select-dot:hover {
+        transform: scale(1.1);
+    }
+
+    /* Dark mode styles */
+    .dark .select-dot {
+        border-color: #666;
+    }
+
+    .dark .select-dot.selected {
+        background-color: var(--primary-color);
+        border-color: var(--primary-light);
+    }
+
     .ellipsis {
         display: inline-block;
         margin: 0 4px;
