@@ -428,7 +428,11 @@ def clear_constraints():
     try:
         confirm['modified_reactions'] = []
         # 如果还有其他需要清理的数据，可以在此操作
-        return jsonify({"status": "success", "message": "操作函数已清空"})
+        return jsonify({
+            "status": "success", 
+            "message": "操作函数已清空",
+             "clearLocalStorage": True
+            })
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 

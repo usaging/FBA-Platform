@@ -245,20 +245,7 @@
             // document.getElementById('modelIdText').textContent = "未选择模型";
             renderTable();
 
-            // 调用清空API
-            // fetch('/clear-config', { method: 'POST' })
-            //     .then(response => {
-            //         if (!response.ok) {
-            //             throw new Error('清空请求失败');
-            //         }
-            //         return response.json();
-            //     })
-            //     .then(data => {
-            //         console.log(data.message); // 控制台记录即可，不需要alert
-            //     })
-            //     .catch(error => {
-            //         console.error('Error:', error);
-            //     });
+
         }
         // 否则选择新模型（原有逻辑）
         else {
@@ -267,21 +254,8 @@
             let localBounds = {};
             localStorage.setItem('submittedReactions', JSON.stringify(submittedReactions));
             localStorage.setItem('localBounds', JSON.stringify(localBounds));
-
-            // 发送清空的请求
-            // fetch('/clear-config', { method: 'POST' })
-            //     .then(response => {
-            //         if (!response.ok) {
-            //             throw new Error('清空config请求失败');
-            //         }
-            //         return response.json();
-            //     })
-            //     .then(data => {
-            //         console.log(data.message); // 控制台记录即可，不需要alert
-            //     })
-            //     .catch(error => {
-            //         console.error('Error:', error);
-            //     });
+            localStorage.setItem('buttonStates', JSON.stringify({}));
+            localStorage.setItem('boundValues', JSON.stringify({}));
 
             selectedModelId = modelId;
             localStorage.setItem('selectedModelId', modelId);
