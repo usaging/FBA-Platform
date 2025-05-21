@@ -26,7 +26,8 @@
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
 
 <script>
-    const rowsPerPage = 15;
+    const rowsPerColumn = 11;
+    const columnsPerPage = 5;
     let currentPage = 1;
     let totalPages = 1;
     let originalData = [];  // 原始数据（本地+导入）
@@ -38,7 +39,7 @@
     fetch('/gene.json')
         .then(res => res.json())
         .then(data => {
-            // 直接使用原始数据（不添加 source 字段）
+
             originalData = data;  // 假设数据本身已包含所需字段
 
             // 初始化 Fuse.js
@@ -49,7 +50,7 @@
             });
 
             filteredData = originalData;
-            totalPages = Math.ceil(filteredData.length / rowsPerPage);
+            totalPages = Math.ceil(filteredData.length / (rowsPerColumn * columnsPerPage));
             renderTable();
             renderPagination();
         });
@@ -75,7 +76,7 @@
         }
 
         currentPage = 1;
-        totalPages = Math.ceil(filteredData.length / rowsPerPage);
+        totalPages = Math.ceil(filteredData.length / (rowsPerColumn * columnsPerPage));
         renderTable();
         renderPagination();
     }));
@@ -102,29 +103,45 @@
             return;
         }
 
-        // 表头只在首次渲染
-        if (!thead.hasChildNodes()) {
-            const headers = Object.keys(filteredData[0]).concat('选择');
-            thead.innerHTML = '<tr>' +
-                headers.map(h => `<th>${h}</th>`).join('') +
-                '</tr>';
+        const headers = Object.keys(filteredData[0]).concat('选择');
+
+        // 表头渲染
+        let theadHtml = '<tr>';
+        for (let j = 0; j < columnsPerPage; j++) {
+            headers.forEach(h => {
+                theadHtml += `<th>${h}</th>`;
+            });
         }
+        theadHtml += '</tr>';
+        thead.innerHTML = theadHtml;
 
-        const start = (currentPage - 1) * rowsPerPage;
-        const pageData = filteredData.slice(start, start + rowsPerPage);
+        const start = (currentPage - 1) * rowsPerColumn * columnsPerPage;
+        const pageData = filteredData.slice(start, start + rowsPerColumn * columnsPerPage);
 
-        tbody.innerHTML = pageData.map((row, idx) => {
-            const realIndex = start + idx;
-            const cells = Object.keys(row).map(key => `<td>${row[key]}</td>`);
-            // 修改操作列为圆点选择
-            cells.push(`
-                <td class="select-cell">
-                    <div class="select-dot ${selectedGenes.includes(row.id) ? 'selected' : ''}" 
-                         onclick="toggleGene('${row.id}')"></div>
-                </td>
-            `);
-            return `<tr>${cells.join('')}</tr>`;
-        }).join('');
+        let tableHtml = '';
+        for (let i = 0; i < rowsPerColumn; i++) {
+            let rowHtml = '<tr>';
+            for (let j = 0; j < columnsPerPage; j++) {
+                const index = i + j * rowsPerColumn;
+                if (index < pageData.length) {
+                    const row = pageData[index];
+                    const cells = Object.keys(row).map(key => `<td>${row[key]}</td>`);
+                    // 修改操作列为圆点选择
+                    cells.push(`
+                        <td class="select-cell">
+                            <div class="select-dot ${selectedGenes.includes(row.id) ? 'selected' : ''}" 
+                                 onclick="toggleGene('${row.id}')"></div>
+                        </td>
+                    `);
+                    rowHtml += cells.join('');
+                } else {
+                    rowHtml += '<td colspan="' + (Object.keys(filteredData[0]).length + 1) + '"></td>';
+                }
+            }
+            rowHtml += '</tr>';
+            tableHtml += rowHtml;
+        }
+        tbody.innerHTML = tableHtml;
     }
 
     function renderPagination() {
@@ -244,7 +261,7 @@
         });
 
         currentPage = 1; // 重置到第一页
-        totalPages = Math.ceil(filteredData.length / rowsPerPage);
+        totalPages = Math.ceil(filteredData.length / (rowsPerColumn * columnsPerPage));
         renderTable();
         renderPagination();
     });
@@ -262,6 +279,16 @@
     #gene-table th,
     #gene-table td {
         text-align: center;
+        padding: 15px 10px;
+        /* 设置列间距 */
+        min-width: 100px;
+        /* 增大列宽度 */
+    }
+
+    /* 每两列（id列+选择列）之间增加距离 */
+    #gene-table td:nth-child(even) {
+        padding-left: 40px;
+        /* 增加列间距 */
     }
 
     #pagination button {
@@ -308,7 +335,7 @@
         background-color: var(--primary-color);
         border-color: var(--primary-light);
     }
-    
+
     .ellipsis {
         display: inline-block;
         margin: 0 4px;

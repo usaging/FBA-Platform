@@ -422,6 +422,27 @@ def set_confirm():
 #     except Exception as e:
 #         return jsonify({"status": "error", "message": str(e)}), 500
 
+
+@app.route('/clear-weights', methods=['POST'])
+def clear_weights():
+    global confirm
+    try:
+        confirm['weights'] = []
+        with open("fba_config.json", "w") as f:
+            json.dump(confirm, f, indent=2)
+        return jsonify({
+            "status": "success",
+            "message": "权重已清空",
+            "clearLocalStorage": True
+        })
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e),
+            "clearLocalStorage": False
+        }), 500
+    
+    
 @app.route('/clear-constraints', methods=['POST'])  # 明确指定允许 POST 方法
 def clear_constraints():
     global confirm

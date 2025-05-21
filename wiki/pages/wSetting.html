@@ -33,13 +33,19 @@
     let buttonStates = JSON.parse(localStorage.getItem('buttonStates')) || {};   // 跟踪按钮状态 {index: {modified: bool, submitted: bool}}
     let weightValues = JSON.parse(localStorage.getItem('weightValues')) || {};   // 跟踪权重值 {index: value}
     let selectedReactions = JSON.parse(localStorage.getItem('selectedReactions') || '[]');
-
+    
+   // 从本地存储恢复编辑状态
+    function restoreEditState() {
+        buttonStates = JSON.parse(localStorage.getItem('buttonStates')) || {};
+        weightValues = JSON.parse(localStorage.getItem('weightValues')) || {};
+    }
 
     // 加载数据并初始化表格和分页
     fetch('/reaction.json')
         .then(res => res.json())
         .then(data => {
             originalData = data.filter(item => selectedReactions.includes(item.name));
+
             // 初始化 Fuse.js（根据实际字段修改 keys）
             fuse = new Fuse(originalData, {
                 keys: ['name', 'reaction'], // 根据你的 JSON 字段名修改
@@ -65,6 +71,8 @@
             totalPages = Math.ceil(filteredData.length / rowsPerPage);
             renderTable();
             renderPagination();
+        }).catch(error => {
+            console.error('Fetch error:', error);
         });
 
     // 防抖函数
@@ -131,7 +139,8 @@
         const pageData = filteredData.slice(start, start + rowsPerPage);
 
         tbody.innerHTML = pageData.map((row, idx) => {
-            const realIndex = start + idx;
+            // const realIndex = start + idx;
+            const realIndex = originalData.findIndex(item => item.name === row.name);
             const state = buttonStates[realIndex] || { modified: false, submitted: false };
             const weightValue = weightValues[realIndex] || 0;
 
@@ -158,29 +167,16 @@
                 `<td>${row.reaction}</td>`,
                 `<td><input type="number" inputmode="numeric" id="weight-${realIndex}" value="${weightValue}" min="0" max="100" class="weight-input" onchange="handleWeightChange(${realIndex}, this.value)" /></td>`,
                 `<td>
-                   <button class="${buttonClass}" onclick="submitWeight(${realIndex})" 
-                                style="${buttonStyle}">
-                            ${buttonText}
-                        </button>
-                </td>`
+       <button class="${buttonClass}" onclick="submitWeight(${realIndex})" 
+                    style="${buttonStyle}">
+                ${buttonText}
+            </button>
+    </td>`
             ];
 
             return `<tr>${cells.join('')}</tr>`;
         }).join('');
 
-        // 为每个输入框添加 input 事件监听器
-        // const weightInputs = document.querySelectorAll('.weight-input');
-        // weightInputs.forEach((input, index) => {
-        //     input.addEventListener('input', () => {
-        //         const realIndex = (currentPage - 1) * rowsPerPage + index;
-        //         buttonStates[realIndex] = {
-        //             modified: true,
-        //             submitted: false
-        //         };
-        //         saveEditState();
-        //         renderTable();
-        //     });
-        // });
     }
 
     function handleWeightChange(index, value) {
@@ -251,7 +247,6 @@
                 renderTable();
             });
     }
-
     // 清空按钮点击事件（添加错误处理和响应提示）
     document.getElementById('clear-btn').addEventListener('click', function () {
 
@@ -271,12 +266,18 @@
                     return response.json();
                 })
                 .then(data => {
+                    if (data.clearLocalStorage) {
+                        buttonStates = {};
+                        weightValues = {};
+                        localStorage.setItem('buttonStates', JSON.stringify({}));
+                        localStorage.setItem('weightValues', JSON.stringify({}));
+                    }
                     alert(data.message);
+                    renderTable();
                 })
                 .catch(error => {
                     console.error('Error:', error);
                     alert('清空失败: ' + error.message);
-                    // 失败时恢复之前的状态
                     saveEditState();
                     renderTable();
                 });
@@ -291,11 +292,9 @@
         localStorage.setItem('weightValues', JSON.stringify(weightValues));
     }
 
-    // 从本地存储恢复编辑状态
-    function restoreEditState() {
-        buttonStates = JSON.parse(localStorage.getItem('buttonStates')) || {};
-        weightValues = JSON.parse(localStorage.getItem('weightValues')) || {};
-    }
+    
+    // 在页面加载时恢复状态
+    restoreEditState();
 </script>
 
 <style>

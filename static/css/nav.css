@@ -6,7 +6,7 @@
     height: calc(100vh - 80px);
     width: 220px;
     padding: 15px 0;
-    background: #E0F4FB !important;
+    background: #E0F4FB;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     z-index: 100;
     overflow-y: auto;
@@ -25,18 +25,10 @@
     padding-left: 20px;
 }
 
-/* .nav-link::before {
-    display: none;
-    /* 去掉第一级之间的虚线 */
-/* } */
-
-/* .nav-link:last-child::before {
-    display: none;
-} */ 
 
 .nav-link a {
     text-decoration: none;
-    color: #267289!important;
+    color: #267289 !important;
     display: flex;
     align-items: center;
     padding: 8px 10px;
@@ -45,14 +37,15 @@
 
 .nav-link a.active,
 .nav-link a:hover {
-    background-color: #FFFFFF!important;
+    background-color: #FFFFFF !important;
     color: #267289 !important;
 }
 
 .step-icon {
     margin-right: 10px;
     font-size: 18px;
-    color: inherit; /* 继承父元素颜色 */
+    color: inherit;
+    /* 继承父元素颜色 */
 }
 
 /* 子菜单项 */
@@ -85,7 +78,7 @@
 
 .submenu .nav-link a {
     text-decoration: none;
-    color:  #267289;
+    color: #267289;
     display: flex;
     align-items: center;
     padding: 8px 10px;
@@ -94,18 +87,18 @@
 
 .submenu .nav-link a.active,
 .submenu .nav-link a:hover {
-    color: #267289 ;
+    color: #267289;
     background-color: #FFFFFF;
 }
 
 /* 子菜单展开键颜色 */
 .submenu-toggle {
-    color: #BA213D !important;
+    color: #BA213D ;
 }
 
 /* 条件设置键样式 */
 .step-item {
-    color: #267289 !important; /* 默认颜色 */
+    color: #267289 ;
 }
 
 /* 条件设置激活时变色 */
@@ -198,7 +191,7 @@ input:checked+.slider:before {
 
 .wiki-link a {
     text-decoration: none;
-    color: #333;
+    color: var(--primary-color);
     display: flex;
     align-items: center;
     padding: 8px 20px;
@@ -213,11 +206,17 @@ input:checked+.slider:before {
 /* 暗黑模式样式 */
 .dark .shell {
     background-color: #333;
+    background: #333;
     border-right: 1px solid #444;
 }
-
+.dark .menu-bar{
+    background-color: #333;
+}
+.dark .menu-bar{
+    background-color: #333;
+}
 .dark .nav-link a {
-    color: #eee  !important;
+    color: #eee !important;
 }
 
 .dark .nav-link a:hover,
@@ -229,6 +228,10 @@ input:checked+.slider:before {
 
 /* 暗黑模式下的步骤图标 */
 .dark .step-icon {
+    color: #aaa;
+}
+
+.dark .step-item {
     color: #aaa;
 }
 
@@ -250,7 +253,8 @@ input:checked+.slider:before {
 }
 
 .dark .submenu-toggle {
-    color: #aaa; /* 暗黑模式三角键保持红色 */
+    color: #aaa;
+    /* 暗黑模式三角键保持红色 */
 }
 
 /* 暗黑模式下的WIKI链接样式 */
@@ -260,4 +264,24 @@ input:checked+.slider:before {
 
 .dark .wiki-link a {
     color: #eee;
+}
+
+/* 新增：调整按钮背景颜色等 */
+.dark .nav-link a {
+    background-color: #333;
+    transition: background-color 0.2s;
+}
+
+.dark .nav-link a:hover {
+    background-color: #1e3a8a;
+}
+
+.dark .wiki-link a {
+    color: #eee;
+    background-color: #333;
+    transition: background-color 0.2s;
+}
+
+.dark .wiki-link a:hover {
+    background-color: rgba(0, 123, 255, 0.05);
 }
