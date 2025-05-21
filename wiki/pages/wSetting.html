@@ -30,14 +30,14 @@
     let originalData = [];  // 原始数据（本地+导入）
     let filteredData = [];   // 过滤后的数据
     let fuse = null;
-    let buttonStates = JSON.parse(localStorage.getItem('buttonStates')) || {};   // 跟踪按钮状态 {index: {modified: bool, submitted: bool}}
-    let weightValues = JSON.parse(localStorage.getItem('weightValues')) || {};   // 跟踪权重值 {index: value}
+    let buttonStates = JSON.parse(localStorage.getItem('wSbuttonStates')) || {};   // 跟踪按钮状态 {index: {modified: bool, submitted: bool}}
+    let weightValues = JSON.parse(localStorage.getItem('wSweightValues')) || {};   // 跟踪权重值 {index: value}
     let selectedReactions = JSON.parse(localStorage.getItem('selectedReactions') || '[]');
 
     // 从本地存储恢复编辑状态
     function restoreEditState() {
-        buttonStates = JSON.parse(localStorage.getItem('buttonStates')) || {};
-        weightValues = JSON.parse(localStorage.getItem('weightValues')) || {};
+        buttonStates = JSON.parse(localStorage.getItem('wSbuttonStates')) || {};
+        weightValues = JSON.parse(localStorage.getItem('wSweightValues')) || {};
     }
 
     // 加载数据并初始化表格和分页
@@ -259,8 +259,8 @@
             .then(data => {
                 if (data.clearLocalStorage) {
                     // 清空本地存储
-                    localStorage.removeItem('buttonStates');
-                    localStorage.removeItem('weightValues');
+                    localStorage.removeItem('wSbuttonStates');
+                    localStorage.removeItem('wSweightValues');
 
                     // 重置内存中的状态
                     buttonStates = {};
@@ -305,8 +305,8 @@
 
     // 保存编辑状态到本地存储
     function saveEditState() {
-        localStorage.setItem('buttonStates', JSON.stringify(buttonStates));
-        localStorage.setItem('weightValues', JSON.stringify(weightValues));
+        localStorage.setItem('wSbuttonStates', JSON.stringify(buttonStates));
+        localStorage.setItem('wSweightValues', JSON.stringify(weightValues));
     }
 
 

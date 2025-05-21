@@ -1,13 +1,7 @@
 {
-  "model": "e_coli_core",
+  "model": null,
   "objective": [],
   "deleted_genes": [],
-  "modified_reactions": [
-    {
-      "reaction": "PGI",
-      "lower_bound": -1000.0,
-      "upper_bound": 1007.0
-    }
-  ],
+  "modified_reactions": [],
   "weights": []
 }

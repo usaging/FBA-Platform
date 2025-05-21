@@ -27,7 +27,7 @@
 
 <script>
     const rowsPerColumn = 11;
-    const columnsPerPage = 5;
+    const columnsPerPage = 4;
     let currentPage = 1;
     let totalPages = 1;
     let originalData = [];  // 原始数据（本地+导入）
@@ -274,6 +274,10 @@
         display: block;
         overflow-x: auto;
         max-height: calc(100vh - 150px);
+        border-collapse: separate;
+        /* 启用边框间距 */
+        /* border-spacing: 30px 0; */
+        /* 设置水平和垂直间距 */
     }
 
     #gene-table th,
@@ -282,14 +286,24 @@
         padding: 15px 10px;
         /* 设置列间距 */
         min-width: 100px;
-        /* 增大列宽度 */
+        position: relative;
     }
 
-    /* 每两列（id列+选择列）之间增加距离 */
-    #gene-table td:nth-child(even) {
-        padding-left: 40px;
-        /* 增加列间距 */
+    /* 每两列数据组之间添加间距 */
+    #gene-table td:nth-child(4n + 2)::after {
+        content: "";
+        display: inline-block;
+        width: 30px;
+        /* 间距宽度 */
     }
+
+    /* 伪元素方法 */
+    /* #gene-table td:nth-child(2n)::after {
+        content: "";
+        display: inline-block;
+        width: 30px;
+        /* 间距宽度 
+    } */
 
     #pagination button {
         margin: 0 2px;
