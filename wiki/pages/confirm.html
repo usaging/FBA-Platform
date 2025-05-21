@@ -23,7 +23,7 @@
         <div class="table-container">
             <!-- Objective 表格 -->
             <div class="table-wrapper">
-                <h2 style = "color:var(--primary-color)">Objective Setting</h2>
+                <h2 style="color:var(--primary-color)">Objective Setting</h2>
                 <table id="objective-table">
                     <thead>
                         <tr>
@@ -36,8 +36,8 @@
             </div>
 
             <!-- Deleted Genes 表格 -->
-            <div class="table-wrapper" id="deleted-genes" >
-                <h2 style = "color:var(--primary-color)">Deleted Genes</h2>
+            <div class="table-wrapper" id="deleted-genes">
+                <h2 style="color:var(--primary-color)">Deleted Genes</h2>
                 <table id="deleted-genes-table">
                     <thead>
                         <tr>
@@ -50,7 +50,7 @@
 
             <!-- Modified Reactions 表格 -->
             <div class="table-wrapper">
-                <h2 style = "color:var(--primary-color)">Modified Reactions</h2>
+                <h2 style="color:var(--primary-color)">Modified Reactions</h2>
                 <table id="modified-reactions-table">
                     <thead>
                         <tr>
@@ -74,28 +74,40 @@
             // 显示模型ID
             document.getElementById('model-id-text').textContent = data.model || "未选择模型";
 
-
-
             // 填充 Objective 表格
             const objTbody = document.querySelector('#objective-table tbody');
-            if (data.objective.length === 0) {
-                const objRow = document.createElement('tr');
+            objTbody.innerHTML = ''; // 清空现有内容
 
-                objRow.innerHTML = `
-                <td>${'Biomass'}</td>
-                <td>100%</td> <!-- 默认权重为1.0 -->
-            `;
-                objTbody.appendChild(objRow);
-            }
-            else {
+            // 如果有 weights 数据，优先显示
+            if (data.weights && data.weights.length > 0) {
                 data.weights.forEach(reaction => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
                     <td>${reaction.reaction}</td>
-                    <td>${reaction.weight} %</td>
+                    <td>${reaction.weight}%</td>
                 `;
                     objTbody.appendChild(row);
                 });
+            }
+            // 否则显示 objective 数据
+            else if (data.objective && data.objective.length > 0) {
+                data.objective.forEach(reaction => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                    <td>${reaction}</td>
+                    <td>100%</td>
+                `;
+                    objTbody.appendChild(row);
+                });
+            }
+            // 都没有则显示默认 Biomass
+            else {
+                const objRow = document.createElement('tr');
+                objRow.innerHTML = `
+                <td>Biomass</td>
+                <td>100%</td>
+            `;
+                objTbody.appendChild(objRow);
             }
 
             // 填充 Deleted Genes

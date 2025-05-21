@@ -212,15 +212,38 @@ def set_weight(reaction_id,weight):
     if model_id is None:
         return "No model loaded."
     
-    existing_reactions = {item["reaction"] for item in confirm['weights']}
-    if reaction_id not in existing_reactions:
+    # existing_reactions = {item["reaction"] for item in confirm['weights']}
+    # if reaction_id not in existing_reactions:
+    #     confirm['weights'].append({
+    #         "reaction": reaction_id,
+    #         "weight": weight
+    # })
+    # return f"Reaction {reaction_id} weight added to objectives."
+    # else:
+    #     return f"Reaction {reaction_id} already exists in objectives."
+
+     # 检查是否已存在该反应
+    existing_index = -1
+    for i, item in enumerate(confirm['weights']):
+        if item['reaction'] == reaction_id:
+            existing_index = i
+            break
+    
+    if existing_index >= 0:
+        # 更新现有权重
+        confirm['weights'][existing_index]['weight'] = weight
+    else:
+        # 添加新权重
         confirm['weights'].append({
             "reaction": reaction_id,
             "weight": weight
-    })
-    return f"Reaction {reaction_id} weight added to objectives."
-    # else:
-    #     return f"Reaction {reaction_id} already exists in objectives."
+        })
+    
+    # 确保同时更新配置文件
+    with open("fba_config.json", "w") as f:
+        json.dump(confirm, f, indent=2)
+        
+    return f"Reaction {reaction_id} weight updated to {weight}%."
 
 @app.route('/reaction/<reaction_id>/<lower>/<upper>')
 def set_reaction(reaction_id, lower, upper):

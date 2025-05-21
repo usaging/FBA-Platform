@@ -13,11 +13,14 @@
         <button id="clear-btn" class="search-btn">清空</button>
         <button id="organize-btn" class="search-btn">整理</button>
     </div>
-    <div class="content">
-        <table id="gene-table">
-            <thead></thead>
-            <tbody></tbody>
-        </table>
+    <div class="content" style="padding-left: 0px; margin-left: 100px;">
+        <div id="gene-container">
+            <!-- 四个容器用来装四组列表 -->
+            <div class="group-container"></div>
+            <div class="group-container"></div>
+            <div class="group-container"></div>
+            <div class="group-container"></div>
+        </div>
     </div>
     <div id="pagination" style="margin-top: 1em; text-align: center;margin-bottom: 80px;"></div>
 </div>
@@ -37,8 +40,8 @@
     let selectedGenes = JSON.parse(localStorage.getItem('selectedGenes') || '[]');
 
     fetch('/gene.json')
-       .then(res => res.json())
-       .then(data => {
+        .then(res => res.json())
+        .then(data => {
 
             originalData = data;  // 假设数据本身已包含所需字段
 
@@ -83,45 +86,24 @@
 
 
     function renderTable() {
-        const table = document.getElementById('gene-table');
-        const thead = table.querySelector('thead');
-        const tbody = table.querySelector('tbody');
-
-        // 先清空表格
-        thead.innerHTML = '';
-        tbody.innerHTML = '';
-
-        // 检查数据有效性（新增）
-        if (!filteredData || !Array.isArray(filteredData)) {
-            console.error('Invalid data format:', filteredData);
-            thead.innerHTML = '<tr><th>数据加载异常</th></tr>';
-            return;
-        }
-
-        if (filteredData.length === 0) {
-            thead.innerHTML = '<tr><th colspan="3">没有找到匹配的基因</th></tr>';
-            return;
-        }
-
-        const headers = Object.keys(filteredData[0]).concat('选择');
-
-        // 表头渲染
-        let theadHtml = '<tr>';
-        for (let j = 0; j < columnsPerPage; j++) {
-            headers.forEach(h => {
-                theadHtml += `<th>${h}</th>`;
-            });
-        }
-        theadHtml += '</tr>';
-        thead.innerHTML = theadHtml;
+        const container = document.getElementById('gene-container');
+        const groupContainers = container.querySelectorAll('.group-container');
+        groupContainers.forEach(container => container.innerHTML = '');
 
         const start = (currentPage - 1) * rowsPerColumn * columnsPerPage;
         const pageData = filteredData.slice(start, start + rowsPerColumn * columnsPerPage);
 
-        let tableHtml = '';
-        for (let i = 0; i < rowsPerColumn; i++) {
-            let rowHtml = '<tr>';
-            for (let j = 0; j < columnsPerPage; j++) {
+        for (let j = 0; j < columnsPerPage; j++) {
+            const groupContainer = groupContainers[j];
+            let groupHtml = '<table>';
+            const headers = Object.keys(filteredData[0]).concat('选择');
+            groupHtml += '<thead><tr>';
+            headers.forEach(h => {
+                groupHtml += `<th>${h}</th>`;
+            });
+            groupHtml += '</tr></thead><tbody>';
+
+            for (let i = 0; i < rowsPerColumn; i++) {
                 const index = i + j * rowsPerColumn;
                 if (index < pageData.length) {
                     const row = pageData[index];
@@ -133,15 +115,15 @@
                                  onclick="toggleGene('${row.id}')"></div>
                         </td>
                     `);
-                    rowHtml += cells.join('');
+                    groupHtml += '<tr>' + cells.join('') + '</tr>';
                 } else {
-                    rowHtml += '<td colspan="' + (Object.keys(filteredData[0]).length + 1) + '"></td>';
+                    groupHtml += '<tr><td colspan="' + headers.length + '"></td></tr>';
                 }
             }
-            rowHtml += '</tr>';
-            tableHtml += rowHtml;
+            groupHtml += '</tbody></table>';
+            groupContainer.innerHTML = groupHtml;
         }
-        tbody.innerHTML = tableHtml;
+
     }
 
     function renderPagination() {
@@ -228,18 +210,18 @@
             localStorage.removeItem('selectedGenes');
             renderTable();
             fetch('/clear-genes', { method: 'POST' })
-               .then(response => {
+                .then(response => {
                     if (!response.ok) {
                         throw new Error('清空请求失败');
                     }
                     return response.json();
                 })
-               .then(data => {
+                .then(data => {
                     alert(data.message); // 显示后端返回的提示
                     renderTable();
                     renderPagination();
                 })
-               .catch(error => {
+                .catch(error => {
                     console.error('Error:', error);
                     alert('清空失败: ' + error.message);
                 });
@@ -270,34 +252,48 @@
 </script>
 
 <style>
-    #gene-table {
-        display: block;
-        overflow-x: auto;
-        max-height: calc(100vh - 150px);
-        border-collapse: separate;
-        border-spacing: 0;
+    #gene-container {
+        display: flex;
+        justify-content:left;
+        gap: 45px;
+        /* 组间间距 */
+        max-width: 1200px;
+        /* 控制最大宽度，避免撑满全屏 */
+        margin: 0 auto;
+        /* 居中显示 */
+        padding: 0px;
+    }
+
+    .group-container {
+        border: 2px solid #ffffff;
+        /* 加粗边框 */
+        margin: 0;
+        /* 可选：添加内边距 */
+        width: 250px;
+        box-sizing: border-box;
+        display: inline-block;
+        vertical-align: top;
+
+    }
+
+    .group-container table {
+        border-collapse: collapse;
         width: 100%;
     }
 
-    #gene-table th,
-    #gene-table td {
+    .group-container th,
+    .group-container td {
         text-align: center;
-        padding: 15px 10px;
+        padding: 15px 5px;
         min-width: 100px;
-        position: relative;
+        border: 1px solid #ddd;
     }
 
-    /* 为每组第二列（选择列）添加右边距 */
-    #gene-table th:nth-child(2n),
-    #gene-table td:nth-child(2n) {
-        border-right: 30px; /* 组间间距 */
+    /* ID 列（奇数列）设置更宽 */
+    .group-container tr> :nth-child(2n + 1) {
+        min-width: 150px;
     }
 
-    /* 去除每组第一列和第二列之间的间距 */
-    /* #gene-table th:nth-child(2n-1),
-    #gene-table td:nth-child(2n-1) {
-        border-right: 0;
-    } */
 
     #pagination button {
         margin: 0 2px;

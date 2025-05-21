@@ -1,33 +1,7 @@
 {
-  "model": "e_coli_core",
-  "objective": [
-    "PFK",
-    "PGL"
-  ],
-  "deleted_genes": [
-    "b2097",
-    "b3733"
-  ],
-  "modified_reactions": [
-    {
-      "reaction": "PGM",
-      "lower_bound": -1000.0,
-      "upper_bound": 9.0
-    },
-    {
-      "reaction": "PGL",
-      "lower_bound": 0.0,
-      "upper_bound": 7.0
-    }
-  ],
-  "weights": [
-    {
-      "reaction": "PFK",
-      "weight": "100"
-    },
-    {
-      "reaction": "PGL",
-      "weight": "0"
-    }
-  ]
+  "model": "iND750",
+  "objective": [],
+  "deleted_genes": [],
+  "modified_reactions": [],
+  "weights": []
 }
