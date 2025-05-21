@@ -1,9 +1,13 @@
 {
   "model": "e_coli_core",
-  "objective": [
-    "PFK"
-  ],
+  "objective": [],
   "deleted_genes": [],
-  "modified_reactions": [],
+  "modified_reactions": [
+    {
+      "reaction": "PGI",
+      "lower_bound": -1000.0,
+      "upper_bound": 1007.0
+    }
+  ],
   "weights": []
 }

@@ -33,8 +33,8 @@
     let buttonStates = JSON.parse(localStorage.getItem('buttonStates')) || {};   // 跟踪按钮状态 {index: {modified: bool, submitted: bool}}
     let weightValues = JSON.parse(localStorage.getItem('weightValues')) || {};   // 跟踪权重值 {index: value}
     let selectedReactions = JSON.parse(localStorage.getItem('selectedReactions') || '[]');
-    
-   // 从本地存储恢复编辑状态
+
+    // 从本地存储恢复编辑状态
     function restoreEditState() {
         buttonStates = JSON.parse(localStorage.getItem('buttonStates')) || {};
         weightValues = JSON.parse(localStorage.getItem('weightValues')) || {};
@@ -55,16 +55,18 @@
             });
 
             // 初始化按钮状态和权重值
-            originalData.forEach((item, index) => {
-                buttonStates[index] = {
-                    modified: false,
-                    submitted: false
-                };
-                if (!weightValues[index]) {
-                    weightValues[index] = 0;
+            originalData.forEach(item => {
+                const id = item.name;
+                if (!buttonStates[id]) {
+                    buttonStates[id] = {
+                        modified: false,
+                        submitted: false
+                    };
+                }
+                if (!weightValues[id]) {
+                    weightValues[id] = 0;
                 }
             });
-
 
             // 初始显示全部数据
             filteredData = originalData;
@@ -139,10 +141,9 @@
         const pageData = filteredData.slice(start, start + rowsPerPage);
 
         tbody.innerHTML = pageData.map((row, idx) => {
-            // const realIndex = start + idx;
-            const realIndex = originalData.findIndex(item => item.name === row.name);
-            const state = buttonStates[realIndex] || { modified: false, submitted: false };
-            const weightValue = weightValues[realIndex] || 0;
+            const id = row.name;
+            const state = buttonStates[id] || { modified: false, submitted: false };
+            const weightValue = weightValues[id] || 0;
 
             // 确定按钮样式和文本
             let buttonClass = 'btn submit-btn';
@@ -165,9 +166,9 @@
             const cells = [
                 `<td>${row.name}</td>`,
                 `<td>${row.reaction}</td>`,
-                `<td><input type="number" inputmode="numeric" id="weight-${realIndex}" value="${weightValue}" min="0" max="100" class="weight-input" onchange="handleWeightChange(${realIndex}, this.value)" /></td>`,
+                `<td><input type="number" inputmode="numeric" id="weight-${id}" value="${weightValue}" min="0" max="100" class="weight-input" onchange="handleWeightChange('${id}', this.value)" /></td>`,
                 `<td>
-       <button class="${buttonClass}" onclick="submitWeight(${realIndex})" 
+       <button class="${buttonClass}" onclick="submitWeight('${id}')" 
                     style="${buttonStyle}">
                 ${buttonText}
             </button>
@@ -177,17 +178,19 @@
             return `<tr>${cells.join('')}</tr>`;
         }).join('');
 
+
     }
 
-    function handleWeightChange(index, value) {
-        weightValues[index] = value;
-        buttonStates[index] = {
+    function handleWeightChange(id, value) {
+        weightValues[id] = value;
+        buttonStates[id] = {
             modified: true,
             submitted: false
         };
         saveEditState();
         debounceRenderTable(); // 使用防抖函数延迟渲染
     }
+
 
     function renderPagination() {
         const container = document.getElementById('pagination');
@@ -230,19 +233,18 @@
     }
 
     // 提交比重按钮逻辑
-    function submitWeight(index) {
-        const item = filteredData[index];
-        const id = item.name;
-        const weight = document.getElementById(`weight-${index}`).value;
+    function submitWeight(id) {
+        const weight = document.getElementById(`weight-${id}`).value;
+
         // 更新按钮状态
-        buttonStates[index] = {
+        buttonStates[id] = {
             modified: false,
             submitted: true
         };
         saveEditState();
 
         // 发送请求
-        fetch('/weight/' + id + '/' + weight)
+        fetch(`/weight/${id}/${weight}`)
             .then(() => {
                 renderTable();
             });
@@ -250,40 +252,55 @@
     // 清空按钮点击事件（添加错误处理和响应提示）
     document.getElementById('clear-btn').addEventListener('click', function () {
 
-        if (confirm('确定要清空所有配置吗？')) {
-            // 先本地更新状态
-            Object.keys(buttonStates).forEach(index => {
-                buttonStates[index] = { modified: false, submitted: false };
-                weightValues[index] = 0;
+        if (!confirm('确定要清空所有配置吗？')) return;
+
+        fetch('/clear-weights', { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.clearLocalStorage) {
+                    // 清空本地存储
+                    localStorage.removeItem('buttonStates');
+                    localStorage.removeItem('weightValues');
+
+                    // 重置内存中的状态
+                    buttonStates = {};
+                    weightValues = {};
+
+                    // 重新加载原始数据
+                    fetch('/reaction.json')
+                        .then(res => res.json())
+                        .then(data => {
+                            originalData = data.filter(item => selectedReactions.includes(item.name));
+                            filteredData = originalData;
+
+                            // 重置分页
+                            currentPage = 1;
+                            totalPages = Math.ceil(filteredData.length / rowsPerPage);
+
+                            // 重新初始化按钮状态和权重值为默认值
+                            originalData.forEach(item => {
+                                const id = item.name;
+                                buttonStates[id] = {
+                                    modified: false,
+                                    submitted: false
+                                };
+                                weightValues[id] = 0;
+                            });
+
+                            // 保存到本地存储
+                            saveEditState();
+
+                            // 重新渲染表格和分页
+                            renderTable();
+                            renderPagination();
+                        });
+                }
+                alert(data.message);
+            })
+            .catch(err => {
+                console.error(err);
+                alert('清空失败：' + err.message);
             });
-            saveEditState();
-            renderTable(); // 立即更新UI
-
-            // 然后发送清空请求
-            fetch('/clear-weights', { method: 'POST' })
-                .then(response => {
-                    if (!response.ok) throw new Error('清空请求失败');
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.clearLocalStorage) {
-                        buttonStates = {};
-                        weightValues = {};
-                        localStorage.setItem('buttonStates', JSON.stringify({}));
-                        localStorage.setItem('weightValues', JSON.stringify({}));
-                    }
-                    alert(data.message);
-                    renderTable();
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('清空失败: ' + error.message);
-                    saveEditState();
-                    renderTable();
-                });
-        }
-
-
     });
 
     // 保存编辑状态到本地存储
@@ -292,7 +309,7 @@
         localStorage.setItem('weightValues', JSON.stringify(weightValues));
     }
 
-    
+
     // 在页面加载时恢复状态
     restoreEditState();
 </script>
