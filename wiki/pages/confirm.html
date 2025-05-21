@@ -131,15 +131,22 @@
             });
 
         });
+    function clearAllRelatedStorage_1() {
+        const keysToClear = [
+            'selectedReactions','selectedModelId', 'buttonStates', 'weightValues',
+            'wSbuttonStates', 'wSweightValues', 'submittedReactions',
+            'localBounds', 'boundValues','selectedGenes'
+        ];
 
-    // 添加清空按钮点击事件
+        keysToClear.forEach(key => localStorage.removeItem(key));
+    }
+
+
+    // 添加清空按钮点击事件(待改)
     document.getElementById('clear-btn').addEventListener('click', function () {
         if (confirm('确定要清空所有配置吗？')) {
-            localStorage.removeItem('selectedModelId');
+            clearAllRelatedStorage_1();
             document.getElementById('modelIdText').textContent = "未选择模型";
-            localStorage.removeItem('selectedGenes');
-            localStorage.removeItem('selectedReactions');
-            localStorage.removeItem('selectedReactionId');
             fetch('/clear-config', { method: 'POST' })
                 .then(response => {
                     if (response.ok) {
