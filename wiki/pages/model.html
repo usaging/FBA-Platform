@@ -233,6 +233,17 @@
         renderPagination();
     }
 
+    // 清除所有相关本地存储数据
+    function clearAllRelatedStorage() {
+        const keysToClear = [
+            'selectedReactions', 'buttonStates', 'weightValues',
+            'wSbuttonStates', 'wSweightValues', 'submittedReactions',
+            'localBounds', 'boundValues'
+        ];
+
+        keysToClear.forEach(key => localStorage.removeItem(key));
+    }
+
     function selectModel(modelId) {
         // 如果点击已选中的模型，则取消选择（与清空按钮相同逻辑）
         if (selectedModelId === modelId) {
@@ -242,26 +253,17 @@
             document.querySelectorAll('#modelIdText').forEach(el => {
                 el.textContent = "未选择模型";
             });
-
-            localStorage.setItem('selectedReactions', JSON.stringify([]));
-            localStorage.setItem('buttonStates', JSON.stringify({}));
-            localStorage.setItem('weightValues', JSON.stringify({}));
+            // 清除所有相关存储
+            clearAllRelatedStorage();
+            currentPage = 1;
             renderTable();
 
 
         }
         // 否则选择新模型（原有逻辑）
         else {
-            // 清空constraints相关的本地存储
-            let submittedReactions = [];
-            let localBounds = {};
-            localStorage.setItem('submittedReactions', JSON.stringify(submittedReactions));
-            localStorage.setItem('localBounds', JSON.stringify(localBounds));
-            localStorage.setItem('buttonStates', JSON.stringify({}));
-            localStorage.setItem('boundValues', JSON.stringify({}));
-            localStorage.setItem('selectedReactions', JSON.stringify([]));
-            localStorage.setItem('buttonStates', JSON.stringify({}));
-            localStorage.setItem('weightValues', JSON.stringify({}));
+            // 清除旧数据
+            clearAllRelatedStorage();
 
 
             selectedModelId = modelId;

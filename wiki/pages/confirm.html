@@ -19,40 +19,50 @@
             <span id="model-id-text">Loading model ID...</span>
         </div>
 
-        <!-- Objective 表格 -->
-        <h2>Objective Setting
-        </h2>
-        <table id="objective-table">
-            <thead>
-                <tr>
-                    <th>reaction ID</th>
-                    <th>reaction weight</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+        <!-- 表格容器，用于水平排布 -->
+        <div class="table-container">
+            <!-- Objective 表格 -->
+            <div class="table-wrapper">
+                <h2 style = "color:var(--primary-color)">Objective Setting</h2>
+                <table id="objective-table">
+                    <thead>
+                        <tr>
+                            <th>reaction ID</th>
+                            <th>reaction weight</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
 
-        <h2>Deleted Genes</h2>
-        <table id="deleted-genes-table">
-            <thead>
-                <tr>
-                    <th>Gene</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+            <!-- Deleted Genes 表格 -->
+            <div class="table-wrapper" id="deleted-genes" >
+                <h2 style = "color:var(--primary-color)">Deleted Genes</h2>
+                <table id="deleted-genes-table">
+                    <thead>
+                        <tr>
+                            <th>Gene</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
 
-        <h2>Modified Reactions</h2>
-        <table id="modified-reactions-table">
-            <thead>
-                <tr>
-                    <th>Reaction</th>
-                    <th>Lower Bound</th>
-                    <th>Upper Bound</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+            <!-- Modified Reactions 表格 -->
+            <div class="table-wrapper">
+                <h2 style = "color:var(--primary-color)">Modified Reactions</h2>
+                <table id="modified-reactions-table">
+                    <thead>
+                        <tr>
+                            <th>Reaction</th>
+                            <th>Lower Bound</th>
+                            <th>Upper Bound</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -167,22 +177,82 @@
         font-size: 1.5em;
     }
 
+    /* 表格容器，用于水平排布 */
+    .table-container {
+        display: flex;
+        gap: 30px;
+    }
+
+    /* 表格包裹器 */
+    .table-wrapper {
+        display: inline-block;
+        vertical-align: top;
+        width: max-content;
+    }
+
     /* 表格基础样式 */
     table {
-        border-collapse: collapse;
+        /* border-collapse: collapse;
         width: 100%;
-        margin-bottom: 1.5em;
+        margin-bottom: 1.5em; */
+        table-layout: fixed;
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+        border-collapse: collapse;
+        margin-bottom: 0;
+        margin: 15px 0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        display: block;
+        overflow-x: auto;
+        height: calc(100% - 30px);
     }
 
     th,
     td {
-        border: 1px solid #ccc;
-        padding: 10px;
-        text-align: left;
+        width: 120px;
+        /* 默认宽度 */
+        padding: 12px 15px;
+        box-sizing: border-box;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        border: 1px solid #ddd;
     }
 
     th {
-        background-color: #f5f5f5;
+        /* background-color: #f5f5f5; */
+        text-align: center;
+        background-color: var(--primary-light);
+        color: var(--primary-dark);
+        position: sticky;
+        top: 0;
+    }
+
+    /* 针对特定表格的列宽度调整 */
+    #objective-table th,
+    #objective-table td {
+        width: 150px;
+        /* 调整 Objective 表格列宽 */
+    }
+
+    #deleted-genes-table th,
+    #deleted-genes-table td {
+        width: 130px;
+        /* 调整 Deleted Genes 表格列宽 */
+    }
+
+    #modified-reactions-table th,
+    #modified-reactions-table td {
+        width: 120px;
+        /* 调整 Modified Reactions 表格列宽 */
+    }
+
+    /* 针对特定列的宽度调整 */
+    #modified-reactions-table th:nth-child(1),
+    #modified-reactions-table td:nth-child(1) {
+        width: 180px;
+        /* 调整第一列（Reaction）宽度 */
     }
 
     /* 暗黑模式样式 */
@@ -194,12 +264,22 @@
     .dark th {
         background-color: #444;
         color: var(--primary-color);
+        border-bottom: 0.5px solid white;
     }
 
     .dark #objective-table th,
     .dark #deleted-genes-table th,
     .dark #modified-reactions-table th {
         border-bottom: 0.5px solid white;
+    }
+
+
+    .dark td {
+        border-color: #555;
+    }
+
+    .dark tr:hover td {
+        background-color: #444;
     }
 
     /* 按钮样式 */
