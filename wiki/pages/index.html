@@ -1,68 +1,89 @@
-{% extends "layout.html" %}
+<!DOCTYPE html>
+<html lang="zh">
 
-{% block title %}FBA分析平台{% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FBA分析平台</title>
+    <!-- 添加logo的链接 -->
+    <link rel="shortcut icon" href="{{url_for('static', filename = 'icons/logo.svg')}}" />
+    <!-- 直接加载必要的CSS和字体，不再继承layout.html -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: url('/static/starting/back_3.jpg') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
 
-{% block page_content %}
+        /* 新增按钮样式 */
+        .button {
+            background: url('/static/starting/button.jpg') no-repeat center center;
+            background-size: cover;
+            border: none;
+            /* 移除 padding，用 width/height 控制尺寸 */
+            padding: 0;
+            width: 200px;
+            /* 设置固定宽度 */
+            height: 60px;
+            /* 设置固定高度 */
+            cursor: pointer;
+            position: relative;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-size: 0;
+            /* 防止空白间隙影响布局 */
+        }
 
-<link href="{{ url_for('static', filename = 'css/base.css')}}" rel="stylesheet">
+        .button:hover {
+            background: url('/static/starting/button_active.jpg') no-repeat center center;
+            background-size: cover;
+        }
 
+        .button-text-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding:10px;
+            width:80%;
+            height:80%;
+            object-fit: cover;
+        }
 
-<style>
-    .welcome-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: calc(100vh - 160px);
-        text-align: center;
-    }
+    </style>
+</head>
 
-    .welcome-logo {
-        font-size: 72px;
-        color: var(--primary-color);
-        margin-bottom: 30px;
-    }
-
-    .welcome-text {
-        font-size: 24px;
-        margin-bottom: 50px;
-        color:var(--primary-color);
-    }
-
-    .start-btn {
-        padding: 8px 16px;
-        background-color: var(--primary-light);
-        color: var(--primary-color);
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 16px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .start-btn:hover {
-        background-color: var(--primary-dark);
-        opacity: 0.9;
-    }
-</style>
-
-<div class="welcome-container">
-    <div class="welcome-logo">FBA ANALYSIS</div>
-    <div class="welcome-text">代谢网络通量平衡分析平台</div>
-    <button class="start-btn" onclick="window.location.href='/model'">
-        开始分析 <i class="fa-solid fa-arrow-right"></i>
+<body>
+    <button class="button" id="indexButton" style="position: absolute; top: 450px; left: 380px;">
+       <!-- <img class="button-text-image" src="/static/starting/button_text.jpg"> -->
     </button>
-</div>
 
-<script>
-    localStorage.removeItem('selectedModelId');
-    document.getElementById('modelIdText').textContent = "未选择模型";
-    localStorage.removeItem('selectedGenes');
-    localStorage.removeItem('selectedReactions');
-    localStorage.removeItem('selectedReactionId');
-</script>
+    <script>
+        // 清除本地存储
+        localStorage.removeItem('selectedModelId');
+        localStorage.removeItem('selectedGenes');
+        localStorage.removeItem('selectedReactions');
+        localStorage.removeItem('selectedReactionId');
 
-{% endblock %}
+        // 获取按钮元素
+        const indexButton = document.getElementById('indexButton');
+
+        // 为按钮添加点击事件监听器
+        indexButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = '/model';
+        });
+    </script>
+</body>
+
+</html>

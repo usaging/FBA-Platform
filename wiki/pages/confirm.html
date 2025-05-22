@@ -67,82 +67,91 @@
 </div>
 
 <script>
-    // 从后端接口获取 JSON 配置
-    fetch('/fba-config.json')
-        .then(res => res.json())
-        .then(data => {
-            // 显示模型ID
-            document.getElementById('model-id-text').textContent = data.model || "未选择模型";
+    function fetchConfigData() {
+        // 从后端接口获取 JSON 配置
+        fetch('/fba-config.json')
+            .then(res => res.json())
+            .then(data => {
+                // 显示模型ID
+                document.getElementById('model-id-text').textContent = data.model || "未选择模型";
 
-            // 填充 Objective 表格
-            const objTbody = document.querySelector('#objective-table tbody');
-            objTbody.innerHTML = ''; // 清空现有内容
+                // 填充 Objective 表格
+                const objTbody = document.querySelector('#objective-table tbody');
+                objTbody.innerHTML = ''; // 清空现有内容
 
-            // 如果有 weights 数据，优先显示
-            if (data.weights && data.weights.length > 0) {
-                data.weights.forEach(reaction => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                    <td>${reaction.reaction}</td>
-                    <td>${reaction.weight}%</td>
-                `;
-                    objTbody.appendChild(row);
-                });
-            }
-            // 否则显示 objective 数据
-            else if (data.objective && data.objective.length > 0) {
-                data.objective.forEach(reaction => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                    <td>${reaction}</td>
+                // 如果有 weights 数据，优先显示
+                if (data.weights && data.weights.length > 0) {
+                    data.weights.forEach(reaction => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                        <td>${reaction.reaction}</td>
+                        <td>${reaction.weight}%</td>
+                    `;
+                        objTbody.appendChild(row);
+                    });
+                }
+                // 否则显示 objective 数据
+                else if (data.objective && data.objective.length > 0) {
+                    data.objective.forEach(reaction => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                        <td>${reaction}</td>
+                        <td>100%</td>
+                    `;
+                        objTbody.appendChild(row);
+                    });
+                }
+                // 都没有则显示默认 Biomass
+                else {
+                    const objRow = document.createElement('tr');
+                    objRow.innerHTML = `
+                    <td>Biomass</td>
                     <td>100%</td>
                 `;
-                    objTbody.appendChild(row);
+                    objTbody.appendChild(objRow);
+                }
+
+                // 填充 Deleted Genes
+                const delTbody = document.querySelector('#deleted-genes-table tbody');
+                delTbody.innerHTML = ''; // 清空现有内容
+                data.deleted_genes.forEach(gene => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td>${gene}</td>`;
+                    delTbody.appendChild(row);
                 });
-            }
-            // 都没有则显示默认 Biomass
-            else {
-                const objRow = document.createElement('tr');
-                objRow.innerHTML = `
-                <td>Biomass</td>
-                <td>100%</td>
-            `;
-                objTbody.appendChild(objRow);
-            }
 
-            // 填充 Deleted Genes
-            const delTbody = document.querySelector('#deleted-genes-table tbody');
-            data.deleted_genes.forEach(gene => {
-                const row = document.createElement('tr');
-                row.innerHTML = `<td>${gene}</td>`;
-                delTbody.appendChild(row);
+                // 填充 Modified Reactions
+                const modTbody = document.querySelector('#modified-reactions-table tbody');
+                modTbody.innerHTML = ''; // 清空现有内容
+                data.modified_reactions.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item.reaction}</td>
+                        <td>${item.lower_bound}</td>
+                        <td>${item.upper_bound}</td>
+                    `;
+                    modTbody.appendChild(row);
+                });
+
             });
-
-            // 填充 Modified Reactions
-            const modTbody = document.querySelector('#modified-reactions-table tbody');
-            data.modified_reactions.forEach(item => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${item.reaction}</td>
-                    <td>${item.lower_bound}</td>
-                    <td>${item.upper_bound}</td>
-                `;
-                modTbody.appendChild(row);
-            });
-
-        });
+    }
+    
     function clearAllRelatedStorage_1() {
         const keysToClear = [
-            'selectedReactions','selectedModelId', 'buttonStates', 'weightValues',
+            'selectedReactions', 'selectedModelId', 'buttonStates', 'weightValues',
             'wSbuttonStates', 'wSweightValues', 'submittedReactions',
-            'localBounds', 'boundValues','selectedGenes'
+            'localBounds', 'boundValues', 'selectedGenes'
         ];
 
         keysToClear.forEach(key => localStorage.removeItem(key));
     }
 
+    // 在页面加载完成后重新获取数据
+    document.addEventListener('DOMContentLoaded', function () {
+        fetchConfigData();
+    });
 
-    // 添加清空按钮点击事件(待改)
+    // 添加清空按钮点击事件
     document.getElementById('clear-btn').addEventListener('click', function () {
         if (confirm('确定要清空所有配置吗？')) {
             clearAllRelatedStorage_1();

@@ -1,7 +1,12 @@
 {
-  "model": null,
-  "objective": [],
-  "deleted_genes": [],
+  "model": "iJO1366",
+  "objective": [
+    "EX_cm_e"
+  ],
+  "deleted_genes": [
+    "b4067",
+    "b1090"
+  ],
   "modified_reactions": [],
   "weights": []
 }
