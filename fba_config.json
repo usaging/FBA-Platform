@@ -1,12 +1,16 @@
 {
-  "model": "iJO1366",
+  "model": "iNF517",
   "objective": [
-    "EX_cm_e"
+    "ACTNdiff"
   ],
   "deleted_genes": [
-    "b4067",
-    "b1090"
+    "LLMG_RS09720"
   ],
   "modified_reactions": [],
-  "weights": []
+  "weights": [
+    {
+      "reaction": "ACTNdiff",
+      "weight": "100"
+    }
+  ]
 }

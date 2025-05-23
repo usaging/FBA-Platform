@@ -165,6 +165,11 @@ def constraints_page():
 def gene_page():
     return render_template('pages/gene.html')
 
+@app.route('/gene-del/<gene_id>')
+def del_gene(gene_id):
+    global confirm
+    if gene_id in confirm.get("deleted_genes", []):
+        confirm["deleted_genes"].remove(gene_id)
 
 @app.route('/model/<id>')
 def set_model(id):
@@ -176,8 +181,14 @@ def set_model(id):
     export_r_path='reactions/'+id+'.json'
     export_g_path='genes/'+id+'.json'
     if not os.path.exists(export_r_path):
+        if model is None:
+            model_path = Path('models') / f'{id}.xml'
+            model = cobra.io.read_sbml_model(str(model_path))
         tools.export_reactions_json(model,export_r_path )
     if not os.path.exists(export_r_path):
+        if model is None:
+            model_path = Path('models') / f'{id}.xml'
+            model = cobra.io.read_sbml_model(str(model_path))
         tools.export_genes_json(model,export_g_path )
     confirm={
             "model": model_id,               # 存储模型名称（字符串）
@@ -331,8 +342,9 @@ def set_config():
     global confirm
     if model_id is None:
         return "No model loaded."
-    model_path = Path('models') / f'{id}.xml'
-    model = cobra.io.read_sbml_model(str(model_path))
+    if model is None:
+        model_path = Path('models') / f'{id}.xml'
+        model = cobra.io.read_sbml_model(str(model_path))
     
   # 应用基因敲除
     apply_knockouts(model, confirm.get('deleted_genes', []))

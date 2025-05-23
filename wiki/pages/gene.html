@@ -188,17 +188,15 @@
     function toggleGene(geneId) {
         if (selectedGenes.includes(geneId)) {
             selectedGenes = selectedGenes.filter(id => id !== geneId);
+            fetch('/gene-del/' + geneId);
         } else {
             selectedGenes.push(geneId);
+            // 保持原有的后端请求
+            fetch('/gene/' + geneId);
         }
         localStorage.setItem('selectedGenes', JSON.stringify(selectedGenes));
         renderTable();
-
-        // 保持原有的后端请求
-        fetch('/gene/' + geneId);
     }
-
-    
 
     // 初始化时渲染已选基因
     document.addEventListener('DOMContentLoaded', () => {
@@ -227,10 +225,7 @@
                     console.error('Error:', error);
                     alert('清空失败: ' + error.message);
                 });
-
         }
-
-
     });
 
     // 整理按钮点击事件（新增排序逻辑）
@@ -256,7 +251,7 @@
 <style>
     #gene-container {
         display: flex;
-        justify-content:left;
+        justify-content: left;
         gap: 45px;
         /* 组间间距 */
         max-width: 1200px;
