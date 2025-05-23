@@ -1,12 +1,19 @@
 {
-  "model": "iJO1366",
+  "model": "e_coli_core",
   "objective": [
-    "EX_cm_e"
+    "PFK",
+    "PGK"
   ],
-  "deleted_genes": [
-    "b4067",
-    "b1090"
-  ],
+  "deleted_genes": [],
   "modified_reactions": [],
-  "weights": []
+  "weights": [
+    {
+      "reaction": "PFK",
+      "weight": "30"
+    },
+    {
+      "reaction": "PGK",
+      "weight": "70"
+    }
+  ]
 }
