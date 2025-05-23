@@ -248,6 +248,37 @@
             });
     }
 
+    // 添加全局函数用于提交所有修改的通量
+    function submitAllModifiedBounds() {
+        const modifiedReactions = Object.entries(buttonStates)
+            .filter(([id, state]) => state.modified)
+            .map(([id]) => id);
+
+        if (modifiedReactions.length === 0) {
+            return Promise.resolve(); // 没有需要提交的修改
+        }
+
+        // 收集所有需要提交的请求
+        const requests = modifiedReactions.map(id => {
+            const bounds = boundValues[id];
+            return fetch(`/reaction/${id}/${bounds.lower}/${bounds.upper}`)
+                .then(() => {
+                    // 更新按钮状态为已提交
+                    buttonStates[id] = {
+                        modified: false,
+                        submitted: true
+                    };
+                    // 更新本地存储
+                    localBounds[id] = { lower_bound: bounds.lower, upper_bound: bounds.upper };
+                    if (!submittedReactions.includes(id)) {
+                        submittedReactions.push(id);
+                    }
+                    saveEditState();
+                });
+        });
+
+        return Promise.all(requests);
+    }
     // 整理按钮：把已提交的排到前面
     document.getElementById('organize-btn').addEventListener('click', () => {
 
@@ -323,12 +354,16 @@
     function saveEditState() {
         localStorage.setItem('buttonStates', JSON.stringify(buttonStates));
         localStorage.setItem('boundValues', JSON.stringify(boundValues));
+        localStorage.setItem('localBounds', JSON.stringify(localBounds));
+        localStorage.setItem('submittedReactions', JSON.stringify(submittedReactions));
     }
 
     // 从本地存储恢复编辑状态
     function restoreEditState() {
         buttonStates = JSON.parse(localStorage.getItem('buttonStates')) || {};
         boundValues = JSON.parse(localStorage.getItem('boundValues')) || {};
+        localBounds = JSON.parse(localStorage.getItem('localBounds')) || {};
+        submittedReactions = JSON.parse(localStorage.getItem('submittedReactions')) || [];
     }
 </script>
 

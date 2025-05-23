@@ -16,7 +16,7 @@
                 <span class="image"><img src="{{url_for('static',filename='starting/logo.png')}}" alt=""></span>
                 <div class="text logo-text" style="padding-left:10px;">
                     <span class="name">FBA-PLATFORM</span>
-                    <span class="software">SCUT-CHINA_L</span>
+                    <span class="software">SCUT-CHINA-L</span>
                 </div>
             </div>
 
@@ -132,14 +132,30 @@
                         window.location.href = '/constraints';
                     }
 
+                }
+                else if (currentPath === '/constraints') {
+                    e.preventDefault();
 
-                } else {
+                    // 先提交所有修改的通量
+                    submitAllModifiedBounds().then(() => {
+                        // 确保本地存储更新
+                        localStorage.setItem('localBounds', JSON.stringify(localBounds));
+                        localStorage.setItem('submittedReactions', JSON.stringify(submittedReactions));
+
+                        // 然后跳转到下一页
+                        window.location.href = '/gene';
+                    }).catch(error => {
+                        console.error('提交修改时出错:', error);
+                        alert('提交修改时出错: ' + error.message);
+                    });
+                }
+                else {
                     const routes = {
                         '/': '/model',
                         '/model': '/objective',
                         // '/objective': '/wSetting',
-                        // '/wSetting': '/constraints',
-                        '/constraints': '/gene',
+                        // // '/wSetting': '/constraints',
+                        // '/constraints': '/gene',
                         '/gene': '/confirm',
                         '/confirm': '/result'
                     };

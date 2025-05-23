@@ -1,33 +1,33 @@
 {
-  "model": "e_coli_core",
+  "model": "yeast-GEM",
   "objective": [
-    "PFK",
-    "ACALD"
+    "r_0001",
+    "r_0004"
   ],
   "deleted_genes": [
-    "b0978",
-    "b0755"
+    "YBL091C",
+    "YBL080C"
   ],
   "modified_reactions": [
     {
-      "reaction": "PGL",
+      "reaction": "r_0002",
       "lower_bound": 0.0,
-      "upper_bound": 108.0
+      "upper_bound": 1007.0
     },
     {
-      "reaction": "CO2t",
-      "lower_bound": -1000.0,
-      "upper_bound": 165.0
+      "reaction": "r_0004",
+      "lower_bound": 8.0,
+      "upper_bound": 1000.0
     }
   ],
   "weights": [
     {
-      "reaction": "ACALD",
-      "weight": "90"
+      "reaction": "r_0001",
+      "weight": "70"
     },
     {
-      "reaction": "PFK",
-      "weight": "10"
+      "reaction": "r_0004",
+      "weight": "30"
     }
   ]
 }
