@@ -54,35 +54,117 @@
             position: absolute;
             top: 0;
             left: 0;
-            padding:10px;
-            width:80%;
-            height:80%;
+            padding: 10px;
+            width: 80%;
+            height: 80%;
             object-fit: cover;
         }
 
+        /* 新增加载动画样式 */
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255,0.95);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-gif {
+            width: 500px;
+            height: auto;
+            transition: opacity 0.3s ease;
+        }
+
+        /* 淡入内容的样式 */
+        .fade-in-content {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .content-visible {
+            opacity: 1;
+        }
+
+        /* 响应式布局 */
+        @media (max-width: 768px) {
+            .button {
+                width: 160px;
+                height: 50px;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <button class="button" id="indexButton" style="position: absolute; top: 450px; left: 380px;">
-       <img class="button-text-image" src="/static/starting/button_text.png" style="
-            padding-left:40px;padding-top: 5px;">
-    </button>
+
+    <!-- 加载动画元素 -->
+    <div id="loading-overlay">
+        <img src="/static/loading.gif" class="loading-gif">
+    </div>
+
+    <!-- 主要内容容器 -->
+    <div id="mainContent" class="fade-in-content">
+        <button class="button" id="indexButton" style="position: absolute; top: 450px; left: 405px;">
+            <img class="button-text-image" src="/static/starting/button_text.png"
+                style="padding-left:40px;padding-top: 5px;">
+        </button>
+    </div>
+
 
     <script>
-        // 清除本地存储
-        localStorage.removeItem('selectedModelId');
-        localStorage.removeItem('selectedGenes');
-        localStorage.removeItem('selectedReactions');
-        localStorage.removeItem('selectedReactionId');
+        // 新增加载动画控制
+        function showLoadingAnimation() {
+            var overlay = document.getElementById('loading-overlay');
+            overlay.style.opacity = '1';
+            overlay.style.pointerEvents = 'auto';
+            document.getElementById('mainContent').classList.remove('content-visible');
+        }
+        function hideLoadingAnimation() {
+            var overlay = document.getElementById('loading-overlay');
+            overlay.style.opacity = '0';
+            overlay.style.pointerEvents = 'none';
+            setTimeout(function () {
+                overlay.style.display = 'none';
+            }, 500); // 与transition时间一致
+            // 显示主内容
+            document.getElementById('mainContent').classList.add('content-visible');
+        }
 
-        // 获取按钮元素
-        const indexButton = document.getElementById('indexButton');
 
-        // 为按钮添加点击事件监听器
-        indexButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            window.location.href = '/model';
+        // 新增加载动画控制
+        window.addEventListener('load', function () {
+            setTimeout(hideLoadingAnimation, 500); // 与transition时间一致
+
+            // 获取按钮元素
+            const indexButton = document.getElementById('indexButton');
+
+
+            // 清除本地存储
+            localStorage.removeItem('selectedModelId');
+            localStorage.removeItem('selectedGenes');
+            localStorage.removeItem('selectedReactions');
+            localStorage.removeItem('selectedReactionId');
+
+
+            // 为按钮添加点击事件监听器
+            indexButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.location.href = '/model';
+            });
+            // 监听页面返回事件
+            window.addEventListener('pageshow', function (event) {
+                if (event.persisted) {
+                    // 如果页面是从缓存中恢复的，重新显示加载动画并隐藏内容
+                    showLoadingAnimation();
+                    setTimeout(hideLoadingAnimation, 500);
+                }
+            });
         });
     </script>
 </body>
