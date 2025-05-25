@@ -1,33 +1,7 @@
 {
-  "model": "yeast-GEM",
-  "objective": [
-    "r_0001",
-    "r_0004"
-  ],
-  "deleted_genes": [
-    "YBL091C",
-    "YBL080C"
-  ],
-  "modified_reactions": [
-    {
-      "reaction": "r_0002",
-      "lower_bound": 0.0,
-      "upper_bound": 1007.0
-    },
-    {
-      "reaction": "r_0004",
-      "lower_bound": 8.0,
-      "upper_bound": 1000.0
-    }
-  ],
-  "weights": [
-    {
-      "reaction": "r_0001",
-      "weight": "70"
-    },
-    {
-      "reaction": "r_0004",
-      "weight": "30"
-    }
-  ]
+  "model": null,
+  "objective": [],
+  "deleted_genes": [],
+  "modified_reactions": [],
+  "weights": []
 }
